@@ -1,8 +1,10 @@
 ## Issue
-    Resolve #XXX
+    
+Resolve #XXX
 
 ## Descrição
-    Descreva as mudanças ocorridas
+
+Descreva as mudanças ocorridas
 
 ## Tipo de mudança
 
@@ -11,4 +13,5 @@
 - [ ] Mudança de funcionalidade
 
 ## Comentários adicionais
-    Informações complementares
+
+Informações complementares
