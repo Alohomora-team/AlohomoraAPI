@@ -4,7 +4,7 @@ from django import forms
 # Create your models here.
 
 class User(models.Model):
-    
+
     complete_name = models.CharField(
         max_length = 80,
     )
@@ -12,7 +12,7 @@ class User(models.Model):
         max_length = 90,
     )
     password = models.CharField(
-        max_length=50, 
+        max_length=50,
     )
     phone = models.CharField(
         max_length = 9,
@@ -26,9 +26,9 @@ class User(models.Model):
         blank = True,
         null = True,
     )
-    
+
 class Visitor(models.Model):
-    
+
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
 
     complete_name = models.CharField(
@@ -40,7 +40,3 @@ class Visitor(models.Model):
     phone = models.CharField(
         max_length = 9,
     )
-
-
-
-

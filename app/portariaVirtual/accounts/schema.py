@@ -2,7 +2,7 @@ import graphene
 
 from graphene_django import DjangoObjectType
 
-from app.models import User
+from portariaVirtual.accounts.models import User
 
 class UserType(DjangoObjectType):
     class Meta:
