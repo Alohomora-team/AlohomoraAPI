@@ -23,7 +23,7 @@ Nossa politica de branch é muito simples, caso queira contribuir é totalmente 
 Independente do seu quadro de contribuição é norma do projeto nomear as branches com um nome significativo (baseado no texto da issue). Por exemplo a issue **Criar página de login** com número 13 seria nomeada da seguinte forma:
 
 ```bash
-13-criar_pagina_login
+13-criar-pagina-login
 ```
 
 De forma mais genérica a nossa normalização é:
