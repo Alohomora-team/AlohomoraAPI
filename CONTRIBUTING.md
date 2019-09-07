@@ -29,7 +29,7 @@ Independente do seu quadro de contribuição é norma do projeto nomear as branc
 De forma mais genérica a nossa normalização é:
 
 ```
-<numero da issue>-<primeiro nome>_<segundo nome_<terceiro ...>
+<numero da issue>-<primeiro nome>-<segundo nome>-<terceiro ...>
 ```
 
 ### Pull Request
