@@ -1,10 +1,15 @@
 FROM python:3.7-alpine
 ENV PYTHONUNBUFFERED 1
 
-COPY ./requirements.txt /requirements.txt
-RUN pip install --no-cache-dir -r /requirements.txt
 
-RUN mkdir /api
-WORKDIR /api
+RUN mkdir /app
+COPY ./requirements.txt /app/requirements.txt
+WORKDIR /app
 
-COPY ./api /api
+RUN apk update \
+    && apk add postgresql-dev gcc musl-dev \
+    && pip install --no-cache-dir -r requirements.txt
+
+COPY ./app /app
+
+

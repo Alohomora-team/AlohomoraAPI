@@ -1,14 +1,19 @@
 version: "3"
 
 services:
-  api:
+  db:
+    image: postgres:11.5-alpine
+  app:
     build:
       context: .
       dockerfile: ./docker/Dockerfile
     ports:
       - "8000:8000"
+    depends_on:
+      - db
     volumes: 
-      - ./api:/api
+      - ./app:/app
     command: >
       sh -c "python3 manage.py runserver 0.0.0.0:8000"
+
 
