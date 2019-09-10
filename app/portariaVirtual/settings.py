@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 ]
+
 GRAPHENE = {
     'SCHEMA': 'portariaVirtual.schema.schema'
 }
@@ -80,10 +81,11 @@ WSGI_APPLICATION = 'portariaVirtual.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'HOST': 'db',   
-        'PORT': 5432,
+        'NAME': os.environ['POSTGRES_DB'] or 'postgres',
+        'USER': os.environ['POSTGRES_USER'] or 'postgres',
+        'PASSWORD': os.environ['POSTGRES_PASSWORD'] or 'bypass',
+        'HOST': os.environ['POSTGRES_HOST'] or 'db',   
+        'PORT': '5432',
     }
 }
 
