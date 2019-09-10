@@ -1,19 +1,19 @@
-version: "3"
+version: "3.7"
 
 services:
-  db:
-    image: postgres:11.5-alpine
-  app:
+
+  api:
     build:
       context: .
-      dockerfile: ./docker/Dockerfile
+      dockerfile: docker/Dockerfile
+    env_file: ".env"
     ports:
       - "8000:8000"
+    volumes:
+      - "./app:/home"
     depends_on:
       - db
-    volumes: 
-      - ./app:/app
-    command: >
-      sh -c "python3 manage.py runserver 0.0.0.0:8000"
 
-
+  db:
+    image: postgres:11.5-alpine
+    env_file: ".env"

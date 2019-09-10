@@ -1,15 +1,21 @@
 FROM python:3.7-alpine
+
 ENV PYTHONUNBUFFERED 1
 
 
-RUN mkdir /app
-COPY ./requirements.txt /app/requirements.txt
-WORKDIR /app
+WORKDIR /home
 
-RUN apk update \
-    && apk add postgresql-dev gcc musl-dev \
-    && pip install --no-cache-dir -r requirements.txt
+RUN apk add --update --no-cache \
+    postgresql-dev \
+    gcc \
+    musl-dev 
 
-COPY ./app /app
+COPY docker/requirements.txt requirements.txt
 
+RUN pip install --no-cache-dir -r requirements.txt
 
+COPY app/ .
+
+ENTRYPOINT ["python3", "manage.py"]
+
+CMD ["runserver", "0:8000"]
