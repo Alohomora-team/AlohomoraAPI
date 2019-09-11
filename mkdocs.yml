@@ -1,0 +1,11 @@
+site_name: Alohomora
+nav:
+- Início: 'index.md'
+- Projeto:
+  - 'Documento de visão': 'projeto/doc_visao.md'
+- Gerência:
+  - 'Plano de gerência de configuração de software': 'gerencia/plano_gcs.md'
+- Sprints:
+  - 'Sprint 0': 'sprints/sprint_0.md'
+
+theme: material
