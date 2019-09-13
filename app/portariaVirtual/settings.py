@@ -31,7 +31,6 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'graphene_django',
     'portariaVirtual.accounts',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -39,6 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # Third-Party Apps
+    'rest_framework',
+    'graphene_django',
 ]
 
 GRAPHENE = {
