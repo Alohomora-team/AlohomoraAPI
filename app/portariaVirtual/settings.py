@@ -92,7 +92,7 @@ DATABASES = {
         'NAME': os.environ['POSTGRES_DB'] or 'postgres',
         'USER': os.environ['POSTGRES_USER'] or 'postgres',
         'PASSWORD': os.environ['POSTGRES_PASSWORD'] or 'bypass',
-        'HOST': os.environ['POSTGRES_HOST'] or 'db',   
+        'HOST': os.environ['POSTGRES_HOST'] or 'db',
         'PORT': '5432',
     }
 }
