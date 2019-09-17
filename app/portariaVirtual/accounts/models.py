@@ -4,6 +4,10 @@ from django import forms
 # Create your models here.
 
 class User(models.Model):
+    
+    admin = models.BooleanField(
+        default = False,
+    )
 
     complete_name = models.CharField(
         max_length = 80,
@@ -11,21 +15,22 @@ class User(models.Model):
     email = models.CharField(
         max_length = 90,
     )
+
+    cpf = models.IntegerField(
+        null = True,
+    )
+
     password = models.CharField(
         max_length=50,
     )
     phone = models.CharField(
         max_length = 9,
     )
-    apartment = models.IntegerField(
-        blank = True,
+
+    voice_data = models.TextField(
         null = True,
     )
-    block = models.CharField(
-        max_length = 6,
-        blank = True,
-        null = True,
-    )
+
 
 class Visitor(models.Model):
 
@@ -37,6 +42,15 @@ class Visitor(models.Model):
     email = models.CharField(
         max_length = 90,
     )
+
+    cpf = models.IntegerField(
+        null = True,
+    )
+
+    voice_data = models.TextField(
+        null = True,
+    )
+
     phone = models.CharField(
         max_length = 9,
     )
