@@ -1,8 +1,13 @@
-from django.shortcuts import render
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
-# Create your views here.
-from django.http import HttpResponse
+# TODO(felipe) Why thats is here ?
+class HelloView(APIView):
 
+    #verify into header if token is valid
+    permission_classes = (IsAuthenticated,)
 
-def index(request):
-    return HttpResponse("Hello, world. You're at the polls index.")
+    def get(self, request):
+        content = {'message': 'Hello, World!'}
+        return Response(content)

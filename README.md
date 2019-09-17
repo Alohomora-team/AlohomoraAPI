@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/fga-eps-mds/Alohomora.svg?branch=devel)](https://travis-ci.org/fga-eps-mds/Alohomora)
 
 ### Como subir a aplicação
 
