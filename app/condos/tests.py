@@ -21,11 +21,6 @@ class ApartmentTestCase(TestCase):
 
         self.assertEqual(apartment.block.number, "1")
 
-    def test_apartment_number_max_length(self):
-        apartment = Apartment.objects.get(number="101")
-        max_length = apartment._meta.get_field('number').max_length
-        self.assertEqual(max_length, 6)
-
 class BlockTestCase(TestCase):
 
     def setUp(self):
@@ -35,7 +30,3 @@ class BlockTestCase(TestCase):
         block = Block.objects.get(number="1")
         self.assertEqual(block.number, "1")
 
-    def test_block_number_max_length(self):
-        block = Block.objects.get(number="1")
-        max_length = block._meta.get_field('number').max_length
-        self.assertEqual(max_length, 4)

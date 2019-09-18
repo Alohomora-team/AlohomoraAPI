@@ -3,10 +3,9 @@ import graphene
 import accounts.schema
 import condos.schema
 
-class Query(accounts.schema.Query, graphene.ObjectType):
-    pass
-
-class Query(condos.schema.Query, graphene.ObjectType):
+class Query(condos.schema.Query,
+        accounts.schema.Query,
+        graphene.ObjectType):
     pass
 
 class Mutation(condos.schema.Mutation, graphene.ObjectType):

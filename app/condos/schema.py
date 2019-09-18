@@ -1,7 +1,5 @@
 import graphene
 
-from django.db import models
-
 from graphene_django.types import DjangoObjectType
 
 from condos.models import Block, Apartment
@@ -9,12 +7,12 @@ from condos.models import Block, Apartment
 class BlockType(DjangoObjectType):
     class Meta:
         model = Block
-  
+
 class ApartmentType(DjangoObjectType):
     class Meta:
         model = Apartment
-  
-class Query(object):
+
+class Query():
     all_blocks = graphene.List(BlockType)
     all_apartments = graphene.List(ApartmentType)
 
@@ -46,9 +44,9 @@ class CreateApartment(graphene.Mutation):
         apartment.save()
 
         return CreateApartment(
-                id=apartment.id,
-                number=apartment.number,
-                block=apartment.block)
+            id=apartment.id,
+            number=apartment.number,
+            block=apartment.block)
 
 class CreateBlock(graphene.Mutation):
     id = graphene.Int()
@@ -63,8 +61,8 @@ class CreateBlock(graphene.Mutation):
         block.save()
 
         return CreateBlock(
-                id=block.id,
-                number=block.number)
+            id=block.id,
+            number=block.number)
 
 
 
