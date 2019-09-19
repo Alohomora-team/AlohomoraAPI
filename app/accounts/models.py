@@ -15,7 +15,6 @@ class User(models.Model):
     voice_data = models.TextField(null=True)
 
 
-
 class Visitor(models.Model):
 
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
