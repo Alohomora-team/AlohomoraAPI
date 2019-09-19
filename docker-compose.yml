@@ -17,3 +17,13 @@ services:
   db:
     image: postgres:11.5-alpine
     env_file: ".env"
+
+  lint:
+    # directory with code
+    command: "app"
+    build:
+      context: .
+      dockerfile: docker/lint/Dockerfile
+    # The volume with pylintrc configuration
+    volumes:
+    - "./:/home"
