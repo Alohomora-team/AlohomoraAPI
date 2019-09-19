@@ -1,8 +1,6 @@
 from django.test import TestCase
-
 from condos.models import Apartment, Block
 
-# Create your tests here.
 
 class ApartmentTestCase(TestCase):
 
@@ -29,4 +27,3 @@ class BlockTestCase(TestCase):
     def test_block_number(self):
         block = Block.objects.get(number="1")
         self.assertEqual(block.number, "1")
-
