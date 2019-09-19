@@ -1,6 +1,8 @@
 from django.test import TestCase
-from portariaVirtual.accounts.models import User
-from portariaVirtual.accounts.models import Visitor
+
+from accounts.models import User
+
+from accounts.models import Visitor
 
 class UserModelTest(TestCase):
 

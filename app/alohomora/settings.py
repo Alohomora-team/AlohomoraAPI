@@ -46,11 +46,12 @@ INSTALLED_APPS = [
     'graphene_django',
 
     #Local apps (our project's apps)
-    'portariaVirtual.accounts',
+    'accounts',
+    'condos',
 ]
 
 GRAPHENE = {
-    'SCHEMA': 'portariaVirtual.schema.schema'
+    'SCHEMA': 'alohomora.schema.schema'
 }
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -62,7 +63,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'portariaVirtual.urls'
+ROOT_URLCONF = 'alohomora.urls'
 
 TEMPLATES = [
     {
@@ -80,7 +81,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'portariaVirtual.wsgi.application'
+WSGI_APPLICATION = 'alohomora.wsgi.application'
 
 
 # Database

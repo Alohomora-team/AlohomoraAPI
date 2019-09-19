@@ -1,8 +1,8 @@
 from django.contrib import admin
 from django.urls import path
 from graphene_django.views import GraphQLView
-from portariaVirtual.accounts import views
-from portariaVirtual.schema import schema
+from accounts import views
+from alohomora.schema import schema
 from rest_framework.authtoken.views import obtain_auth_token
 
 urlpatterns = [
