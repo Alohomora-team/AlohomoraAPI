@@ -8,19 +8,17 @@ class UserModelTest(TestCase):
 
     @classmethod
     def setUpTestData(cls):
+
         User.objects.create(
             complete_name='Big',
             email='Bob',
             password='12345',
             phone='12345',
-            apartment='42',
-            block='13'
         )
 
     def test_complete_name_label(self):
         user = User.objects.get(id=1)
-        field_label = user._meta.get_field('complete_name').verbose_name
-        self.assertEquals(field_label, 'complete name')
+        self.assertEquals(user.complete_name, 'Big')
 
     def test_complete_name_max_length(self):
         user = User.objects.get(id=1)
@@ -57,16 +55,6 @@ class UserModelTest(TestCase):
         max_length = user._meta.get_field('phone').max_length
         self.assertEquals(max_length, 9)
 
-    def test_apartment_label(self):
-        user = User.objects.get(id=1)
-        field_label = user._meta.get_field('apartment').verbose_name
-        self.assertEquals(field_label, 'apartment')
-
-    def test_block_label(self):
-        user = User.objects.get(id=1)
-        field_label = user._meta.get_field('block').verbose_name
-        self.assertEquals(field_label, 'block')
-
 
 class VisitorModelTest(TestCase):
 
@@ -78,12 +66,10 @@ class VisitorModelTest(TestCase):
             email='Bob',
             password='12345',
             phone='12345',
-            apartment='42',
-            block='13'
         )
 
         Visitor.objects.create(
-            owner=User.objects.get(id=1),
+            owner=User.objects.get(complete_name='Big'),
             complete_name='Big',
             email='Bob',
             phone='12345'
