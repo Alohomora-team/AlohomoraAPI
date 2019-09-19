@@ -1,0 +1,29 @@
+version: "3.7"
+
+services:
+
+  api:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    env_file: ".env"
+    ports:
+      - "8000:8000"
+    volumes:
+      - "./app:/home"
+    depends_on:
+      - db
+
+  db:
+    image: postgres:11.5-alpine
+    env_file: ".env"
+
+  lint:
+    # directory with code
+    command: "app"
+    build:
+      context: .
+      dockerfile: docker/lint/Dockerfile
+    # The volume with pylintrc configuration
+    volumes:
+    - "./:/home"

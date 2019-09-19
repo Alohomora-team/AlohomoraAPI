@@ -1,0 +1,13 @@
+stages:
+  - statical
+  - deploy
+
+env:
+  - DOCKER_COMPOSE_VERSON=1.4.2
+
+jobs:
+  include:
+    - stage: statical
+      script:
+        - docker-compose run lint
+        - docker-compose run api test
