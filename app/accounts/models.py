@@ -1,5 +1,5 @@
 from django.db import models
-
+from condos.models import Apartment, Block
 
 class User(models.Model):
 
@@ -13,6 +13,10 @@ class User(models.Model):
     admin = models.BooleanField(default=False)
 
     voice_data = models.TextField(null=True)
+
+    apartment = models.ForeignKey(Apartment, models.SET_NULL, null=True)
+
+    block = models.ForeignKey(Block, models.SET_NULL, null=True)
 
 
 class Visitor(models.Model):
