@@ -45,7 +45,7 @@ class CreateVisitor(graphene.Mutation):
     phone = graphene.String()
     cpf = graphene.Int()
     voice_data = graphene.String()
-    user = graphene.Field(UserType)
+    owner = graphene.Field(UserType)
 
     class Arguments:
         complete_name = graphene.String()
@@ -53,13 +53,11 @@ class CreateVisitor(graphene.Mutation):
         phone = graphene.String()
         cpf = graphene.Int()
         voice_data = graphene.String()
-        user_id = graphene.Int()
-
-    def mutate(self, info, complete_name, email, phone, cpf, voice_data, user_id):
-        user = get_user_model().objects.filter(id=user_id).first()
+    def mutate(self, info, complete_name, email, phone, cpf, voice_data):
+        user = info.context.user or None
         if not user:
             raise Exception('Invalid User!')
-        if user.is_authenticated:
+        if not user.is_authenticated:
             raise Exception('Not logged in!')
 
         visitor = Visitor(
@@ -68,9 +66,7 @@ class CreateVisitor(graphene.Mutation):
             phone=phone,
             cpf=cpf,
             voice_data=voice_data,
-        )
-        Visitor.objects.create(
-            user=user,
+            owner=user,
         )
         visitor.save()
 
@@ -81,7 +77,7 @@ class CreateVisitor(graphene.Mutation):
             phone=visitor.phone,
             cpf=visitor.cpf,
             voice_data=visitor.voice_data,
-            user=user,
+            owner=user.owner,
         )
 
 class Mutation(graphene.ObjectType):
@@ -93,10 +89,6 @@ class Query(graphene.AbstractType):
     users = graphene.List(UserType)
     visitors = graphene.List(VisitorType)
 
-    def resolve_me(self, info):
-        user = info.context.user
-        if user.is_anonymous:
-            raise Exception('Not logged in!')
 
     def resolve_visitors(self, info, **kwargs):
         return Visitor.objects.all()
@@ -104,5 +96,9 @@ class Query(graphene.AbstractType):
     def resolve_users(self, info, **kwargs):
         return get_user_model().objects.all()
 
+    def resolve_me(self, info):
+        user = info.context.user
+        if user.is_anonymous:
+            raise Exception('Not logged in!')
 
         return user

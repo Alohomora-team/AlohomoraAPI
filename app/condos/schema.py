@@ -37,6 +37,9 @@ class CreateApartment(graphene.Mutation):
 
 
     def mutate(self, info, number, block_number):
+        user = info.context.user
+        if user.is_anonymous:
+            raise Exception('You must be logged to create apartment!')
 
         block = Block.objects.filter(number=block_number).first()
 
@@ -56,6 +59,9 @@ class CreateBlock(graphene.Mutation):
         number = graphene.String()
 
     def mutate(self, info, number):
+        user = info.context.user
+        if user.is_anonymous:
+            raise Exception('You must be logged to create a block!')
 
         block = Block(number=number)
         block.save()

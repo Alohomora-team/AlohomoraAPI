@@ -1,5 +1,4 @@
 from django.db import models
-from django import forms
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.conf import settings
 
@@ -37,9 +36,9 @@ class User(AbstractUser):
         return self.email
 
 class Visitor(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
     complete_name = models.CharField(max_length=80)
     email = models.CharField(max_length=90)
     phone = models.CharField(max_length=9)
     cpf = models.IntegerField(null=True)
-    voice_data = models.TextField(null=True)        
+    voice_data = models.TextField(null=True)
