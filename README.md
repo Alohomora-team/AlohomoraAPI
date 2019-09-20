@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/fga-eps-mds/Alohomora.svg?branch=devel)](https://travis-ci.org/fga-eps-mds/Alohomora)
+[![Coverage Status](https://coveralls.io/repos/github/fga-eps-mds/Alohomora/badge.svg?branch=devel)](https://coveralls.io/github/fga-eps-mds/Alohomora?branch=devel)
 
 ### Como subir a aplicação
 

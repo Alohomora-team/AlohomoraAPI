@@ -11,3 +11,12 @@ jobs:
       script:
         - docker-compose run lint
         - docker-compose run api test
+
+    - stage: coveralls
+      script:
+        - docker-compose run --entrypoint "/bin/sh -c" api "coverage run --source=. manage.py test"
+        - docker-compose run --entrypoint "/bin/sh -c" api "coverage report"
+      
+      after_success:
+        - docker-compose run --entrypoint "/bin/sh -c" api "coveralls"
+
