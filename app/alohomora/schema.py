@@ -9,7 +9,7 @@ class Query(condos.schema.Query,
     pass
 
 
-class Mutation(condos.schema.Mutation, graphene.ObjectType):
+class Mutation(condos.schema.Mutation, accounts.schema.Mutation, graphene.ObjectType):
     pass
 
 schema = graphene.Schema(query=Query, mutation=Mutation)
