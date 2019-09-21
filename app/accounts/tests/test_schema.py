@@ -6,8 +6,9 @@ from alohomora.schema import schema
 
 # ========== utility function ==========
 
-def create_test_user(complete_name=None, password=None, email=None, cpf=None,
-                     phone=None, voiceData=None):
+def create_test_user(**kwargs):
+
+
     user = get_user_model().objects.create(complete_name='bob o construtor',
                                            email='charizard@exemplo.com',
                                            password='1231',

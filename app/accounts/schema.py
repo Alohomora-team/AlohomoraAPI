@@ -24,8 +24,14 @@ class CreateUser(graphene.Mutation):
         cpf = graphene.Int(required=True)
         voice_data = graphene.String()
 
+    def mutate(self, info, **kwargs):
+        voice_data = kwargs.get('voice_data')
+        cpf = kwargs.get('cpf')
+        password = kwargs.get('password')
+        complete_name = kwargs.get('complete_name')
+        phone = kwargs.get('phone')
+        email = kwargs.get('email')
 
-    def mutate(self, info, complete_name, password, email, phone, cpf, voice_data):
         user = get_user_model()(
             complete_name=complete_name,
             email=email,
@@ -53,7 +59,13 @@ class CreateVisitor(graphene.Mutation):
         phone = graphene.String()
         cpf = graphene.Int()
         voice_data = graphene.String()
-    def mutate(self, info, complete_name, email, phone, cpf, voice_data):
+    def mutate(self, info, **kwargs):
+        voice_data = kwargs.get('voice_data')
+        cpf = kwargs.get('cpf')
+        complete_name = kwargs.get('complete_name')
+        phone = kwargs.get('phone')
+        email = kwargs.get('email')
+
         user = info.context.user or None
         if not user:
             raise Exception('Invalid User!')
