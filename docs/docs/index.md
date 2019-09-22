@@ -13,3 +13,4 @@
 |Victor Jorge|[@VictorJorgeFGA](https://github.com/VictorJorgeFGA)|Desenvolvedor|
 |Luis Furtado|[@luiscesm](https://github.com/luiscesm)|Desenvolvedor|
 |Rodrigo Lima|[@RodrigoTCLima](https://github.com/RodrigoTCLima)|Desenvolvedor|
+

@@ -4,6 +4,7 @@
 
 * Guia de contribuição do projeto
 * Estrutura padrão do condominio
+* Adicionado docker-compose para rodar o site locamente
 
 
 ### Bug FIX 
