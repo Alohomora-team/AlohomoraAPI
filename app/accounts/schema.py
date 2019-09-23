@@ -1,15 +1,116 @@
-import graphene
+from django.contrib.auth import get_user_model
 
+import graphene
 from graphene_django import DjangoObjectType
 
-from accounts.models import User
+from accounts.models import Visitor
 
 class UserType(DjangoObjectType):
     class Meta:
-        model = User
+        model = get_user_model()
 
-class Query(graphene.ObjectType):
+class VisitorType(DjangoObjectType):
+    class Meta:
+        model = Visitor
+
+class CreateUser(graphene.Mutation):
+    user = graphene.Field(UserType)
+
+    class Arguments:
+        complete_name = graphene.String(required=True)
+        password = graphene.String(required=True)
+        email = graphene.String(required=True)
+        phone = graphene.String(required=True)
+        cpf = graphene.Int(required=True)
+        voice_data = graphene.String()
+
+    def mutate(self, info, **kwargs):
+        voice_data = kwargs.get('voice_data')
+        cpf = kwargs.get('cpf')
+        password = kwargs.get('password')
+        complete_name = kwargs.get('complete_name')
+        phone = kwargs.get('phone')
+        email = kwargs.get('email')
+
+        user = get_user_model()(
+            complete_name=complete_name,
+            email=email,
+            phone=phone,
+            cpf=cpf,
+            voice_data=voice_data,
+        )
+        user.set_password(password)
+        user.save()
+
+        return CreateUser(user=user)
+
+class CreateVisitor(graphene.Mutation):
+    id = graphene.Int()
+    complete_name = graphene.String()
+    email = graphene.String()
+    phone = graphene.String()
+    cpf = graphene.Int()
+    voice_data = graphene.String()
+    owner = graphene.Field(UserType)
+
+    class Arguments:
+        complete_name = graphene.String()
+        email = graphene.String()
+        phone = graphene.String()
+        cpf = graphene.Int()
+        voice_data = graphene.String()
+    def mutate(self, info, **kwargs):
+        voice_data = kwargs.get('voice_data')
+        cpf = kwargs.get('cpf')
+        complete_name = kwargs.get('complete_name')
+        phone = kwargs.get('phone')
+        email = kwargs.get('email')
+
+        user = info.context.user or None
+        if not user:
+            raise Exception('Invalid User!')
+        if not user.is_authenticated:
+            raise Exception('Not logged in!')
+
+        visitor = Visitor(
+            complete_name=complete_name,
+            email=email,
+            phone=phone,
+            cpf=cpf,
+            voice_data=voice_data,
+            owner=user,
+        )
+        visitor.save()
+
+        return CreateVisitor(
+            id=visitor.id,
+            complete_name=visitor.complete_name,
+            email=visitor.email,
+            phone=visitor.phone,
+            cpf=visitor.cpf,
+            voice_data=visitor.voice_data,
+            owner=user.owner,
+        )
+
+class Mutation(graphene.ObjectType):
+    create_user = CreateUser.Field()
+    create_visitor = CreateVisitor.Field()
+
+class Query(graphene.AbstractType):
+    me = graphene.Field(UserType)
     users = graphene.List(UserType)
+    visitors = graphene.List(VisitorType)
+
+
+    def resolve_visitors(self, info, **kwargs):
+        return Visitor.objects.all()
 
     def resolve_users(self, info, **kwargs):
-        return User.objects.all()
+        return get_user_model().objects.all()
+
+    def resolve_me(self, info):
+        user = info.context.user
+        if user.is_anonymous:
+            raise Exception('Not logged in!')
+
+        return user
