@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.conf import settings
 
+from condos.models import Apartment, Block
 
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None, **kwars):
@@ -26,8 +27,11 @@ class User(AbstractUser):
     cpf = models.IntegerField(null=True)
     admin = models.BooleanField(default=False)
     voice_data = models.TextField(null=True)
-
     objects = UserManager()
+
+    apartment = models.ForeignKey(Apartment, models.SET_NULL, null=True)
+    block = models.ForeignKey(Block, models.SET_NULL, null=True)
+
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
