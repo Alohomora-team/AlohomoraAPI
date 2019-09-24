@@ -44,7 +44,7 @@ class CreateUser(graphene.Mutation):
             cpf=cpf,
             voice_data=voice_data,
             username=email,
-            apartment = Apartment.objects.filter(number=apartment,block=Block.objects.filter(number=block).first()).first()
+            apartment=Apartment.objects.filter(number=apartment, block=Block.objects.filter(number=block).first()).first()
         )
         user.set_password(password)
         user.save()
