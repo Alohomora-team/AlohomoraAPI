@@ -23,7 +23,7 @@ class UserManager(BaseUserManager):
 class User(AbstractUser):
     complete_name = models.CharField(max_length=80)
     email = models.CharField(max_length=90, unique=True)
-    phone = models.CharField(max_length=9)
+    phone = models.CharField(max_length=15)
     cpf = models.CharField(max_length=11)
     admin = models.BooleanField(default=False)
     voice_data = models.TextField(null=True)
@@ -43,6 +43,6 @@ class Visitor(models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
     complete_name = models.CharField(max_length=80)
     email = models.CharField(max_length=90)
-    phone = models.CharField(max_length=9)
+    phone = models.CharField(max_length=15)
     cpf = models.CharField(max_length=11)
     voice_data = models.TextField(null=True)
