@@ -4,6 +4,7 @@ import graphene
 from graphene_django import DjangoObjectType
 
 from accounts.models import Visitor
+from condos.models import Apartment, Block
 
 class UserType(DjangoObjectType):
     class Meta:
@@ -21,7 +22,9 @@ class CreateUser(graphene.Mutation):
         password = graphene.String(required=True)
         email = graphene.String(required=True)
         phone = graphene.String(required=True)
-        cpf = graphene.Int(required=True)
+        cpf = graphene.String(required=True)
+        apartment = graphene.String(required=True)
+        block = graphene.String(required=True)
         voice_data = graphene.String()
 
     def mutate(self, info, **kwargs):
@@ -31,6 +34,8 @@ class CreateUser(graphene.Mutation):
         complete_name = kwargs.get('complete_name')
         phone = kwargs.get('phone')
         email = kwargs.get('email')
+        apartment = kwargs.get('apartment')
+        block = kwargs.get('block')
 
         user = get_user_model()(
             complete_name=complete_name,
@@ -39,6 +44,7 @@ class CreateUser(graphene.Mutation):
             cpf=cpf,
             voice_data=voice_data,
             username=email,
+            apartment = Apartment.objects.filter(number=apartment,block=Block.objects.filter(number=block).first()).first()
         )
         user.set_password(password)
         user.save()
@@ -50,7 +56,7 @@ class CreateVisitor(graphene.Mutation):
     complete_name = graphene.String()
     email = graphene.String()
     phone = graphene.String()
-    cpf = graphene.Int()
+    cpf = graphene.String()
     voice_data = graphene.String()
     owner = graphene.Field(UserType)
 
@@ -58,7 +64,7 @@ class CreateVisitor(graphene.Mutation):
         complete_name = graphene.String()
         email = graphene.String()
         phone = graphene.String()
-        cpf = graphene.Int()
+        cpf = graphene.String()
         voice_data = graphene.String()
     def mutate(self, info, **kwargs):
         voice_data = kwargs.get('voice_data')
