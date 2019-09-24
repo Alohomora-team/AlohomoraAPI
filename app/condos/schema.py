@@ -16,11 +16,43 @@ class Query():
     all_blocks = graphene.List(BlockType)
     all_apartments = graphene.List(ApartmentType)
 
+    block = graphene.Field(
+            BlockType,
+            id=graphene.Int(),
+            number=graphene.String()
+            )
+
+    apartment = graphene.Field(
+            ApartmentType,
+            id=graphene.Int(),
+            number=graphene.String()
+            )
+
     def resolve_all_blocks(self, info, **kwargs):
         return Block.objects.all()
 
     def resolve_all_apartments(self, info, **kwargs):
         return Apartment.objects.select_related('block').all()
+
+    def resolve_apartment(self, info, **kwargs):
+        id = kwargs.get('id')
+        number = kwargs.get('number')
+
+        if id is not None:
+            return Apartment.objects.get(pk=id)
+
+        if number is not None:
+            return Apartment.objects.get(number=number)
+
+    def resolve_block(self, info, **kwargs):
+        id = kwargs.get('id')
+        number = kwargs.get('number')
+
+        if id is not None:
+            return Block.objects.get(pk=id)
+
+        if number is not None:
+            return Block.objects.get(number=number)
 
 
 # Mutations
