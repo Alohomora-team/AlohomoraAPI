@@ -2,6 +2,8 @@ import logging
 
 from telegram.ext import Updater, CommandHandler, MessageHandler, ConversationHandler, Filters
 
+from telegram import KeyboardButton, ReplyKeyboardMarkup
+
 NAME, PHONE, EMAIL, PASSWORD, CPF, APARTMENT, BLOCK = range(7)
 
 data = {}
@@ -34,10 +36,29 @@ def name(update, context):
 
     data['name'] = name
 
-    update.message.reply_text('Telefone:')
+    contact_keyboard = KeyboardButton('Enviar meu número de telefone', request_contact=True)
+    custom_keyboard = [[ contact_keyboard ]]
+    reply_markup = ReplyKeyboardMarkup(custom_keyboard, one_time_keyboard=True, resize_keyboard=True)
+
+    update.message.reply_text('Telefone:', reply_markup=reply_markup)
     return PHONE
 def phone(update, context):
-    phone = update.message.text
+    if(update.message.text is not None):
+        phone = update.message.text
+
+        if("-" in phone):
+            phone = phone.replace('-','')
+
+        if(" " in phone):
+            phone = phone.replace(' ','')
+
+        if(any(i.isalpha() for i in phone)):
+            update.message.reply_text('Por favor, digite seu telefone corretamente:')
+            return PHONE
+
+    else:
+        contact = update.effective_message.contact
+        phone = contact.phone_number
 
     data['phone'] = phone
 
@@ -49,7 +70,7 @@ def email(update, context):
     if("@" not in email or " " in email or len(email)<4):
         update.message.reply_text('Por favor, digite seu email corretamente:')
         return EMAIL
-    
+
     data['email'] = email
 
     update.message.reply_text('Senha:')
@@ -119,7 +140,7 @@ if __name__ == '__main__':
 
     dp.add_handler(ConversationHandler(
         entry_points=[CommandHandler('cadastrar', register)],
-        
+
         states={
             NAME:[MessageHandler(Filters.text, name)],
             PHONE:[MessageHandler(Filters.text | Filters.contact, phone)],
