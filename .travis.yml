@@ -21,11 +21,10 @@ jobs:
         - pip install coveralls
       script:
         - docker-compose run --entrypoint "/bin/sh -c" api "coverage run --source=. manage.py test"
-        # - docker-compose run --entrypoint "/bin/sh -c" api "coverage report"
-      
+        - docker-compose run --entrypoint "/bin/sh -c" api "coverage report"
+      after_script:
+        - coverage combine --append --rcfile=.coveragerc app/.coverage
       after_success:
-        - ls -a
-        - ls app -a
-        - cd app
-        - ls -a
+        - coverage combine --append --rcfile=.coveragerc app/.coverage
+        - coverage report
         - coveralls
