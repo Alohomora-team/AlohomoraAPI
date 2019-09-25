@@ -22,8 +22,7 @@ jobs:
       script:
         - docker-compose run --entrypoint "/bin/sh -c" api "coverage run --source=. manage.py test"
         - docker-compose run --entrypoint "/bin/sh -c" api "coverage report"
-      after_script:
-        - coverage combine --append --rcfile=.coveragerc app/.coverage
       after_success:
+        - coverage combine --append --rcfile=.coveragerc app/.coverage
         - coverage report
         - coveralls
