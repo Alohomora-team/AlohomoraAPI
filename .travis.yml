@@ -26,4 +26,6 @@ jobs:
       after_success:
         - ls -a
         - ls app -a
+        - cd app
+        - ls -a
         - coveralls
