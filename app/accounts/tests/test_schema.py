@@ -33,7 +33,7 @@ class GraphQLTestCase(TestCase):
     def test_mutation_user(self):
 
         block = Block.objects.create(number="1")
-        apartment = Apartment.objects.create(number="101", block=block)
+        Apartment.objects.create(number="101", block=block)
 
         mutation = '''
                 mutation{
@@ -62,7 +62,7 @@ class GraphQLTestCase(TestCase):
                   }
                 }
         '''
-    
+
         response = self.query(query=mutation)
         self.assertNoResponseErrors(response)
         data = list(list(list(response['data'].items())[0][1].items())[0][1].items())
