@@ -1,4 +1,5 @@
 import logging
+import requests
 
 from telegram.ext import Updater, CommandHandler, MessageHandler, ConversationHandler, Filters
 
@@ -120,13 +121,69 @@ def block(update, context):
 
     data['block'] = block
 
-    update.message.reply_text('Morador cadastrado no sistema!')
-    print(data)
+   
+    response = register_user()
+    
+    if(response.status_code == 200):
+        update.message.reply_text('Morador cadastrado no sistema!')
+    else:
+        update.message.reply_text('Falha ao cadastrar no sistema!')
+
     return ConversationHandler.END
 def end(update, context):
     update.message.reply_text('Cancelando cadastro!')
     data = {}
     return ConversationHandler.END
+
+def register_user():
+    path = 'http://127.0.0.1:8000/graphql/'
+    print(data)
+
+    query_user = """
+    mutation createUser($completeName: String!, $email: String!, $password: String!, $phone: String!, $cpf: String!, $apartment: String!, $block: String!){
+        createUser(
+            completeName: $completeName,
+            email: $email,
+            password: $password,
+            cpf: $cpf,
+            phone: $phone,
+            apartment: $apartment,
+            block: $block
+        ){
+            user{
+                completeName
+                email
+                cpf
+                phone
+                apartment{
+                    number
+                    block{
+                        number
+                    }
+                }
+            }
+        }
+    }
+    """
+
+    variables_user = {
+            'completeName': data['name'],
+            'email': data['email'],
+            'password': data['password'],
+            'phone': data['phone'],
+            'cpf': data['cpf'],
+            'apartment': data['apartment'],
+            'block': data['block']
+            }
+    
+    user_response = requests.post(path, json={'query':query_user, 'variables':variables_user})
+
+
+    print("status code: " + str(user_response.status_code))
+    print(user_response.json())
+
+    return user_response
+
 
 if __name__ == '__main__':
 
