@@ -1,3 +1,7 @@
+language: python
+python:
+  - "3.7"
+
 stages:
   - statical
   - deploy
@@ -13,10 +17,11 @@ jobs:
         - docker-compose run api test
 
     - stage: coveralls
+      install:
+        - pip install coveralls
       script:
         - docker-compose run --entrypoint "/bin/sh -c" api "coverage run --source=. manage.py test"
         - docker-compose run --entrypoint "/bin/sh -c" api "coverage report"
       
       after_success:
-        - docker-compose run --entrypoint "/bin/sh -c" api "coveralls"
-
+        - coveralls
