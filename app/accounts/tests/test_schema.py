@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase
 from graphene.test import Client
 from alohomora.schema import schema
+from condos.models import Apartment, Block
 
 
 # ========== utility function ==========
@@ -31,6 +32,9 @@ class GraphQLTestCase(TestCase):
 
     def test_mutation_user(self):
 
+        block = Block.objects.create(number="1")
+        apartment = Apartment.objects.create(number="101", block=block)
+
         mutation = '''
                 mutation{
                   createUser(
@@ -39,6 +43,8 @@ class GraphQLTestCase(TestCase):
                     password: "1231234",
                     cpf: "12345678911",
                     phone: "11123",
+                    apartment: "101",
+                    block: "1",
                     voiceData: "11ok",
                   ){ user{
                      completeName
@@ -46,17 +52,28 @@ class GraphQLTestCase(TestCase):
                      cpf
                      phone
                      voiceData
+                     apartment{
+                        number
+                        block{
+                            number
+                        }
+                     }
                   }
                   }
                 }
         '''
+    
         response = self.query(query=mutation)
         self.assertNoResponseErrors(response)
-        self.assertEqual(get_user_model().objects.count(), 1)
-        self.assertEqual(get_user_model().objects.get(id=3).cpf, "12345678911")
-        self.assertEqual(get_user_model().objects.get(id=3).phone, "11123")
-        self.assertEqual(get_user_model().objects.get(id=3).voice_data, "11ok")
-        self.assertEqual(get_user_model().objects.get(id=3).complete_name, "esquilo-voador")
+        data = list(list(list(response['data'].items())[0][1].items())[0][1].items())
+
+        self.assertEqual(data[0][1], "esquilo-voador")
+        self.assertEqual(data[1][1], "matpaulo@hoa")
+        self.assertEqual(data[2][1], "12345678911")
+        self.assertEqual(data[3][1], "11123")
+        self.assertEqual(data[4][1], "11ok")
+        self.assertEqual(list(data[5][1].items())[0][1], "101")
+        self.assertEqual(list(list(data[5][1].items())[1][1].items())[0][1], "1")
 
 # ========== createUser query tests ==========
 
@@ -81,7 +98,6 @@ class GraphQLTestCase(TestCase):
         self.assertNoResponseErrors(response)
         data = response['data']
         self.assertEqual(len(data), 1)
-        print(data)
         self.assertEqual(data['users'][0]['completeName'], 'bob o construtor')
         self.assertEqual(data['users'][0]['email'], 'charizard@exemplo.com')
         self.assertEqual(data['users'][0]['password'], '1231')
