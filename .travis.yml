@@ -24,4 +24,5 @@ jobs:
         - docker-compose run --entrypoint "/bin/sh -c" api "coverage report"
       
       after_success:
+        - ls -a
         - coveralls
