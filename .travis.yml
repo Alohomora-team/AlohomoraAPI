@@ -25,6 +25,5 @@ jobs:
       after_script:
         - coverage combine --append --rcfile=.coveragerc app/.coverage
       after_success:
-        - coverage combine --append --rcfile=.coveragerc app/.coverage
         - coverage report
         - coveralls
