@@ -97,6 +97,20 @@ def cpf(update, context):
         update.message.reply_text('Por favor, digite o CPF com os 11 digitos: (Ex: 123.456.789-10)')
         return CPF
 
+    authCPF_J = (int(cpf[0])*10 + int(cpf[1])*9 + int(cpf[2])*8 + int(cpf[3])*7 + int(cpf[4])*6 + int(cpf[5])*5 + int(cpf[6])*4 + int(cpf[7])*3 + int(cpf[8])*2)%11
+    authCPF_K = (int(cpf[0])*11 + int(cpf[1])*10 + int(cpf[2])*9 + int(cpf[3])*8 + int(cpf[4])*7 + int(cpf[5])*6 + int(cpf[6])*5 + int(cpf[7])*4 + int(cpf[8])*3 + int(cpf[9])*2)%11
+    print(authCPF_J)
+    print(authCPF_K)
+
+    if((int(cpf[9]) != 0 and authCPF_J != 0 and authCPF_J != 1) and (int(cpf[9]) != (11 - authCPF_J))):
+        update.message.reply_text('CPF inválido, tente novamente:')
+        return CPF
+
+    if((int(cpf[10]) != 0 and authCPF_K != 0 and authCPF_K != 1) and (int(cpf[10]) != (11 - authCPF_K))):
+        update.message.reply_text('CPF inválido, tente novamente:')
+        return CPF
+
+
     data['cpf'] = cpf
 
     update.message.reply_text('Apartamento:')
