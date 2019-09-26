@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase
 from graphene.test import Client
 from alohomora.schema import schema
+from condos.models import Apartment, Block
 
 class GraphQLTestCase(TestCase):
 
@@ -24,33 +25,48 @@ class GraphQLTestCase(TestCase):
      
     def test_mutation_user(self):
 
-        mutation = '''mutation {
-                        createUser(
-                            completeName:"felipe",
-                            email: "felipeborges@gmail.com",
-                            password: "1234",
-                            cpf: "1234",
-                            phone: "234123",
-                            block: "1",
-                            apartment : "40",
-                            voiceData: "asdfa"){
-                            user{
-                              completeName
-                              email
-                              cpf
-                              phone
-                              voiceData
-                            }
-                        }
-                      }
-            '''
+        block = Block.objects.create(number="1")
+        Apartment.objects.create(number="101", block=block)
 
-        response = self._client.execute(mutation)
-        user = self.user_object.objects.get(email='felipeborges@gmail.com')
-        self.assertEqual(user.cpf, "1234")
-        self.assertEqual(user.phone, "234123")
-        self.assertEqual(user.voice_data, "asdfa")
-        self.assertEqual(user.complete_name, "felipe")
+        mutation = '''
+                mutation{
+                  createUser(
+                    completeName: "esquilo-voador",
+                    email: "matpaulo@hoa",
+                    password: "1231234",
+                    cpf: "12345678911",
+                    phone: "11123",
+                    apartment: "101",
+                    block: "1",
+                    voiceData: "11ok",
+                  ){ user{
+                     completeName
+                     email
+                     cpf
+                     phone
+                     voiceData
+                     apartment{
+                        number
+                        block{
+                            number
+                        }
+                     }
+                  }
+                  }
+                }
+        '''
+
+        response = self.query(query=mutation)
+        self.assertNoResponseErrors(response)
+        data = list(list(list(response['data'].items())[0][1].items())[0][1].items())
+
+        self.assertEqual(data[0][1], "esquilo-voador")
+        self.assertEqual(data[1][1], "matpaulo@hoa")
+        self.assertEqual(data[2][1], "12345678911")
+        self.assertEqual(data[3][1], "11123")
+        self.assertEqual(data[4][1], "11ok")
+        self.assertEqual(list(data[5][1].items())[0][1], "101")
+        self.assertEqual(list(list(data[5][1].items())[1][1].items())[0][1], "1")
 
     def test_query_users(self):
 
