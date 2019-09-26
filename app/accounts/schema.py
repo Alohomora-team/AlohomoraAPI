@@ -37,7 +37,13 @@ class CreateUser(graphene.Mutation):
         apartment = kwargs.get('apartment')
         block = kwargs.get('block')
 
-        block_obj = Block.objects.get(number=block)
+        block_obj = Block.objects.filter(number=block).first()
+
+        if block_obj is None:
+            raise Exception('Block not found')
+
+        if Apartment.objects.filter(number=apartment, block=block_obj).first() is None:
+            raise Exception('Apartment not found')
 
 
         user = get_user_model()(
