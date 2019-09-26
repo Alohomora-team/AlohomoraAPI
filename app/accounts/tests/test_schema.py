@@ -10,6 +10,13 @@ class GraphQLTestCase(TestCase):
         self.user_object = get_user_model()
         self._client = Client(schema)
 
+    def query(self, query: str):
+        resp = self._client.execute(query)
+        return resp
+    
+    def assertNoResponseErrors(self, resp: dict):
+        self.assertNotIn('erros', resp, 'Response has erros')
+
     @classmethod
     def setUpTestData(cls):
 
