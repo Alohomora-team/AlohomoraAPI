@@ -8,11 +8,25 @@ Alohomora é um sistema de portaria virtual que, com a ajuda da ferramenta de co
 
 ## 3. Propósito e justificativa do projeto
 
+Num condomínio residencial, com o intuito de controlar o acesso, moradores, funcionários ou visitantes precisam se identificar (com a ajuda de um porteiro, biometria, etc.) para entrarem no local. Quando se trata do controle de acesso de visitantes, é requerido que o acesso dele seja autorizado pelo morador do apartamento que ele deseja visitar, que normalmente implica em um porteiro ligar para o morador e confirmar a visita. 
 
+Esse processo pode ficar demorado e entendiante ao longo que o número de visitas aumenta ou imprevistos aconteçam.
+
+O projeto Alohomora vem com uma abordagem que tenta melhorar o processo de controle de acesso ao condomínio e deixar o morador com um maior controle sobre as visitas que ele receberá.
 
 ## 4. Objetivos do projeto
 
+O projeto Alohomora tem como objetivo facilitar o processo de controle de acesso ao condomínio com a biometria por voz e permitir que o morador tenha um controle maior sobre as visitas que ele recebe através do bot.
+
 ## 5. Requisitos de alto nível
+
+Os requisitos de alto nível do projeto Alohomora são:
+
+- O sistema deve ser fácil de usar;
+- O processo de autenticação por voz tem que ocorrer de forma que economize o máximo de tempo possível;
+- O sistema deve ser seguro, não permitindo autenticação de pessoas não desejadas
+- Deve haver confidencialidade dos dados presentes no sistema
+
 
 ## 6. Riscos
 
