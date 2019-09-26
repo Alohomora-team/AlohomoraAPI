@@ -5,7 +5,7 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, ConversationHa
 
 from telegram import KeyboardButton, ReplyKeyboardMarkup
 
-NAME, PHONE, EMAIL, PASSWORD, CPF, APARTMENT, BLOCK = range(7)
+NAME, PHONE, EMAIL, PASSWORD, CPF, BLOCK, APARTMENT = range(7)
 
 data = {}
 
@@ -53,6 +53,9 @@ def phone(update, context):
         if(" " in phone):
             phone = phone.replace(' ','')
 
+        if("+" in phone):
+            phone = phone.replace('+','')
+
         if(any(i.isalpha() for i in phone)):
             update.message.reply_text('Por favor, digite seu telefone corretamente:')
             return PHONE
@@ -60,6 +63,7 @@ def phone(update, context):
     else:
         contact = update.effective_message.contact
         phone = contact.phone_number
+        phone = phone.replace('+','')
 
     data['phone'] = phone
 
@@ -68,8 +72,8 @@ def phone(update, context):
 def email(update, context):
     email = update.message.text
 
-    if("@" not in email or " " in email or len(email)<4):
-        update.message.reply_text('Por favor, digite seu email corretamente:')
+    if("@" not in email or " " in email or len(email)<4 or "." not in email):
+        update.message.reply_text('Por favor, digite um email válido:')
         return EMAIL
 
     data['email'] = email
@@ -113,17 +117,6 @@ def cpf(update, context):
 
     data['cpf'] = cpf
 
-    update.message.reply_text('Apartamento:')
-    return APARTMENT
-def apartment(update, context):
-    apartment = update.message.text
-
-    if(any(i.isalpha() for i in apartment) or " " in apartment):
-        update.message.reply_text('Por favor, digite apenas o apartamento: (Ex: 101)')
-        return APARTMENT
-
-    data['apartment'] = apartment
-
     update.message.reply_text('Bloco:')
     return BLOCK
 def block(update, context):
@@ -135,9 +128,19 @@ def block(update, context):
 
     data['block'] = block
 
-   
+    update.message.reply_text('Apartamento:')
+    return APARTMENT
+def apartment(update, context):
+    apartment = update.message.text
+
+    if(any(i.isalpha() for i in apartment) or " " in apartment):
+        update.message.reply_text('Por favor, digite apenas o apartamento: (Ex: 101)')
+        return APARTMENT
+
+    data['apartment'] = apartment
+
     response = register_user()
-    
+
     if(response.status_code == 200):
         update.message.reply_text('Morador cadastrado no sistema!')
     else:
@@ -189,7 +192,7 @@ def register_user():
             'apartment': data['apartment'],
             'block': data['block']
             }
-    
+
     user_response = requests.post(path, json={'query':query_user, 'variables':variables_user})
 
 
