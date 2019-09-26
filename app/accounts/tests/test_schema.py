@@ -13,14 +13,14 @@ class GraphQLTestCase(TestCase):
     def query(self, query: str):
         resp = self._client.execute(query)
         return resp
-    
+
     def assertNoResponseErrors(self, resp: dict):
         self.assertNotIn('erros', resp, 'Response has erros')
 
     @classmethod
     def setUpTestData(cls):
 
-        user = get_user_model().objects.create(
+        get_user_model().objects.create(
             complete_name='bob o construtor',
             email='charizard@exemplo.com',
             password='1231',
@@ -29,7 +29,7 @@ class GraphQLTestCase(TestCase):
             voice_data='Singing in the Rain',
             admin=True
         )
-     
+
     def test_mutation_user(self):
 
         block = Block.objects.create(number="1")

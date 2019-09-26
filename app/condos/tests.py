@@ -67,10 +67,9 @@ class GraphQLTestCase(TestCase):
             }
         }
         """
-         
+
         response = self.query(query=query)
         data = list(list(response['data'].items())[0][1].items())
 
         self.assertEqual(list(data)[0][1], "101")
         self.assertEqual(list(data[1][1].items())[0][1], "1")
-        
