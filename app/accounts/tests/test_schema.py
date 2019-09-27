@@ -26,7 +26,7 @@ class GraphQLTestCase(TestCase):
             password='1231',
             cpf='12345678910',
             phone='42',
-            voice_data='Singing in the Rain',
+            voice_data='[[1],[2],[3]]',
             admin=True
         )
 
@@ -45,7 +45,7 @@ class GraphQLTestCase(TestCase):
                     phone: "11123",
                     apartment: "101",
                     block: "1",
-                    voiceData: "11ok",
+                    voiceData: "[[1],[2],[3]]",
                   ){ user{
                      completeName
                      email
@@ -71,7 +71,7 @@ class GraphQLTestCase(TestCase):
         self.assertEqual(data[1][1], "matpaulo@hoa")
         self.assertEqual(data[2][1], "12345678911")
         self.assertEqual(data[3][1], "11123")
-        self.assertEqual(data[4][1], "11ok")
+        self.assertEqual(data[4][1], "[[1],[2],[3]]")
         self.assertEqual(list(data[5][1].items())[0][1], "101")
         self.assertEqual(list(list(data[5][1].items())[1][1].items())[0][1], "1")
 
@@ -99,4 +99,4 @@ class GraphQLTestCase(TestCase):
         self.assertEqual(data['users'][0]['password'], '1231')
         self.assertEqual(data['users'][0]['cpf'], '12345678910')
         self.assertEqual(data['users'][0]['phone'], '42')
-        self.assertEqual(data['users'][0]['voiceData'], 'Singing in the Rain')
+        self.assertEqual(data['users'][0]['voiceData'], '[[1],[2],[3]]')
