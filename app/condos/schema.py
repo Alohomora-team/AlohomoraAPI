@@ -16,6 +16,11 @@ class Query():
     all_blocks = graphene.List(BlockType)
     all_apartments = graphene.List(ApartmentType)
 
+    apartments = graphene.Field(
+        graphene.List(ApartmentType),
+        number=graphene.String()
+        )
+
     block = graphene.Field(
         BlockType,
         number=graphene.String()
@@ -51,6 +56,13 @@ class Query():
 
         return None
 
+    def resolve_apartments(self, info, **kwargs):
+        number = kwargs.get('number')
+
+        if number is not None:
+            return Apartment.objects.filter(number=number).all()
+
+        return None
 
 # Mutations
 
