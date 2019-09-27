@@ -21,3 +21,5 @@ six==1.12.0
 sqlparse==0.3.0
 urllib3==1.25.3
 django-graphql-jwt==0.2.1
+python_speech_features==0.6
+fastdtw==0.3.2

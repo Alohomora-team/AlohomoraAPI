@@ -6,6 +6,11 @@ from graphene_django import DjangoObjectType
 from accounts.models import Visitor
 from condos.models import Apartment, Block
 
+from fastdtw import fastdtw
+from python_speech_features import mfcc
+
+import random
+
 class UserType(DjangoObjectType):
     class Meta:
         model = get_user_model()
@@ -110,7 +115,10 @@ class Query(graphene.AbstractType):
     me = graphene.Field(UserType)
     users = graphene.List(UserType)
     visitors = graphene.List(VisitorType)
-
+    voice_belongs_user = graphene.Boolean(
+        cpf=graphene.String(required=True),
+        voice_data=graphene.List(graphene.Float, required=True)
+    )
 
     def resolve_visitors(self, info, **kwargs):
         return Visitor.objects.all()
@@ -124,3 +132,44 @@ class Query(graphene.AbstractType):
             raise Exception('Not logged in!')
 
         return user
+
+    def resolve_voice_belongs_user(self, info, **kwargs):
+        user_cpf = kwargs.get('cpf')
+        voice_sample = mfcc(kwargs.get('voice_data'), 16000)
+
+        user = get_user_model().objects.get(cpf=user_cpf)
+        others = get_user_model().objects.exclude(cpf=user_cpf)
+        companion_users = _retrieve_random_users(others, 4)
+        
+        query_result = False
+        test_group = [user] + companion_users
+        if user == _find_nearest_user_by_voice(test_group, voice_sample):
+            query_result = True
+
+        return query_result
+
+    def _retrieve_random_users(users, quantity):
+        return users if len(users) <= quantity
+
+        random_users = list()
+        users_len = len(users)
+
+        while len(random_users) < quantity:
+            current_random_user = users[random.randint(0,users_len - 1)]
+            if random_users.count(current_random_user) == 0:
+                random_users.append(current_random_user)
+
+        return random_users
+
+    def _find_nearest_user_by_voice(users, voice_sample):
+        nearest_user = None
+        lowest_dtw_score = 10**9
+
+        for current_user in users:
+            current_measure = fastdtw(current_user.voice_data, voice_sample)
+            if current_measure < lowest_dtw_score:
+                lowest_dtw_score = current_measure
+                nearest_user = user
+
+        return nearest_user
+        
