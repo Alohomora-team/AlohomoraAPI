@@ -32,7 +32,7 @@ class Query():
         return Block.objects.all()
 
     def resolve_all_apartments(self, info, **kwargs):
-        return Apartment.objects.select_related('block').all()
+        return Apartment.objects.all()
 
     def resolve_apartment(self, info, **kwargs):
         id_ap = kwargs.get('id')
@@ -62,7 +62,6 @@ class Query():
 # Mutations
 
 class CreateApartment(graphene.Mutation):
-    id = graphene.Int()
     number = graphene.String()
     block_number = graphene.String()
     block = graphene.Field(BlockType)
@@ -79,12 +78,10 @@ class CreateApartment(graphene.Mutation):
         apartment.save()
 
         return CreateApartment(
-            id=apartment.id,
             number=apartment.number,
             block=apartment.block)
 
 class CreateBlock(graphene.Mutation):
-    id = graphene.Int()
     number = graphene.String()
 
     class Arguments:
@@ -95,7 +92,6 @@ class CreateBlock(graphene.Mutation):
         block.save()
 
         return CreateBlock(
-            id=block.id,
             number=block.number)
 
 
