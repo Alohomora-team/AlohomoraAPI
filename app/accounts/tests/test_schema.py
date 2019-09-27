@@ -4,31 +4,31 @@ from graphene.test import Client
 from alohomora.schema import schema
 from condos.models import Apartment, Block
 
-
-# ========== utility function ==========
-
-def create_test_user(**kwargs):
-
-
-    user = get_user_model().objects.create(complete_name='bob o construtor',
-                                           email='charizard@exemplo.com',
-                                           password='1231',
-                                           cpf='12345678910',
-                                           phone='42',
-                                           voice_data='Singing in the Rain',
-                                           admin=True)
-    return user
-
-# ========== createUser mutation tests ==========
-
 class GraphQLTestCase(TestCase):
+
     def setUp(self):
+        self.user_object = get_user_model()
         self._client = Client(schema)
+
     def query(self, query: str):
         resp = self._client.execute(query)
         return resp
+
     def assertNoResponseErrors(self, resp: dict):
-        self.assertNotIn('errors', resp, 'Response has errors')
+        self.assertNotIn('erros', resp, 'Response has erros')
+
+    @classmethod
+    def setUpTestData(cls):
+
+        get_user_model().objects.create(
+            complete_name='bob o construtor',
+            email='charizard@exemplo.com',
+            password='1231',
+            cpf='12345678910',
+            phone='42',
+            voice_data='Singing in the Rain',
+            admin=True
+        )
 
     def test_mutation_user(self):
 
@@ -75,12 +75,8 @@ class GraphQLTestCase(TestCase):
         self.assertEqual(list(data[5][1].items())[0][1], "101")
         self.assertEqual(list(list(data[5][1].items())[1][1].items())[0][1], "1")
 
-# ========== createUser query tests ==========
-
     def test_query_users(self):
-        user = create_test_user()
 
-        user.save()
         query = '''
         {
             users {
@@ -94,8 +90,8 @@ class GraphQLTestCase(TestCase):
             }
         }
         '''
-        response = self.query(query=query)
-        self.assertNoResponseErrors(response)
+
+        response = self._client.execute(query)
         data = response['data']
         self.assertEqual(len(data), 1)
         self.assertEqual(data['users'][0]['completeName'], 'bob o construtor')
