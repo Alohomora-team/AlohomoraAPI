@@ -62,7 +62,7 @@ class CreateUser(graphene.Mutation):
 
     def _extract_mfcc_json(voice_data):
         voice_data = json.loads(voice_data)
-        voice_data = mfcc(voice_data, sample_rate=16000)
+        voice_data = mfcc(voice_data, samplerate=16000)
         voice_data = json.dumps(voice_data)
         
         return voice_data
@@ -144,7 +144,7 @@ class Query(graphene.AbstractType):
     def resolve_voice_belongs_user(self, info, **kwargs):
         user_cpf = kwargs.get('cpf')
         voice_data = json.loads(kwargs.get('voice_data'))
-        voice_sample = mfcc(voice_data, sample_rate=16000)
+        voice_sample = mfcc(voice_data, samplerate=16000)
 
         user = get_user_model().objects.get(cpf=user_cpf)
         others = get_user_model().objects.exclude(cpf=user_cpf)
