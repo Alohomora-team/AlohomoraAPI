@@ -3,11 +3,13 @@ from django.test import TestCase
 from graphene.test import Client
 from alohomora.schema import schema
 from condos.models import Apartment, Block
+from accounts.models import User, Visitor
+
 
 class GraphQLTestCase(TestCase):
 
     def setUp(self):
-        self.user_object = get_user_model()
+        self.user_object = User
         self._client = Client(schema)
 
     def query(self, query: str):
@@ -20,10 +22,9 @@ class GraphQLTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
 
-        get_user_model().objects.create(
+        User.objects.create(
             complete_name='bob o construtor',
             email='charizard@exemplo.com',
-            password='1231',
             cpf='12345678910',
             phone='42',
             voice_data='Singing in the Rain',
@@ -40,7 +41,6 @@ class GraphQLTestCase(TestCase):
                   createUser(
                     completeName: "esquilo-voador",
                     email: "matpaulo@hoa",
-                    password: "1231234",
                     cpf: "12345678911",
                     phone: "11123",
                     apartment: "101",
@@ -78,17 +78,15 @@ class GraphQLTestCase(TestCase):
     def test_query_users(self):
 
         query = '''
-        {
-            users {
-                id
-                completeName
-                email
-                password
-                phone
-                cpf
-                voiceData
-            }
-        }
+query{
+  users{
+   id
+   completeName
+   email
+   phone
+
+  }
+}
         '''
 
         response = self._client.execute(query)
@@ -96,7 +94,6 @@ class GraphQLTestCase(TestCase):
         self.assertEqual(len(data), 1)
         self.assertEqual(data['users'][0]['completeName'], 'bob o construtor')
         self.assertEqual(data['users'][0]['email'], 'charizard@exemplo.com')
-        self.assertEqual(data['users'][0]['password'], '1231')
         self.assertEqual(data['users'][0]['cpf'], '12345678910')
         self.assertEqual(data['users'][0]['phone'], '42')
         self.assertEqual(data['users'][0]['voiceData'], 'Singing in the Rain')

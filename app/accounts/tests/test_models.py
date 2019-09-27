@@ -10,7 +10,6 @@ class UserModelTest(TestCase):
         User.objects.create(
             complete_name='Big',
             email='Bob',
-            password='12345',
             phone='12345',
         )
 
@@ -23,7 +22,6 @@ class UserModelTest(TestCase):
             User.objects.create(
                 complete_name='a'*81,
                 email='test@test.com',
-                password='1234',
                 phone='123412341234'
             )
 
@@ -36,8 +34,7 @@ class UserModelTest(TestCase):
         with self.assertRaises(Exception):
             User.objects.create(
                 complete_name='teste',
-                email='1'*10,
-                password='1234',
+                email='1'*100,
                 phone='123412341234'
             )
 
@@ -54,7 +51,6 @@ class VisitorModelTest(TestCase):
         User.objects.create(
             complete_name='Big',
             email='Bob',
-            password='12345',
             phone='12345',
         )
 
