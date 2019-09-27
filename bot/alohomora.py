@@ -5,6 +5,8 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, ConversationHa
 
 from telegram import KeyboardButton, ReplyKeyboardMarkup
 
+path = 'http://127.0.0.1:8000/graphql/'
+
 NAME, PHONE, EMAIL, PASSWORD, CPF, BLOCK, APARTMENT = range(7)
 
 data = {}
@@ -22,6 +24,7 @@ def register(update, context):
     update.message.reply_text('Nome:')
 
     return NAME
+
 def name(update, context):
     name = update.message.text
 
@@ -43,6 +46,7 @@ def name(update, context):
 
     update.message.reply_text('Telefone:', reply_markup=reply_markup)
     return PHONE
+
 def phone(update, context):
     if(update.message.text is not None):
         phone = update.message.text
@@ -69,6 +73,7 @@ def phone(update, context):
 
     update.message.reply_text('Email:')
     return EMAIL
+
 def email(update, context):
     email = update.message.text
 
@@ -80,6 +85,7 @@ def email(update, context):
 
     update.message.reply_text('Senha:')
     return PASSWORD
+
 def password(update, context):
     password = update.message.text
 
@@ -91,6 +97,7 @@ def password(update, context):
 
     update.message.reply_text('CPF:')
     return CPF
+
 def cpf(update, context):
     cpf = update.message.text
 
@@ -119,6 +126,7 @@ def cpf(update, context):
 
     update.message.reply_text('Bloco:')
     return BLOCK
+
 def block(update, context):
     block = update.message.text
 
@@ -128,8 +136,15 @@ def block(update, context):
 
     data['block'] = block
 
+    check = check_block()
+
+    if 'errors' in check.keys():
+        update.message.reply_text('Por favor, digite um bloco existente:')
+        return BLOCK
+
     update.message.reply_text('Apartamento:')
     return APARTMENT
+
 def apartment(update, context):
     apartment = update.message.text
 
@@ -139,6 +154,12 @@ def apartment(update, context):
 
     data['apartment'] = apartment
 
+    check = check_apartment()
+
+    if 'errors' in check.keys():
+        update.message.reply_text('Por favor, digite um apartamento existente:')
+        return APARTMENT
+
     response = register_user()
 
     if(response.status_code == 200):
@@ -147,13 +168,13 @@ def apartment(update, context):
         update.message.reply_text('Falha ao cadastrar no sistema!')
 
     return ConversationHandler.END
+
 def end(update, context):
     update.message.reply_text('Cancelando cadastro!')
     data = {}
     return ConversationHandler.END
 
 def register_user():
-    path = 'http://127.0.0.1:8000/graphql/'
     print(data)
 
     query_user = """
@@ -201,6 +222,43 @@ def register_user():
 
     return user_response
 
+def check_block():
+    query = """
+    query block($number: String!){
+        block(number: $number){
+            number
+        }
+    }
+    """
+
+    variables = {
+            'number': data['block']
+            }
+
+    response = requests.post(path, json={'query': query, 'variables':variables})
+
+    return response.json()
+
+def check_apartment():
+    query = """
+    query apartment($number: String!, $block: String!){
+        apartment(number: $number, block: $block){
+            number
+            block{
+                number
+            }
+        }
+    }
+    """
+
+    variables = {
+            'number': data['apartment'],
+            'block': data['block']
+            }
+
+    response = requests.post(path, json={'query': query, 'variables':variables})
+
+    return response.json()
 
 if __name__ == '__main__':
 
