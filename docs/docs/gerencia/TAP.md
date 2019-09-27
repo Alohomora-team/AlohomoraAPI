@@ -41,9 +41,41 @@ Os requisitos de alto nível do projeto Alohomora são:
 ## 7. Estimativa de custo
 
 ### 7.1 Custo de aquisição
+|Produto|Finalidade|Quantidade|Valor|Total|
+|------|--------|--------|------|-----|
+|Notebook|Desenvolvimento e gerência|9|R$ 2.700,00|R$ 24.300,00|
+|Internet|Desenvolvimento e gerência|4 meses, 9 pessoas|R$ 100,00|R$ 3.600,00|
+|Energia elétrica|Desenvolvimento e gerência|6h p/ dia durante 4 meses|0,557 R$/KWh*|R$ 777,60**|
+
+<sup>\* Valor retirado da [ANEEL](http://www.aneel.gov.br/ranking-das-tarifas) em 26/09/2019</sup>
+<br/>
+<sup>\*\* Assumindo que um computador opera a 120 watts</sup>
+
 ### 7.2 Custo de pessoal
+
+|Função|Quantidade|Salário|Total|
+|----|----|----|----|
+|Desenvolvedor Python Júnior|6|R$ 2.300,00|R$ 13.800,00|
+|DevOps, Scrum Master e Product Owner|3|R$ 7.000,00|R$ 21.000,00|
+
 ### 7.3 Custo de ferramentas
+
+|Ferramenta|Finalidade|Valor|
+|---|---|---|
+|Slack|Comunicação entre a equipe|R$ 0,00|
+|Editor de Texto|Criação de código e documentação|R$ 0,00|
+|Git e GitHub|Versionamento de arquivos|R$ 0,00|
+|Google Drive|Compartilhamento de arquivos|R$ 0,00|
+|Python, PostgreSQL, GraphQL|Tecnologias para desenvolvimento|R$ 0,00|
+
 ### 7.4 Custo total
+
+|Custo|Valor|
+|---|---|
+|Aquisição|R$ 28.677,60|
+|Pessoal|R$ 139.200,00|
+|Ferramentas|R$ 0,00|
+|**Total**|R$ 167.877,60|
 
 ## 8. Partes interessadas
 
