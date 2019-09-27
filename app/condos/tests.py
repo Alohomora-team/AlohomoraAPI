@@ -59,7 +59,7 @@ class GraphQLTestCase(TestCase):
 
         query = """
         {
-            apartment(number:"101"){
+            apartment(number:"101", block: "1"){
                 number
                 block{
                     number
@@ -72,4 +72,23 @@ class GraphQLTestCase(TestCase):
         data = list(list(response['data'].items())[0][1].items())
 
         self.assertEqual(list(data)[0][1], "101")
+        self.assertEqual(list(data[1][1].items())[0][1], "1")
+
+    def test_apartments_query(self):
+
+        query = """
+        {
+            apartments(number:"101"){
+                number
+                block{
+                    number
+                }
+            }
+        }
+        """
+
+        response = self.query(query=query)
+        data = list(list(response['data'].items())[0][1][0].items())
+
+        self.assertEqual(data[0][1], "101")
         self.assertEqual(list(data[1][1].items())[0][1], "1")
