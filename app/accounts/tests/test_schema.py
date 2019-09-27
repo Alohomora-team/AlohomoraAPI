@@ -3,6 +3,7 @@ from django.test import TestCase
 from graphene.test import Client
 from alohomora.schema import schema
 from condos.models import Apartment, Block
+import json
 
 class GraphQLTestCase(TestCase):
 
@@ -26,7 +27,37 @@ class GraphQLTestCase(TestCase):
             password='1231',
             cpf='12345678910',
             phone='42',
-            voice_data='[[1],[2],[3]]',
+            voice_data=json.dumps([x for x in range(32000)]),
+            admin=True
+        )
+
+        get_user_model().objects.create(
+            complete_name='Sasuke Uchiha',
+            email='sasuke@exemplo.com',
+            password='itachi',
+            cpf='12345111111',
+            phone='42',
+            voice_data=json.dumps([0 for i in range(32000)]),
+            admin=True
+        )
+
+        get_user_model().objects.create(
+            complete_name='Barry Allen',
+            email='love_you_iris@exemplo.com',
+            password='speedforce',
+            cpf='11111111111',
+            phone='42',
+            voice_data=json.dumps([2 * x for x in range(32000)]),
+            admin=True
+        )
+
+        get_user_model().objects.create(
+            complete_name='Rock Lee do Pagode',
+            email='lotus_primaria@exemplo.com',
+            password='namorademais',
+            cpf='99999999999',
+            phone='42',
+            voice_data=json.dumps([x**2 - 2*x + 3 for x in range(32000)]),
             admin=True
         )
 
@@ -100,3 +131,17 @@ class GraphQLTestCase(TestCase):
         self.assertEqual(data['users'][0]['cpf'], '12345678910')
         self.assertEqual(data['users'][0]['phone'], '42')
         self.assertEqual(data['users'][0]['voiceData'], '[[1],[2],[3]]')
+
+    def test_query_voice_belongs_user(self):
+        response = self.query(
+            '''
+            query voiceBelongsUser($cpf: String! , $voice_data: String!){
+                voiceBelongsUser(cpf: $cpf, voice_data: $voice_data)
+            }
+            ''',
+            op_name='voiceBelongsUser',
+            variables={'cpf': '11111111111', 'voice_data': json.dumps([2 * x for x in range(32000)])}
+        )
+
+        content = json.loads(response)
+        self.assertResponseNoErrors(response)
