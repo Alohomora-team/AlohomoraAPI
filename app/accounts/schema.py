@@ -9,6 +9,7 @@ from condos.models import Apartment, Block
 from fastdtw import fastdtw
 from python_speech_features import mfcc
 
+import json
 import random
 
 class UserType(DjangoObjectType):
@@ -117,7 +118,7 @@ class Query(graphene.AbstractType):
     visitors = graphene.List(VisitorType)
     voice_belongs_user = graphene.Boolean(
         cpf=graphene.String(required=True),
-        voice_data=graphene.List(graphene.Float, required=True)
+        voice_data=graphene.String(required=True)
     )
 
     def resolve_visitors(self, info, **kwargs):
@@ -135,11 +136,12 @@ class Query(graphene.AbstractType):
 
     def resolve_voice_belongs_user(self, info, **kwargs):
         user_cpf = kwargs.get('cpf')
-        voice_sample = mfcc(kwargs.get('voice_data'), 16000)
+        voice_data = json.loads(kwargs.get('voice_data'))
+        voice_sample = mfcc(voice_data, sample_rate=16000)
 
         user = get_user_model().objects.get(cpf=user_cpf)
         others = get_user_model().objects.exclude(cpf=user_cpf)
-        companion_users = _retrieve_random_users(others, 4)
+        companion_users = _retrieve_random_users(others, quantity=4)
         
         query_result = False
         test_group = [user] + companion_users
@@ -149,7 +151,8 @@ class Query(graphene.AbstractType):
         return query_result
 
     def _retrieve_random_users(users, quantity):
-        return users if len(users) <= quantity
+        if len(users) <= quantity:
+            return users
 
         random_users = list()
         users_len = len(users)
