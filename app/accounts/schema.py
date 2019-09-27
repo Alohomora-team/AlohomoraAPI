@@ -176,7 +176,8 @@ class Query(graphene.AbstractType):
         lowest_dtw_score = 10**9
 
         for current_user in users:
-            current_measure = fastdtw(current_user.voice_data, voice_sample)
+            current_user_voice_data = json.loads(current_user.voice_data)
+            current_measure = fastdtw(current_user_voice_data, voice_sample)
             if current_measure < lowest_dtw_score:
                 lowest_dtw_score = current_measure
                 nearest_user = user
