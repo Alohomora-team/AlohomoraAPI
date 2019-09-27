@@ -31,10 +31,10 @@ class CreateUser(graphene.Mutation):
         cpf = graphene.String(required=True)
         apartment = graphene.String(required=True)
         block = graphene.String(required=True)
-        voice_data = graphene.String()
+        voice_data = graphene.String(required=True)
 
     def mutate(self, info, **kwargs):
-        voice_data = kwargs.get('voice_data')
+        voice_data = _extract_mfcc_json(kwargs.get('voice_data'))
         cpf = kwargs.get('cpf')
         password = kwargs.get('password')
         complete_name = kwargs.get('complete_name')
@@ -59,6 +59,13 @@ class CreateUser(graphene.Mutation):
         user.save()
 
         return CreateUser(user=user)
+
+    def _extract_mfcc_json(voice_data):
+        voice_data = json.loads(voice_data)
+        voice_data = mfcc(voice_data, sample_rate=16000)
+        voice_data = json.dumps(voice_data)
+        
+        return voice_data
 
 class CreateVisitor(graphene.Mutation):
     id = graphene.Int()
