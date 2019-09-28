@@ -141,10 +141,10 @@ class Query(graphene.AbstractType):
         cpf = kwargs.get('cpf')
 
         if email is not None:
-            return get_user_model().objects.filter(email=email).first()
+            return get_user_model().objects.get(email=email)
 
         if cpf is not None:
-            return get_user_model().objects.filter(cpf=cpf).first()
+            return get_user_model().objects.get(cpf=cpf)
 
         return None
 
@@ -153,10 +153,10 @@ class Query(graphene.AbstractType):
         cpf = kwargs.get('cpf')
 
         if email is not None:
-            return Visitor.objects.filter(email=email).first()
+            return Visitor.objects.get(email=email)
 
         if cpf is not None:
-            return Visitor.objects.filter(cpf=cpf).first()
+            return Visitor.objects.get(cpf=cpf)
 
         return None
 
