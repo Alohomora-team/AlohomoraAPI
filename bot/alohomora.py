@@ -31,11 +31,14 @@ def name(update, context):
     if("nome" in name.lower()):
         update.message.reply_text('Por favor, digite apenas o seu nome: (Ex: João da Silva)')
         return NAME
-    elif(any(i.isdigit() for i in name)):
+    if(any(i.isdigit() for i in name)):
         update.message.reply_text('Por favor, não digite números no nome, tente novamente:')
         return NAME
-    elif("@" in name or len(name)<3):
+    if("@" in name or len(name)<3):
         update.message.reply_text('Neste momento é hora de digitar o seu nome, tente novamente:')
+        return NAME
+    if(len(name) > 80):
+        update.message.reply_text('Nome excedeu tamanho máximo (80), tente novamente:')
         return NAME
 
     data['name'] = name
@@ -64,6 +67,10 @@ def phone(update, context):
             update.message.reply_text('Por favor, digite seu telefone corretamente:')
             return PHONE
 
+        if(len(phone) > 15):
+            update.message.reply_text('Telefone excedeu tamanho máximo (15), tente novamente:')
+            return PHONE
+
     else:
         contact = update.effective_message.contact
         phone = contact.phone_number
@@ -81,6 +88,10 @@ def email(update, context):
         update.message.reply_text('Por favor, digite um email válido:')
         return EMAIL
 
+    if(len(email) > 90):
+        update.message.reply_text('Email excedeu tamanho máximo (90), tente novamente:')
+        return EMAIL
+
     data['email'] = email
 
     check = check_email()
@@ -95,8 +106,8 @@ def email(update, context):
 def password(update, context):
     password = update.message.text
 
-    if(len(password)<4):
-        update.message.reply_text('Por favor, digite uma senha com no mínimo 4 caractéres:')
+    if(len(password)<4 or len(password)>10):
+        update.message.reply_text('Por favor, digite uma senha de 4~10 caracteres:')
         return PASSWORD
 
     data['password'] = password
@@ -125,7 +136,6 @@ def cpf(update, context):
         update.message.reply_text('CPF inválido, tente novamente:')
         return CPF
 
-
     data['cpf'] = cpf
 
     check = check_cpf()
@@ -144,6 +154,10 @@ def block(update, context):
         update.message.reply_text('Por favor, digite apenas o bloco: (Ex: 1)')
         return BLOCK
 
+    if(len(block) > 4):
+        update.message.reply_text('Digte um bloco de até 4 caracteres:')
+        return BLOCK
+
     data['block'] = block
 
     check = check_block()
@@ -160,6 +174,10 @@ def apartment(update, context):
 
     if(any(i.isalpha() for i in apartment) or " " in apartment):
         update.message.reply_text('Por favor, digite apenas o apartamento: (Ex: 101)')
+        return APARTMENT
+
+    if(len(apartment) > 6):
+        update.message.reply_text('Digite um apartamente de até 6 caracteres:')
         return APARTMENT
 
     data['apartment'] = apartment
