@@ -1,3 +1,7 @@
+language: python
+python:
+  - "3.7"
+
 stages:
   - statical
   - deploy
@@ -11,3 +15,14 @@ jobs:
       script:
         - docker-compose run lint
         - docker-compose run api test
+
+    - stage: coveralls
+      install:
+        - pip install coveralls
+      script:
+        - docker-compose run --entrypoint "/bin/sh -c" api "coverage run --source=. manage.py test"
+        - docker-compose run --entrypoint "/bin/sh -c" api "coverage report"
+      after_success:
+        - coverage combine --append --rcfile=.coveragerc app/.coverage
+        - coverage report
+        - coveralls

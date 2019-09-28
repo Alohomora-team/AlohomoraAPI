@@ -1,6 +1,6 @@
 ### Issues
 
-A issue é o principal elementto de acompanhanto do projeto. Portanto tenha muito cuidado na escrita da mesma e preencha todas as informações necessárias para o acompanhamento como:
+A issue é o principal elemento de acompanhanto do projeto. Portanto tenha muito cuidado na escrita da mesma e preencha todas as informações necessárias para o acompanhamento como:
 
 * milestones - sempre escolha a última milestone criada (cada milestone representa uma sprint)
 * labels - Coloque labels significativa para a tarefa
@@ -14,7 +14,7 @@ Nosso projeto tem vários templates de issue para diferentes situações, acredi
 
 #### Referenciando uma issue em um commit
 
-Ainda sobre as issue, na mensagem de cada commit pedimos que o contribuido referencie a issue pelo seu número. Essa abordagem ajuda nossa equipe a ter maior controle do código e identificar rapidamente as contribuições do projeto.
+Ainda sobre as issue, na mensagem de cada commit pedimos que o contribuidor referencie a issue pelo seu número. Essa abordagem ajuda nossa equipe a ter maior controle do código e identificar rapidamente as contribuições do projeto.
 
 ### Branches
 
@@ -38,6 +38,6 @@ Agora que você já conhece como fazer sua issue, gerou uma branch e escreveu o 
 
 #### Criando um PR
 
-Assim como nas issues o projeto tem um template de PR que lhe auxiliará na escrita do mesmo. O importante é deixar claro sua contribuição e o que foi feito, dessa forma estará facilitando muito a vida de todos os nosso revisores :).
+Assim como nas issues o projeto tem um template de PR que lhe auxiliará na escrita do mesmo. O importante é deixar claro sua contribuição e o que foi feito, dessa forma estará facilitando muito a vida de todos os nossos revisores :).
 
 Fora casos extremamente especificos todos os PRs devem ser realizados baseados na branch *devel*.

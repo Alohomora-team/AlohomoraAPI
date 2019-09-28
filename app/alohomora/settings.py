@@ -46,11 +46,15 @@ INSTALLED_APPS = [
     'graphene_django',
 
     #Local apps (our project's apps)
-    'portariaVirtual.accounts',
+    'accounts',
+    'condos',
 ]
 
 GRAPHENE = {
-    'SCHEMA': 'portariaVirtual.schema.schema'
+    'SCHEMA': 'alohomora.schema.schema',
+    'MIDDLEWARE': [
+        'graphql_jwt.middleware.JSONWebTokenMiddleware',
+    ],
 }
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -62,7 +66,12 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'portariaVirtual.urls'
+AUTHENTICATION_BACKENDS = [
+    'graphql_jwt.backends.JSONWebTokenBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+ROOT_URLCONF = 'alohomora.urls'
 
 TEMPLATES = [
     {
@@ -80,7 +89,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'portariaVirtual.wsgi.application'
+WSGI_APPLICATION = 'alohomora.wsgi.application'
 
 
 # Database
@@ -135,7 +144,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
-
+AUTH_USER_MODEL = 'accounts.User'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
