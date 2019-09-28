@@ -31,3 +31,14 @@ jobs:
         - coverage combine --append --rcfile=.coveragerc app/.coverage
         - coverage report
         - coveralls
+
+    - stage: deploy
+      deploy:
+        provider: heroku
+        api_key:
+          secure: ${HEROKU_KEY}
+        app: alohomora-epsmds
+        on:
+          repo: fga-eps-mds/2019.2-Alohomora
+          branch: 64-realizar-deploy-api
+          
