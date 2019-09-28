@@ -79,7 +79,26 @@ Os requisitos de alto nível do projeto Alohomora são:
 
 ## 8. Partes interessadas
 
-## 9. Requisitos para aprovação do projeto
+### Público Alvo
+- Donos, moradores e visitantes de condomínios
 
-## 10. Referências
+### Equipe
 
+|Nome|Papel|E-mail|
+|---|---|---|
+|Felipe Borges de Souza Chaves|Gerente|felipe.borges.fga@gmail.com|
+|Mateus Nascimento Nóbrega|Gerente|mateusn@outlook.com|
+|Samuel Barros Borges|Gerente|samuelmordred@gmail.com|
+|João Luis Baraky|Desenvolvedor|jlbaraky@gmail.com|
+|Paulo Batista da Cruz Júnior|Desenvolvedor|matpaulo@hotmail.com.br|
+|Aline Helena Lermen|Desenvolvedor|aline.helena.lermen@gmail.com|
+|Victor Jorge da Silva Gonçalves|Desenvolvedor|victor.eng.unb@gmail.com|
+|Luis Fernando Furtado De Araujo|Desenvolvedor|luiscesm1@gmail.com|
+|Rodrigo Tiago Costa Lima|Desenvolvedor|rodrigotiagocl@gmail.com|
+
+
+## 9. Referências
+
+MUNIZ, Amanda; RIOS, Calebe; DUARTE, Indinara; RIBEIRO, Luciana. Gaia - Termo de Abertura de Projeto. Disponível: em https://fga-eps-mds.github.io/2019.1-Gaia/#/produto/TAP. Acesso em 23 de setembro de 2019.
+<br/><br/>
+YOSHIDA, Eduardo; SILVA, Guilherme; SOUZA, Kamilla; VITOR, Lucas. Aix - Termo de Abertura de Projeto. Disponível: em https://fga-eps-mds.github.io/2019.1-Aix/projeto/2019/03/27/tap/. Acesso em 23 de setembro de 2019.
