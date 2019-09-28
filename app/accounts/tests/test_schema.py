@@ -130,4 +130,3 @@ class GraphQLTestCase(TestCase):
         response = self._client.execute(query)
         data = response['data']
         self.assertEqual(data['user']['completeName'], 'bob o construtor')
-        
