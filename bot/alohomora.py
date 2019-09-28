@@ -83,6 +83,12 @@ def email(update, context):
 
     data['email'] = email
 
+    check = check_email()
+
+    if 'errors' not in check.keys():
+        update.message.reply_text('Já existe um morador com este email, tente novamente:')
+        return EMAIL
+
     update.message.reply_text('Senha:')
     return PASSWORD
 
@@ -110,8 +116,6 @@ def cpf(update, context):
 
     authCPF_J = (int(cpf[0])*10 + int(cpf[1])*9 + int(cpf[2])*8 + int(cpf[3])*7 + int(cpf[4])*6 + int(cpf[5])*5 + int(cpf[6])*4 + int(cpf[7])*3 + int(cpf[8])*2)%11
     authCPF_K = (int(cpf[0])*11 + int(cpf[1])*10 + int(cpf[2])*9 + int(cpf[3])*8 + int(cpf[4])*7 + int(cpf[5])*6 + int(cpf[6])*5 + int(cpf[7])*4 + int(cpf[8])*3 + int(cpf[9])*2)%11
-    print(authCPF_J)
-    print(authCPF_K)
 
     if((int(cpf[9]) != 0 and authCPF_J != 0 and authCPF_J != 1) and (int(cpf[9]) != (11 - authCPF_J))):
         update.message.reply_text('CPF inválido, tente novamente:')
@@ -124,6 +128,12 @@ def cpf(update, context):
 
     data['cpf'] = cpf
 
+    check = check_cpf()
+
+    if 'errors' not in check.keys():
+        update.message.reply_text('Já existe um morador com este CPF, tente novamente:')
+        return CPF
+    
     update.message.reply_text('Bloco:')
     return BLOCK
 
@@ -254,6 +264,40 @@ def check_apartment():
     variables = {
             'number': data['apartment'],
             'block': data['block']
+            }
+
+    response = requests.post(path, json={'query': query, 'variables':variables})
+
+    return response.json()
+
+def check_email():
+    query = """
+    query user($email: String!){
+        user(email: $email){
+            completeName
+        }
+    }
+    """
+
+    variables = {
+            'email': data['email']
+            }
+
+    response = requests.post(path, json={'query': query, 'variables':variables})
+
+    return response.json()
+
+def check_cpf():
+    query = """
+    query user($cpf: String!){
+        user(cpf: $cpf){
+            completeName
+        }
+    }
+    """
+
+    variables = {
+            'cpf': data['cpf']
             }
 
     response = requests.post(path, json={'query': query, 'variables':variables})
