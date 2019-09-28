@@ -37,6 +37,7 @@ jobs:
       script: skip
       deploy:
         provider: heroku
+        skip_cleanup: true
         api_key:
           secure: ${HEROKU_KEY}
         app: alohomora-epsmds
