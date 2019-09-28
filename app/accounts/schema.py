@@ -30,7 +30,7 @@ class CreateUser(graphene.Mutation):
         cpf = graphene.String(required=True)
         apartment = graphene.String(required=True)
         block = graphene.String(required=True)
-        voice_data = graphene.String(required=True)
+        voice_data = graphene.String()
 
     def mutate(self, info, **kwargs):
         voice_data = kwargs.get('voice_data')
