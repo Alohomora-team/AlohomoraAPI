@@ -83,7 +83,7 @@ class CreateVisitor(graphene.Mutation):
         cpf = graphene.String()
         voice_data = graphene.String()
     def mutate(self, info, **kwargs):
-        voice_data = kwargs.get('voice_data')
+        voice_data = _extract_mfcc_json(kwargs.get('voice_data'))
         cpf = kwargs.get('cpf')
         complete_name = kwargs.get('complete_name')
         phone = kwargs.get('phone')
@@ -114,6 +114,13 @@ class CreateVisitor(graphene.Mutation):
             voice_data=visitor.voice_data,
             owner=user.owner,
         )
+
+    def _extract_mfcc_json(voice_data):
+        voice_data = json.loads(voice_data)
+        voice_data = mfcc(voice_data, samplerate=16000)
+        voice_data = json.dumps(voice_data)
+        
+        return voice_data
 
 class Mutation(graphene.ObjectType):
     create_user = CreateUser.Field()
@@ -180,7 +187,7 @@ class Query(graphene.AbstractType):
             current_measure = fastdtw(current_user_voice_data, voice_sample)
             if current_measure < lowest_dtw_score:
                 lowest_dtw_score = current_measure
-                nearest_user = user
+                nearest_user = current_user
 
         return nearest_user
         
