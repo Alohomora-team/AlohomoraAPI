@@ -43,7 +43,13 @@ class CreateUser(graphene.Mutation):
         apartment = kwargs.get('apartment')
         block = kwargs.get('block')
 
-        block_obj = Block.objects.get(number=block)
+        block_obj = Block.objects.filter(number=block).first()
+
+        if block_obj is None:
+            raise Exception('Block not found')
+
+        if Apartment.objects.filter(number=apartment, block=block_obj).first() is None:
+            raise Exception('Apartment not found')
 
 
         user = get_user_model()(
@@ -135,11 +141,48 @@ class Query(graphene.AbstractType):
         voice_data=graphene.String(required=True)
     )
 
+    user = graphene.Field(
+        UserType,
+        email=graphene.String(),
+        cpf=graphene.String()
+        )
+
+    visitor = graphene.Field(
+        VisitorType,
+        email=graphene.String(),
+        cpf=graphene.String()
+        )
+
+
     def resolve_visitors(self, info, **kwargs):
         return Visitor.objects.all()
 
     def resolve_users(self, info, **kwargs):
         return get_user_model().objects.all()
+
+    def resolve_user(self, info, **kwargs):
+        email = kwargs.get('email')
+        cpf = kwargs.get('cpf')
+
+        if email is not None:
+            return get_user_model().objects.get(email=email)
+
+        if cpf is not None:
+            return get_user_model().objects.get(cpf=cpf)
+
+        return None
+
+    def resolve_visitor(self, info, **kwargs):
+        email = kwargs.get('email')
+        cpf = kwargs.get('cpf')
+
+        if email is not None:
+            return Visitor.objects.get(email=email)
+
+        if cpf is not None:
+            return Visitor.objects.get(cpf=cpf)
+
+        return None
 
     def resolve_me(self, info):
         user = info.context.user
