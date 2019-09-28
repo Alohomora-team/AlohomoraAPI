@@ -33,6 +33,8 @@ jobs:
         - coveralls
 
     - stage: deploy
+      install: skip
+      script: skip
       deploy:
         provider: heroku
         api_key:
