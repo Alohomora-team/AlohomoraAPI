@@ -100,3 +100,34 @@ class GraphQLTestCase(TestCase):
         self.assertEqual(data['users'][0]['cpf'], '12345678910')
         self.assertEqual(data['users'][0]['phone'], '42')
         self.assertEqual(data['users'][0]['voiceData'], 'Singing in the Rain')
+
+    def test_query_user_email(self):
+
+        query = """
+        {
+            user(email: "charizard@exemplo.com"){
+                completeName
+            }
+        }
+
+        """
+
+        response = self._client.execute(query)
+        data = response['data']
+        self.assertEqual(data['user']['completeName'], 'bob o construtor')
+
+    def test_query_user_cpf(self):
+
+        query = """
+        {
+            user(cpf: "12345678910"){
+                completeName
+            }
+        }
+
+        """
+
+        response = self._client.execute(query)
+        data = response['data']
+        self.assertEqual(data['user']['completeName'], 'bob o construtor')
+        
