@@ -18,4 +18,4 @@ COPY app/ .
 
 ENTRYPOINT ["python3", "manage.py"]
 
-CMD ["runserver", "0:8000"]
+CMD ["runserver", "0.0.0.0:${PORT}"]
