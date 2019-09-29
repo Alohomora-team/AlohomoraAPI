@@ -150,7 +150,6 @@ class Query(graphene.AbstractType):
         cpf=graphene.String()
         )
 
-
     def resolve_visitors(self, info, **kwargs):
         return Visitor.objects.all()
 
@@ -165,10 +164,10 @@ class Query(graphene.AbstractType):
         cpf = kwargs.get('cpf')
 
         if email is not None:
-            return get_user_model().objects.get(email=email)
+            return User.objects.get(email=email)
 
         if cpf is not None:
-            return get_user_model().objects.get(cpf=cpf)
+            return User.objects.get(cpf=cpf)
 
         return None
 
