@@ -34,14 +34,14 @@ Após esses comandos a aplicação estará disponível em http://localhost:8000.
 
 #### Realizando testes localmente
 
-Para realizar os testes do pytlint locamente basta utiliza o comando abaixo. É válido lembrar que essa verificação é a mesma que acontece na nossa pipeline de integração continua, portanto é muito difícil a análise ser realizada com sucesso na sua máquina e ocorrer um erro no CI.
+Para realizar os testes do pytlint locamente basta utilizar o comando abaixo. É válido lembrar que essa verificação é a mesma que acontece na nossa pipeline de integração continua, portanto é muito difícil a análise ser realizada com sucesso na sua máquina e ocorrer um erro no CI.
 
 ```bash
 docker-compose up lint
 ```
 
 #### Rodando nosso site locamente
-f
+
 Para verificar localmente como sua contribuição para nossa documentação vai aparecer em nosso site basta utilizar o serviços docs no nosso arquivo docker-compose.
 
 ```bash
