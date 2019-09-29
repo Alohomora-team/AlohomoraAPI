@@ -138,6 +138,18 @@ class Query(graphene.AbstractType):
     visitors = graphene.List(VisitorType)
     services = graphene.List(ServiceType)
 
+    user = graphene.Field(
+        UserType,
+        email=graphene.String(),
+        cpf=graphene.String()
+        )
+
+    visitor = graphene.Field(
+        VisitorType,
+        email=graphene.String(),
+        cpf=graphene.String()
+        )
+
 
     def resolve_visitors(self, info, **kwargs):
         return Visitor.objects.all()
@@ -147,6 +159,30 @@ class Query(graphene.AbstractType):
 
     def resolve_services(self, info, **kwargs):
         return get_user_model().objects.all()
+
+    def resolve_user(self, info, **kwargs):
+        email = kwargs.get('email')
+        cpf = kwargs.get('cpf')
+
+        if email is not None:
+            return get_user_model().objects.get(email=email)
+
+        if cpf is not None:
+            return get_user_model().objects.get(cpf=cpf)
+
+        return None
+
+    def resolve_visitor(self, info, **kwargs):
+        email = kwargs.get('email')
+        cpf = kwargs.get('cpf')
+
+        if email is not None:
+            return Visitor.objects.get(email=email)
+
+        if cpf is not None:
+            return Visitor.objects.get(cpf=cpf)
+
+        return None
 
     def resolve_me(self, info):
         service = info.context.user
