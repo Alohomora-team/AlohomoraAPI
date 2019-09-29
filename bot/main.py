@@ -23,7 +23,8 @@ def start(update, context):
     update.message.reply_text('Digite /cadastrar para fazer o cadastro de um morador')
 
 def register(update, context):
-    update.message.reply_text('Certo, vamos iniciar o cadastro!')
+    update.message.reply_text('Ok, vamos iniciar o cadastro!')
+    update.message.reply_text('Caso deseje interromper o processo digite /cancelar')
     update.message.reply_text('Nome:')
 
     return NAME
@@ -225,7 +226,7 @@ def voice_register(update, context):
     return ConversationHandler.END
 
 def end(update, context):
-    update.message.reply_text('Cancelando cadastro!')
+    update.message.reply_text('Cadastro cancelado!')
     data = {}
     return ConversationHandler.END
 
@@ -377,7 +378,7 @@ if __name__ == '__main__':
             VOICE_REGISTER: [MessageHandler(Filters.voice, voice_register)]
             },
 
-        fallbacks=[CommandHandler('end', end)]
+        fallbacks=[CommandHandler('cancelar', end)]
         ))
 
     updater.start_polling()
