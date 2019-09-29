@@ -328,6 +328,7 @@ if __name__ == '__main__':
 
     updater = Updater(token, use_context=True)
 
+    print("Iniciando Bot")
     dp = updater.dispatcher
 
     dp.add_handler(CommandHandler("start", start))
