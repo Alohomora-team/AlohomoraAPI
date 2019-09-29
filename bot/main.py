@@ -1,5 +1,7 @@
 import logging
 import requests
+import numpy
+import json
 
 from telegram.ext import Updater, CommandHandler, MessageHandler, ConversationHandler, Filters
 
@@ -201,6 +203,16 @@ def voice_register(update, context):
         return VOICE_REGISTER
     else:
         update.message.reply_text('Ótimo! Não esqueça da sua frase: mais pra frente você precisará dela!')
+
+    f_reg = voice_register.get_file()
+    file_barr = f_reg.download_as_bytearray()
+
+    del file_barr[5788:len(file_barr)]
+
+    audio_arr_reg = numpy.frombuffer(file_barr, dtype="float32")
+    voice_data_reg = json.dumps(audio_arr_reg.tolist())
+
+    data['voice_reg'] = voice_data_reg
 
 
     response = register_user()
