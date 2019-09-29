@@ -86,6 +86,8 @@ class CreateVisitor(graphene.Mutation):
     phone = graphene.String()
     cpf = graphene.String()
     voice_data = graphene.String()
+    owner = graphene.Field(UserType)
+    owner_cpf = graphene.String()
 
     class Arguments:
         complete_name = graphene.String()
@@ -93,19 +95,25 @@ class CreateVisitor(graphene.Mutation):
         phone = graphene.String()
         cpf = graphene.String()
         voice_data = graphene.String()
+        owner_cpf = graphene.String()
+
     def mutate(self, info, **kwargs):
         voice_data = kwargs.get('voice_data')
         cpf = kwargs.get('cpf')
         complete_name = kwargs.get('complete_name')
         phone = kwargs.get('phone')
         email = kwargs.get('email')
+        owner_cpf = kwargs.get('owner_cpf')
+
+        user = User.objects.filter(cpf=owner_cpf).first()
 
         visitor = Visitor(
             complete_name=complete_name,
             email=email,
-            phone=phone,
             cpf=cpf,
+            phone=phone,
             voice_data=voice_data,
+            owner=user,
         )
         visitor.save()
 
@@ -116,6 +124,7 @@ class CreateVisitor(graphene.Mutation):
             phone=visitor.phone,
             cpf=visitor.cpf,
             voice_data=visitor.voice_data,
+            owner=user,
         )
 
 class Mutation(graphene.ObjectType):
@@ -135,6 +144,9 @@ class Query(graphene.AbstractType):
 
     def resolve_users(self, info, **kwargs):
         return User.objects.all()
+
+    def resolve_services(self, info, **kwargs):
+        return get_user_model().objects.all()
 
     def resolve_me(self, info):
         service = info.context.user
