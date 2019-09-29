@@ -233,7 +233,7 @@ def register_user():
     print(data)
 
     query_user = """
-    mutation createUser($completeName: String!, $email: String!, $password: String!, $phone: String!, $cpf: String!, $apartment: String!, $block: String!){
+    mutation createUser($completeName: String!, $email: String!, $password: String!, $phone: String!, $cpf: String!, $apartment: String!, $block: String!, $voiceData: String!){
         createUser(
             completeName: $completeName,
             email: $email,
@@ -241,7 +241,8 @@ def register_user():
             cpf: $cpf,
             phone: $phone,
             apartment: $apartment,
-            block: $block
+            block: $block,
+            voiceData: $voiceData
         ){
             user{
                 completeName
@@ -254,6 +255,7 @@ def register_user():
                         number
                     }
                 }
+                voiceData
             }
         }
     }
@@ -266,7 +268,8 @@ def register_user():
             'phone': data['phone'],
             'cpf': data['cpf'],
             'apartment': data['apartment'],
-            'block': data['block']
+            'block': data['block'],
+            'voiceData': data['voice_reg']
             }
 
     user_response = requests.post(path, json={'query':query_user, 'variables':variables_user})
@@ -370,7 +373,8 @@ if __name__ == '__main__':
             PASSWORD:[MessageHandler(Filters.text, password)],
             CPF:[MessageHandler(Filters.text, cpf)],
             APARTMENT:[MessageHandler(Filters.text, apartment)],
-            BLOCK:[MessageHandler(Filters.text, block)]
+            BLOCK:[MessageHandler(Filters.text, block)],
+            VOICE_REGISTER: [MessageHandler(Filters.voice, voice_register)]
             },
 
         fallbacks=[CommandHandler('end', end)]
