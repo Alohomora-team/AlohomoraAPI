@@ -7,7 +7,8 @@ from telegram import KeyboardButton, ReplyKeyboardMarkup
 
 path = 'http://127.0.0.1:8000/graphql/'
 
-NAME, PHONE, EMAIL, PASSWORD, CPF, BLOCK, APARTMENT = range(7)
+
+NAME, PHONE, EMAIL, PASSWORD, CPF, BLOCK, APARTMENT, VOICE_REGISTER = range(8)
 
 data = {}
 
@@ -187,6 +188,20 @@ def apartment(update, context):
     if 'errors' in check.keys():
         update.message.reply_text('Por favor, digite um apartamento existente:')
         return APARTMENT
+
+    update.message.reply_text('Vamos agora cadastrar a sua frase! Grave uma mensagem de voz com a sua frase:')
+    return VOICE_REGISTER
+
+def voice_register(update, context):
+    voice_register = update.message.voice
+
+    if((voice_register.duration)<2):
+        update.message.reply_text('Muito curto...O áudio deve ter 2 segundos de duração.')
+        update.message.reply_text('Por favor, grave novamente:')
+        return VOICE_REGISTER
+    else:
+        update.message.reply_text('Ótimo! Não esqueça da sua frase: mais pra frente você precisará dela!')
+
 
     response = register_user()
 
