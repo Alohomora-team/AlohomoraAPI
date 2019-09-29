@@ -1,5 +1,7 @@
 import logging
 import requests
+import numpy
+import json
 
 from telegram.ext import Updater, CommandHandler, MessageHandler, ConversationHandler, Filters
 
@@ -7,7 +9,8 @@ from telegram import KeyboardButton, ReplyKeyboardMarkup
 
 path = 'http://api:8000/graphql/'
 
-NAME, PHONE, EMAIL, PASSWORD, CPF, BLOCK, APARTMENT = range(7)
+
+NAME, PHONE, EMAIL, PASSWORD, CPF, BLOCK, APARTMENT, VOICE_REGISTER = range(8)
 
 data = {}
 
@@ -20,7 +23,8 @@ def start(update, context):
     update.message.reply_text('Digite /cadastrar para fazer o cadastro de um morador')
 
 def register(update, context):
-    update.message.reply_text('Certo, vamos iniciar o cadastro!')
+    update.message.reply_text('Ok, vamos iniciar o cadastro!')
+    update.message.reply_text('Caso deseje interromper o processo digite /cancelar')
     update.message.reply_text('Nome:')
 
     return NAME
@@ -188,6 +192,30 @@ def apartment(update, context):
         update.message.reply_text('Por favor, digite um apartamento existente:')
         return APARTMENT
 
+    update.message.reply_text('Vamos agora cadastrar a sua frase! Grave uma mensagem de voz com a sua frase:')
+    return VOICE_REGISTER
+
+def voice_register(update, context):
+    voice_register = update.message.voice
+
+    if((voice_register.duration)<2):
+        update.message.reply_text('Muito curto...O áudio deve ter 2 segundos de duração.')
+        update.message.reply_text('Por favor, grave novamente:')
+        return VOICE_REGISTER
+    else:
+        update.message.reply_text('Ótimo! Não esqueça da sua frase: mais pra frente você precisará dela!')
+
+    f_reg = voice_register.get_file()
+    file_barr = f_reg.download_as_bytearray()
+
+    del file_barr[5788:len(file_barr)]
+
+    audio_arr_reg = numpy.frombuffer(file_barr, dtype="float32")
+    voice_data_reg = json.dumps(audio_arr_reg.tolist())
+
+    data['voice_reg'] = voice_data_reg
+
+
     response = register_user()
 
     if(response.status_code == 200):
@@ -198,7 +226,7 @@ def apartment(update, context):
     return ConversationHandler.END
 
 def end(update, context):
-    update.message.reply_text('Cancelando cadastro!')
+    update.message.reply_text('Cadastro cancelado!')
     data = {}
     return ConversationHandler.END
 
@@ -206,7 +234,7 @@ def register_user():
     print(data)
 
     query_user = """
-    mutation createUser($completeName: String!, $email: String!, $password: String!, $phone: String!, $cpf: String!, $apartment: String!, $block: String!){
+    mutation createUser($completeName: String!, $email: String!, $password: String!, $phone: String!, $cpf: String!, $apartment: String!, $block: String!, $voiceData: String!){
         createUser(
             completeName: $completeName,
             email: $email,
@@ -214,7 +242,8 @@ def register_user():
             cpf: $cpf,
             phone: $phone,
             apartment: $apartment,
-            block: $block
+            block: $block,
+            voiceData: $voiceData
         ){
             user{
                 completeName
@@ -227,6 +256,7 @@ def register_user():
                         number
                     }
                 }
+                voiceData
             }
         }
     }
@@ -239,7 +269,8 @@ def register_user():
             'phone': data['phone'],
             'cpf': data['cpf'],
             'apartment': data['apartment'],
-            'block': data['block']
+            'block': data['block'],
+            'voiceData': data['voice_reg']
             }
 
     user_response = requests.post(path, json={'query':query_user, 'variables':variables_user})
@@ -343,10 +374,11 @@ if __name__ == '__main__':
             PASSWORD:[MessageHandler(Filters.text, password)],
             CPF:[MessageHandler(Filters.text, cpf)],
             APARTMENT:[MessageHandler(Filters.text, apartment)],
-            BLOCK:[MessageHandler(Filters.text, block)]
+            BLOCK:[MessageHandler(Filters.text, block)],
+            VOICE_REGISTER: [MessageHandler(Filters.voice, voice_register)]
             },
 
-        fallbacks=[CommandHandler('end', end)]
+        fallbacks=[CommandHandler('cancelar', end)]
         ))
 
     updater.start_polling()
