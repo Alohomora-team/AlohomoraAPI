@@ -7,7 +7,7 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, ConversationHa
 
 from telegram import KeyboardButton, ReplyKeyboardMarkup
 
-path = 'http://127.0.0.1:8000/graphql/'
+path = 'http://api:8000/graphql/'
 
 
 NAME, PHONE, EMAIL, PASSWORD, CPF, BLOCK, APARTMENT, VOICE_REGISTER = range(8)
