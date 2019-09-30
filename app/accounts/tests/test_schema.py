@@ -5,6 +5,7 @@ from graphene.test import Client
 from alohomora.schema import schema
 from condos.models import Apartment, Block
 import accounts.utility as Utility
+import unittest
 
 class GraphQLTestCase(TestCase):
 
@@ -145,6 +146,7 @@ class VoiceBelongsUserTests(TestCase):
                 voiceBelongsUser(cpf: $cpf, voiceData: $voice_data )
             }
         '''
+        self.unittest_object = unittest.TestCase()
 
     @classmethod
     def setUpTestData(cls):
@@ -234,23 +236,21 @@ class VoiceBelongsUserTests(TestCase):
         }
 
     def test_nonexistent_cpf_except(self):
-        response = self.client.execute(
-            self.query,
-            variables={
-                'cpf': '1111111111',
-                'voice_data': json.dumps([2.3 * x for x in range(32000)])
-            }
-        )
-
-        assert response['errors'] is not None
+        with self.unittest_object.assertRaises(Exception):
+            response = self.client.execute(
+                self.query,
+                variables={
+                    'cpf': '1111111111',
+                    'voice_data': json.dumps([2.3 * x for x in range(32000)])
+                }
+            )
 
     def test_invalid_voice_data(self):
-        response = self.client.execute(
-            self.query,
-            variables={
-                'cpf': '0123456789',
-                'voice_data': json.dumps([2.3 * x for x in range(32000)] + ['a'])
+        with self.unittest_object.assertRaises(Exception):
+            response = self.client.execute(
+                self.query,
+                variables={
+                    'cpf': '0123456789',
+                    'voice_data': json.dumps([2.3 * x for x in range(32000)] + ['a','b'])
                 }
-        )
-
-        assert response['errors'] is not None
+            )
