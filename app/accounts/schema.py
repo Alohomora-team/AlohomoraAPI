@@ -1,3 +1,4 @@
+import secrets
 from django.contrib.auth import get_user_model
 
 import graphene
@@ -5,6 +6,8 @@ from graphene_django import DjangoObjectType
 
 from accounts.models import Visitor
 from condos.models import Apartment, Block
+
+import accounts.utility as Utility
 
 class UserType(DjangoObjectType):
     class Meta:
@@ -38,6 +41,12 @@ class CreateUser(graphene.Mutation):
         block = kwargs.get('block')
 
         block_obj = Block.objects.filter(number=block).first()
+
+        if voice_data is not None:
+            try:
+                voice_data = Utility.json_voice_data_to_json_mfcc(voice_data)
+            except:
+                raise Exception('Invalid voice data')
 
         if block_obj is None:
             raise Exception('Block not found')
@@ -75,12 +84,16 @@ class CreateVisitor(graphene.Mutation):
         phone = graphene.String()
         cpf = graphene.String()
         voice_data = graphene.String()
+
     def mutate(self, info, **kwargs):
         voice_data = kwargs.get('voice_data')
         cpf = kwargs.get('cpf')
         complete_name = kwargs.get('complete_name')
         phone = kwargs.get('phone')
         email = kwargs.get('email')
+
+        if voice_data is not None:
+            voice_data = Utility.json_voice_data_to_json_mfcc(voice_data)
 
         user = info.context.user or None
         if not user:
@@ -116,6 +129,11 @@ class Query(graphene.AbstractType):
     me = graphene.Field(UserType)
     users = graphene.List(UserType)
     visitors = graphene.List(VisitorType)
+
+    voice_belongs_user = graphene.Boolean(
+        cpf=graphene.String(required=True),
+        voice_data=graphene.String(required=True)
+    )
 
     user = graphene.Field(
         UserType,
@@ -166,3 +184,48 @@ class Query(graphene.AbstractType):
             raise Exception('Not logged in!')
 
         return user
+
+    def resolve_voice_belongs_user(self, info, **kwargs):
+        user_cpf = kwargs.get('cpf')
+        voice_data = kwargs.get('voice_data')
+
+        voice_sample = Utility.json_voice_data_to_mfcc(voice_data)
+
+        user = get_user_model().objects.get(cpf=user_cpf)
+        others_users = get_user_model().objects.exclude(cpf=user_cpf)
+
+        companion_users = Query._retrieve_random_users(others_users, quantity=4)
+        test_group = [user] + companion_users
+
+        query_result = False
+        if user == Query._find_nearest_user_by_voice(test_group, voice_sample):
+            query_result = True
+
+        return query_result
+
+    @staticmethod
+    def _retrieve_random_users(users, quantity):
+        users = users[::1]
+        if len(users) <= quantity:
+            return users
+
+        secure_random = secrets.SystemRandom()
+        random_users = secure_random.sample(users, quantity)
+
+        return random_users
+
+    @staticmethod
+    def _find_nearest_user_by_voice(users, voice_sample):
+        nearest_user = None
+        lowest_dtw_score = 10**9
+
+        for current_user in users:
+            current_user_voice_data = Utility.json_to_numpy_array(current_user.voice_data)
+            current_measure = Utility.compute_dtw_distance(voice_sample, current_user_voice_data)
+
+            if current_measure < lowest_dtw_score:
+                lowest_dtw_score = current_measure
+                nearest_user = current_user
+
+        return nearest_user
+        
