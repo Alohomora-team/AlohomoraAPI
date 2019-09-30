@@ -3,6 +3,7 @@ nav:
 - Início: 'index.md'
 - Projeto:
   - 'Documento de visão': 'projeto/doc_visao.md'
+  - 'Documento de arquitetura': 'projeto/doc_arquitetura.md'
 - Gerência:
   - 'Plano de gerência de configuração de software': 'gerencia/plano_gcs.md'
   - 'Estrutura analítica do projeto': 'gerencia/EAP.md'
