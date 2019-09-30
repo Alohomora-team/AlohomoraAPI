@@ -189,16 +189,10 @@ class Query(graphene.AbstractType):
         user_cpf = kwargs.get('cpf')
         voice_data = kwargs.get('voice_data')
 
-        try:
-            voice_sample = Utility.json_voice_data_to_mfcc(voice_data)
-        except:
-            raise Exception('Invalid voice data')
+        voice_sample = Utility.json_voice_data_to_mfcc(voice_data)
 
-        try:
-            user = get_user_model().objects.get(cpf=user_cpf)
-            others_users = get_user_model().objects.exclude(cpf=user_cpf)
-        except:
-            raise Exception('Invalid CPF')
+        user = get_user_model().objects.get(cpf=user_cpf)
+        others_users = get_user_model().objects.exclude(cpf=user_cpf)
 
         companion_users = Query._retrieve_random_users(others_users, quantity=4)
         test_group = [user] + companion_users
