@@ -18,6 +18,9 @@ class ServiceManager(BaseUserManager):
         service.save(using=self._db)
         return service
 
+    def create_superuser(self, email, password, **extra_fields):
+        return self.create_user(email, password, **extra_fields)
+
 class Service(AbstractUser):
     password = models.CharField(max_length=80)
     email = models.CharField(max_length=40, unique=True)
