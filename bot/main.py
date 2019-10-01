@@ -1,18 +1,24 @@
 import logging
+import subprocess
 import requests
 import numpy
 import json
+from scipy.io.wavfile import read
+from python_speech_features import mfcc
 
 from telegram.ext import Updater, CommandHandler, MessageHandler, ConversationHandler, Filters
 
 from telegram import KeyboardButton, ReplyKeyboardMarkup
 
-path = 'http://api:8000/graphql/'
+path = 'http://127.0.0.1:8000/graphql/'
 
 
 NAME, PHONE, EMAIL, PASSWORD, CPF, BLOCK, APARTMENT, VOICE_REGISTER = range(8)
 
+CPF_AUTH, VOICE_AUTH = range(2)
+
 data = {}
+auth_data = {}
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s - %(message)s', level=logging.INFO)
 
@@ -192,29 +198,39 @@ def apartment(update, context):
         update.message.reply_text('Por favor, digite um apartamento existente:')
         return APARTMENT
 
-    update.message.reply_text('Vamos agora cadastrar a sua frase! Grave uma mensagem de voz com a sua frase:')
+    update.message.reply_text('Vamos agora cadastrar a sua voz! Grave uma breve mensagem de voz dizendo "Sou eu".')
+
     return VOICE_REGISTER
 
 def voice_register(update, context):
     voice_register = update.message.voice
 
-    if((voice_register.duration)<2):
-        update.message.reply_text('Muito curto...O áudio deve ter 2 segundos de duração.')
+    if((voice_register.duration)<1.0):
+        update.message.reply_text('Muito curto...O áudio deve ter 1 segundo de duração.')
+        update.message.reply_text('Por favor, grave novamente:')
+        return VOICE_REGISTER
+    elif((voice_register.duration)>1.5):
+        update.message.reply_text('Muito grande...O áudio deve ter 1 segundo de duração.')
         update.message.reply_text('Por favor, grave novamente:')
         return VOICE_REGISTER
     else:
-        update.message.reply_text('Ótimo! Não esqueça da sua frase: mais pra frente você precisará dela!')
+        update.message.reply_text('Ótimo!')
 
     f_reg = voice_register.get_file()
-    file_barr = f_reg.download_as_bytearray()
 
-    del file_barr[5788:len(file_barr)]
+    src = f_reg.download()
+    dest = src.split('.')[0] + ".wav"
 
-    audio_arr_reg = numpy.frombuffer(file_barr, dtype="float32")
-    voice_data_reg = json.dumps(audio_arr_reg.tolist())
+    subprocess.run(['ffmpeg', '-i', src, dest])
 
-    data['voice_reg'] = voice_data_reg
+    samplerate, voice_data = read(dest)
 
+    mfcc_data = mfcc(voice_data, samplerate=samplerate, nfft=1200, winfunc=numpy.hamming)
+    mfcc_data = mfcc_data.tolist()
+    mfcc_data = json.dumps(mfcc_data)
+
+    data['voice_reg'] = None
+    data['voice_mfcc'] = mfcc_data
 
     response = register_user()
 
@@ -234,7 +250,17 @@ def register_user():
     print(data)
 
     query_user = """
-    mutation createUser($completeName: String!, $email: String!, $password: String!, $phone: String!, $cpf: String!, $apartment: String!, $block: String!, $voiceData: String!){
+    mutation createUser(
+        $completeName: String!,
+        $email: String!,
+        $password: String!,
+        $phone: String!,
+        $cpf: String!,
+        $apartment: String!,
+        $block: String!,
+        $voiceData: String,
+        $voiceMfcc: String,
+        ){
         createUser(
             completeName: $completeName,
             email: $email,
@@ -244,6 +270,7 @@ def register_user():
             apartment: $apartment,
             block: $block,
             voiceData: $voiceData
+            voiceMfcc: $voiceMfcc
         ){
             user{
                 completeName
@@ -256,7 +283,6 @@ def register_user():
                         number
                     }
                 }
-                voiceData
             }
         }
     }
@@ -270,7 +296,8 @@ def register_user():
             'cpf': data['cpf'],
             'apartment': data['apartment'],
             'block': data['block'],
-            'voiceData': data['voice_reg']
+            'voiceData': data['voice_reg'],
+            'voiceMfcc': data['voice_mfcc']
             }
 
     user_response = requests.post(path, json={'query':query_user, 'variables':variables_user})
@@ -353,6 +380,101 @@ def check_cpf():
 
     return response.json()
 
+def auth(update, context):
+    update.message.reply_text("Ok, vamos te autenticar!")
+    update.message.reply_text("Por favor, informe seu CPF.")
+    return CPF_AUTH
+
+def cpf_auth(update, context):
+    cpf = update.message.text
+
+    if(len(cpf) > 11 and cpf[3] == "." and cpf[7] == "." and cpf[11] == "-"):
+        cpf = cpf.replace('.','').replace('-','')
+
+    if(any(i.isalpha() for i in cpf) or "." in cpf or "-" in cpf or len(cpf) != 11):
+        update.message.reply_text('Por favor, digite o CPF com os 11 digitos: (Ex: 123.456.789-10)')
+        return CPF_AUTH
+
+    authCPF_J = (int(cpf[0])*10 + int(cpf[1])*9 + int(cpf[2])*8 + int(cpf[3])*7 + int(cpf[4])*6 + int(cpf[5])*5 + int(cpf[6])*4 + int(cpf[7])*3 + int(cpf[8])*2)%11
+    authCPF_K = (int(cpf[0])*11 + int(cpf[1])*10 + int(cpf[2])*9 + int(cpf[3])*8 + int(cpf[4])*7 + int(cpf[5])*6 + int(cpf[6])*5 + int(cpf[7])*4 + int(cpf[8])*3 + int(cpf[9])*2)%11
+
+    if((int(cpf[9]) != 0 and authCPF_J != 0 and authCPF_J != 1) and (int(cpf[9]) != (11 - authCPF_J))):
+        update.message.reply_text('CPF inválido, tente novamente:')
+        return CPF_AUTH
+
+    if((int(cpf[10]) != 0 and authCPF_K != 0 and authCPF_K != 1) and (int(cpf[10]) != (11 - authCPF_K))):
+        update.message.reply_text('CPF inválido, tente novamente:')
+        return CPF_AUTH
+
+    auth_data['cpf'] = cpf
+
+    update.message.reply_text('Grave um áudio de no mínimo 1 segundo dizendo "Sou eu".')
+
+    return VOICE_AUTH
+
+def voice_auth(update, context):
+    voice_auth = update.message.voice
+
+    if((voice_auth.duration)<1.0):
+        update.message.reply_text('Muito curto...O áudio deve ter 1 segundo de duração.')
+        update.message.reply_text('Por favor, grave novamente:')
+        return VOICE_AUTH
+    elif((voice_auth.duration)>1.5):
+        update.message.reply_text('Muito grande...O áudio deve ter 1 segundo de duração.')
+        update.message.reply_text('Por favor, grave novamente:')
+        return VOICE_AUTH
+    else:
+        update.message.reply_text('Ótimo!')
+
+    f_auth = voice_auth.get_file()
+
+    src = f_auth.download()
+    dest = src.split('.')[0] + ".wav"
+
+    subprocess.run(['ffmpeg', '-i', src, dest])
+
+    samplerate, voice_data = read(dest)
+
+    mfcc_data = mfcc(voice_data, samplerate=samplerate, nfft=1200, winfunc=numpy.hamming)
+    mfcc_data = mfcc_data.tolist()
+    mfcc_data = json.dumps(mfcc_data)
+
+    auth_data['voice_mfcc'] = mfcc_data
+
+    response = authenticate()
+
+    valid = response['data']['voiceBelongsUser']
+
+    if valid:
+        update.message.reply_text('É você!')
+    else:
+        update.message.reply_text('Não é você!')
+
+    return ConversationHandler.END
+
+def end_auth(update, context):
+    update.message.reply_text('Autenticação cancelada!')
+    return ConversationHandler.END
+
+def authenticate():
+    query = """
+    query voiceBelongsUser(
+        $cpf: String!,
+        $voiceMfcc: String
+    ){
+        voiceBelongsUser(cpf: $cpf, voiceMfcc: $voiceMfcc)
+    }
+    """
+
+    variables = {
+            'cpf': auth_data['cpf'],
+            'voiceMfcc': auth_data['voice_mfcc']
+    }
+
+    response = requests.post(path, json={'query': query, 'variables':variables})
+
+    return response.json()
+
 if __name__ == '__main__':
 
     token = '959215527:AAG3K2izQIOGmi82pwFnWyGvr0flkq0K3do'
@@ -380,6 +502,18 @@ if __name__ == '__main__':
 
         fallbacks=[CommandHandler('cancelar', end)]
         ))
+
+    dp.add_handler(ConversationHandler(
+        entry_points=[CommandHandler('autenticar', auth)],
+
+        states={
+            CPF_AUTH:[MessageHandler(Filters.text, cpf_auth)],
+            VOICE_AUTH: [MessageHandler(Filters.voice, voice_auth)]
+            },
+
+        fallbacks=[CommandHandler('cancelar', end_auth)]
+        ))
+    
 
     updater.start_polling()
 
