@@ -4,13 +4,18 @@ from django.test import TestCase
 from graphene.test import Client
 from alohomora.schema import schema
 from condos.models import Apartment, Block
+from accounts.models import User, Visitor
 import accounts.utility as Utility
+from graphql_jwt.testcases import JSONWebTokenTestCase
 
-class GraphQLTestCase(TestCase):
+class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
 
     def setUp(self):
-        self.user_object = get_user_model()
+        self.user_object = User
         self._client = Client(schema)
+        self.service = get_user_model().objects.create(email='chazard@exemplo',
+                                                       password='12',
+                                                       username='service')
 
     def query(self, query: str):
         resp = self._client.execute(query)
@@ -19,17 +24,24 @@ class GraphQLTestCase(TestCase):
     def assertNoResponseErrors(self, resp: dict):
         self.assertNotIn('erros', resp, 'Response has erros')
 
+
     @classmethod
     def setUpTestData(cls):
 
-        get_user_model().objects.create(
+        User.objects.create(
             complete_name='bob o construtor',
             email='charizard@exemplo.com',
-            password='1231',
             cpf='12345678910',
             phone='42',
             voice_data=json.dumps([x*10 for x in range(32000)]),
             admin=True
+        )
+        Visitor.objects.create(
+            complete_name='bob o construtor',
+            email='charizard@exemplo.com',
+            cpf='12345678910',
+            phone='42',
+            voice_data='Singing in the Rain',
         )
 
     def test_mutation_user(self):
@@ -42,7 +54,6 @@ class GraphQLTestCase(TestCase):
                   createUser(
                     completeName: "esquilo-voador",
                     email: "matpaulo@hoa",
-                    password: "1231234",
                     cpf: "12345678911",
                     phone: "11123",
                     apartment: "101",
@@ -81,17 +92,16 @@ class GraphQLTestCase(TestCase):
     def test_query_users(self):
 
         query = '''
-        {
-            users {
-                id
-                completeName
-                email
-                password
-                phone
-                cpf
-                voiceData
-            }
-        }
+                query{
+                  users{
+                   id
+                   completeName
+                   email
+                   phone
+                   cpf
+                   voiceData
+                  }
+                }
         '''
 
         response = self._client.execute(query)
@@ -99,11 +109,11 @@ class GraphQLTestCase(TestCase):
         self.assertEqual(len(data), 1)
         self.assertEqual(data['users'][0]['completeName'], 'bob o construtor')
         self.assertEqual(data['users'][0]['email'], 'charizard@exemplo.com')
-        self.assertEqual(data['users'][0]['password'], '1231')
         self.assertEqual(data['users'][0]['cpf'], '12345678910')
         self.assertEqual(data['users'][0]['phone'], '42')
         #Voice data nao pode ser comparado com valor inicial
         #self.assertEqual(data['users'][0]['voiceData'], json.dumps([x for x in range(32000)]))
+
 
     def test_query_user_email(self):
 
@@ -135,6 +145,97 @@ class GraphQLTestCase(TestCase):
         data = response['data']
         self.assertEqual(data['user']['completeName'], 'bob o construtor')
 
+
+    def test_query_visitors(self):
+
+        query = '''
+                query{
+                  visitors{
+                   id
+                   completeName
+                   email
+                   cpf
+                   phone
+                   voiceData
+                  }
+                }
+        '''
+
+        response = self.query(query=query)
+        data = response['data']
+        self.assertEqual(len(data), 1)
+        self.assertEqual(data['visitors'][0]['completeName'], 'bob o construtor')
+        self.assertEqual(data['visitors'][0]['email'], 'charizard@exemplo.com')
+        self.assertEqual(data['visitors'][0]['cpf'], '12345678910')
+        self.assertEqual(data['visitors'][0]['phone'], '42')
+        self.assertEqual(data['visitors'][0]['voiceData'], 'Singing in the Rain')
+
+    def test_query_services(self):
+
+        query = '''
+                query {
+                  services {
+                    id
+                    username
+                    email
+                    password
+                  }
+                }
+                '''
+
+        response = self.query(query=query)
+        data = response['data']
+        self.assertEqual(len(data), 1)
+        self.assertEqual(data['services'][0]['username'], 'service')
+        self.assertEqual(data['services'][0]['email'], 'chazard@exemplo')
+        self.assertEqual(data['services'][0]['password'], '12')
+
+    def test_mutation_services(self):
+
+        mutation = '''
+                        mutation{
+                          createService(
+                            username: "colheita-feliz",
+                            email: "ibis@ni",
+                            password: "123"
+                          ){ service{
+                             username
+                             email
+                             password
+                          }
+                          }
+                        }
+        '''
+        response = self.query(query=mutation)
+        self.assertNoResponseErrors(response)
+        self.assertEqual(get_user_model().objects.count(), 2)
+        self.assertEqual(get_user_model().objects.get(email="ibis@ni").username, 'colheita-feliz')
+        self.assertEqual(get_user_model().objects.get(email="ibis@ni").email, 'ibis@ni')
+        self.assertNotEqual(get_user_model().objects.get(email="ibis@ni").password, '123')
+
+    def test_authentication(self):
+
+        self.service.set_password('12')
+
+        self.client.authenticate(self.service)
+
+        query = '''
+                    query {
+                      me {
+                        username
+                        email
+                        password
+                      }
+                    }
+            '''
+        result = self.client.execute(query)
+        self.assertIsNone(result.errors)
+        self.assertDictEqual({"me":
+                              {
+                                  "username": "service",
+                                  "email": "chazard@exemplo",
+                                  "password": "12"}
+                             }, result.data)
 class VoiceBelongsUserTests(TestCase):
 
     def setUp(self):
@@ -148,7 +249,7 @@ class VoiceBelongsUserTests(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        get_user_model().objects.create(
+        User.objects.create(
             complete_name="Barry Allen",
             email="love_you_iris@starslab.com",
             phone="6133941598",
@@ -156,10 +257,9 @@ class VoiceBelongsUserTests(TestCase):
             voice_data=Utility.json_voice_data_to_json_mfcc(
                 json.dumps([2 * x for x in range(32000)])
             ),
-            username="1"
         )
 
-        get_user_model().objects.create(
+        User.objects.create(
             complete_name="Naruto Uzumaku",
             email="sereihokage@konoha.com",
             phone="6133941597",
@@ -167,10 +267,9 @@ class VoiceBelongsUserTests(TestCase):
             voice_data=Utility.json_voice_data_to_json_mfcc(
                 json.dumps([3 * x for x in range(32000)])
             ),
-            username="2"
         )
 
-        get_user_model().objects.create(
+        User.objects.create(
             complete_name="Max Steel",
             email="modoturbo@yahoo.com",
             phone="6133941596",
@@ -178,10 +277,9 @@ class VoiceBelongsUserTests(TestCase):
             voice_data=Utility.json_voice_data_to_json_mfcc(
                 json.dumps([x**2  - 50 * x + 20 for x in range(32000)])
             ),
-            username="3"
         )
 
-        get_user_model().objects.create(
+        User.objects.create(
             complete_name="Benjamin Tennyson",
             email="ben10@omnitrix.com",
             phone="33941595",
@@ -189,10 +287,9 @@ class VoiceBelongsUserTests(TestCase):
             voice_data=Utility.json_voice_data_to_json_mfcc(
                 json.dumps([x - 200 for x in range(32000)])
             ),
-            username="4"
         )
 
-        get_user_model().objects.create(
+        User.objects.create(
             complete_name="Eren Jaeger",
             email="i_hate_marleyans@eldia.com",
             phone="99999999",
@@ -200,7 +297,6 @@ class VoiceBelongsUserTests(TestCase):
             voice_data=Utility.json_voice_data_to_json_mfcc(
                 json.dumps([x * 0.5 for x in range(32000)])
             ),
-            username="5"
         )
 
     def test_query_accuracy_true(self):
