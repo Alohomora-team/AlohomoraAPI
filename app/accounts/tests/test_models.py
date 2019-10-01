@@ -1,4 +1,5 @@
 from django.test import TestCase
+from django.contrib.auth import get_user_model
 from accounts.models import User
 from accounts.models import Visitor
 
@@ -69,4 +70,26 @@ class VisitorModelTest(TestCase):
                 complete_name='Big',
                 email='a'*100,
                 phone='12345'
+            )
+
+
+class ServiceModelTest(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+
+        get_user_model().objects.create(
+            email='squirtle@exemplo.com',
+            username='Eeeve',
+        )
+
+    def test_email_label(self):
+        service = get_user_model().objects.get(id=1)
+        self.assertEquals(service.email, 'squirtle@exemplo.com')
+
+    def test_email_max_length(self):
+
+        with self.assertRaises(Exception):
+            get_user_model().objects.create(
+                email='1'*100,
             )

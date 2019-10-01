@@ -29,7 +29,7 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
     def setUpTestData(cls):
 
         User.objects.create(
-            complete_name='bob o construtor',
+            complete_name='god hand',
             email='charizard@exemplo.com',
             cpf='12345678910',
             phone='42',
@@ -41,7 +41,7 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
             email='charizard@exemplo.com',
             cpf='12345678910',
             phone='42',
-            voice_data='Singing in the Rain',
+            voice_data='[[1],[2],[3]]',
         )
 
     def test_mutation_user(self):
@@ -58,13 +58,11 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
                     phone: "11123",
                     apartment: "101",
                     block: "1",
-                    voiceData: "[[1],[2],[3]]",
                   ){ user{
                      completeName
                      email
                      cpf
                      phone
-                     voiceData
                      apartment{
                         number
                         block{
@@ -76,43 +74,48 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
                 }
         '''
 
-        response = self.query(query=mutation)
-        self.assertNoResponseErrors(response)
-        data = list(list(list(response['data'].items())[0][1].items())[0][1].items())
-
-        self.assertEqual(data[0][1], "esquilo-voador")
-        self.assertEqual(data[1][1], "matpaulo@hoa")
-        self.assertEqual(data[2][1], "12345678911")
-        self.assertEqual(data[3][1], "11123")
-        # voice_data não pode ser comparado com valor incial
-        #self.assertEqual(data[4][1], "[[1],[2],[3]]")
-        self.assertEqual(list(data[5][1].items())[0][1], "101")
-        self.assertEqual(list(list(data[5][1].items())[1][1].items())[0][1], "1")
+        result = self.client.execute(mutation)
+        self.assertIsNone(result.errors)
+        self.assertDictEqual({
+                        "createUser": {
+                            "user": {
+                                "completeName": "esquilo-voador",
+                                "email": "matpaulo@hoa",
+                                "cpf": "12345678911",
+                                "phone": "11123",
+                                "apartment": {
+                                    "number": "101",
+                                    "block": {
+                                        "number": "1"
+                                        }
+                                    }
+                                }
+                            }
+                }, result.data)
 
     def test_query_users(self):
 
         query = '''
                 query{
                   users{
-                   id
                    completeName
                    email
                    phone
                    cpf
-                   voiceData
                   }
                 }
         '''
 
-        response = self._client.execute(query)
-        data = response['data']
-        self.assertEqual(len(data), 1)
-        self.assertEqual(data['users'][0]['completeName'], 'bob o construtor')
-        self.assertEqual(data['users'][0]['email'], 'charizard@exemplo.com')
-        self.assertEqual(data['users'][0]['cpf'], '12345678910')
-        self.assertEqual(data['users'][0]['phone'], '42')
-        #Voice data nao pode ser comparado com valor inicial
-        #self.assertEqual(data['users'][0]['voiceData'], json.dumps([x for x in range(32000)]))
+        result = self.client.execute(query)
+        self.assertIsNone(result.errors)
+        self.assertDictEqual({"users":
+                              [{
+                                  "completeName": "god hand",
+                                  "email": "charizard@exemplo.com",
+                                  "phone": "42",
+                                  "cpf": "12345678910"
+                              }]
+                              }, result.data)
 
 
     def test_query_user_email(self):
@@ -126,9 +129,12 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
 
         """
 
-        response = self._client.execute(query)
-        data = response['data']
-        self.assertEqual(data['user']['completeName'], 'bob o construtor')
+        result = self.client.execute(query)
+        self.assertIsNone(result.errors)
+        self.assertDictEqual({"user":
+                              {
+                                  "completeName": "god hand"}
+                             }, result.data)
 
     def test_query_user_cpf(self):
 
@@ -141,9 +147,12 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
 
         """
 
-        response = self._client.execute(query)
-        data = response['data']
-        self.assertEqual(data['user']['completeName'], 'bob o construtor')
+        result = self.client.execute(query)
+        self.assertIsNone(result.errors)
+        self.assertDictEqual({"user":
+                              {
+                                  "completeName": "god hand"}
+                              }, result.data)
 
 
     def test_query_visitors(self):
@@ -151,44 +160,39 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
         query = '''
                 query{
                   visitors{
-                   id
                    completeName
                    email
-                   cpf
                    phone
-                   voiceData
                   }
                 }
         '''
 
-        response = self.query(query=query)
-        data = response['data']
-        self.assertEqual(len(data), 1)
-        self.assertEqual(data['visitors'][0]['completeName'], 'bob o construtor')
-        self.assertEqual(data['visitors'][0]['email'], 'charizard@exemplo.com')
-        self.assertEqual(data['visitors'][0]['cpf'], '12345678910')
-        self.assertEqual(data['visitors'][0]['phone'], '42')
-        self.assertEqual(data['visitors'][0]['voiceData'], 'Singing in the Rain')
+        result = self.client.execute(query)
+        self.assertIsNone(result.errors)
+        self.assertDictEqual({"visitors":
+                              [{
+                                  "completeName": "bob o construtor",
+                                  "email": "charizard@exemplo.com",
+                                  "phone": "42"}]
+                              }, result.data)
 
     def test_query_services(self):
 
         query = '''
-                query {
-                  services {
-                    id
-                    username
-                    email
-                    password
-                  }
-                }
-                '''
-
-        response = self.query(query=query)
-        data = response['data']
-        self.assertEqual(len(data), 1)
-        self.assertEqual(data['services'][0]['username'], 'service')
-        self.assertEqual(data['services'][0]['email'], 'chazard@exemplo')
-        self.assertEqual(data['services'][0]['password'], '12')
+                    query {
+                      services {
+                        username
+                        email
+                      }
+                    }
+            '''
+        result = self.client.execute(query)
+        self.assertIsNone(result.errors)
+        self.assertDictEqual({"services":
+                              [{
+                                  "username" : "service",
+                                  "email" : "chazard@exemplo",}]
+                             }, result.data)
 
     def test_mutation_services(self):
 
@@ -201,16 +205,20 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
                           ){ service{
                              username
                              email
-                             password
                           }
                           }
                         }
         '''
-        response = self.query(query=mutation)
-        self.assertNoResponseErrors(response)
-        self.assertEqual(get_user_model().objects.count(), 2)
-        self.assertEqual(get_user_model().objects.get(email="ibis@ni").username, 'colheita-feliz')
-        self.assertEqual(get_user_model().objects.get(email="ibis@ni").email, 'ibis@ni')
+        result = self.client.execute(mutation)
+        self.assertIsNone(result.errors)
+        self.assertDictEqual({"createService":
+                              {
+                                  "service": {
+                                      "username": "colheita-feliz",
+                                      "email": "ibis@ni"
+                                  }
+                              }
+                             }, result.data)
         self.assertNotEqual(get_user_model().objects.get(email="ibis@ni").password, '123')
 
     def test_authentication(self):
