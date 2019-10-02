@@ -11,20 +11,20 @@
 
 
 ## Sumário
-__[1. Introdução ](#1-introdução)__\
+__[1. Introdução ](#1-introducao)__\
 [1.1 Objetivo ](#11-objetivo)\
 [1.2 Escopo ](#12-escopo)\
 [1.3 Definições, Acrônimos e Abreviações ](#13-definicoes-acronimos-e-abreviacoes)\
 [1.4 Referências ](#14-referencias)\
 [1.5 Visão Geral ](#15-visao-geral)
 
-__[2. Posicionamento ](#2-posicionamento)__\
+__[2. Planejamento ](#2-planejamento)__\
 [2.1 Oportunidade de Negócios ](#21-oportunidade-de-negocios)\
 [2.2 Instruções do Problema ](#22-instrucao-do-problema)\
 [2.3 Instrução da Posição do Produto ](#23-instrucao-da-posicao-do-produto)
 
 
-__[3. Descrições da Parte Interessada e do Usuário ](#3-descrições-da-parte-interessada-e-do-usuário)__\
+__[3. Descrições da Parte Interessada e do Usuário ](#3-descricoes-da-parte-interessada-e-do-usuario)__\
 [3.1 Resumo da Parte Interessada ](#31-resumo-da-parte-interessada)\
 [3.2 Resumo do Usuário ](#32-resumo-do-usuario)\
 [3.3 Ambiente do Usuário ](#33-ambiente-do-usuario)\
@@ -35,7 +35,7 @@ __[3. Descrições da Parte Interessada e do Usuário ](#3-descrições-da-parte
 [3.5 Perfis dos Usuários ](#35-perfis-dos-usuarios)\
 [3.6 Principais Necessidades da Parte Interessada e Usuários ](#36-principais-necessidades-por-parte-do-condominio-moradores-e-usuarios)
 
-__[4. Visão Geral do Produto ](#4-visão-geral-do-produto)__\
+__[4. Visão Geral do Produto ](#4-visao-geral-do-produto)__\
 [4.1 Perspectiva do Produto ](#41-perspectiva-do-produto)\
 [4.2 Resumo dos Recursos ](#42-resumo-dos-recursos)\
 [4.3 Suposições e Dependências ](#43-suposicoes-e-dependencias)\
@@ -45,7 +45,7 @@ __[5. Recursos do Produto ](#5-recursos-do-produto)__\
 [5.1 Interação com o sistema via voz ](#51-interacao-com-o-sistema-alohomora-via-voz)\
 [5.2 Interação da aplicação com o usuário via Bot ](#52-interacao-da-aplicacao-com-o-usuario-via-bot-telegram)
 
-__[6. Restrições ](#6-restrições)__\
+__[6. Restrições ](#6-restricoes)__\
 [6.1 Restrição de Design ](#61-restricao-de-design)\
 [6.2 Restrição de implementação ](#62-restricao-de-implementacao)\
 [6.3 Restrição de uso ](#63-restricao-de-uso)
@@ -175,9 +175,9 @@ O projeto Alohomora busca atuar como uma portaria virtual, a qual intenciona a a
 | Agilidade na comunicação com o sistema para validar a entrada de um visitante | Disposição de um chatbot para comunicação com o morador responsável pelo visitante |
 
 ### 4.3 Suposições e dependências
-- o sistema Alohomora será utilizado em condomínios residenciais, que possuam algum representante para atuar como administrador
+- o sistema Alohomora será utilizado em condomínios residenciais, que possuam algum representante para atuar como administrador;
 
-- o morador deverá estar conectado à internet para ser informado da chegada de um visitante
+- o morador deverá estar conectado à internet para ser informado da chegada de um visitante.
 
 ### 4.4 Licenciamento
 
@@ -199,5 +199,5 @@ Para o serviço ser executado, deve haver os componentes de hardware necessário
 A implementação deve seguir de forma que seja padronizada de acordo com o modelo servido pela aplicação Alohomora.
 
 ### 6.3 Restrição de uso
-O usuário (morador) deve possuir conexão com a internet e uma conta no aplicativo Telegram
+O usuário (morador) deve possuir conexão com a internet e uma conta no aplicativo Telegram.
 
