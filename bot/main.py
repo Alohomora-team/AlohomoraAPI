@@ -13,7 +13,7 @@ from telegram import KeyboardButton, ReplyKeyboardMarkup
 path = 'http://127.0.0.1:8000/graphql/'
 
 
-NAME, PHONE, EMAIL, PASSWORD, CPF, BLOCK, APARTMENT, VOICE_REGISTER = range(8)
+NAME, PHONE, EMAIL, CPF, BLOCK, APARTMENT, VOICE_REGISTER = range(7)
 
 CPF_AUTH, VOICE_AUTH = range(2)
 
@@ -27,6 +27,7 @@ logger = logging.getLogger(__name__)
 def start(update, context):
     update.message.reply_text('Olá, bem vindo(a) ao bot do Alohomora!')
     update.message.reply_text('Digite /cadastrar para fazer o cadastro de um morador')
+    update.message.reply_text('Caso deseje fazer a autenticação por voz, digite /autenticar')
 
 def register(update, context):
     update.message.reply_text('Ok, vamos iniciar o cadastro!')
@@ -109,18 +110,6 @@ def email(update, context):
     if 'errors' not in check.keys():
         update.message.reply_text('Já existe um morador com este email, tente novamente:')
         return EMAIL
-
-    update.message.reply_text('Senha:')
-    return PASSWORD
-
-def password(update, context):
-    password = update.message.text
-
-    if(len(password)<4 or len(password)>10):
-        update.message.reply_text('Por favor, digite uma senha de 4~10 caracteres:')
-        return PASSWORD
-
-    data['password'] = password
 
     update.message.reply_text('CPF:')
     return CPF
@@ -253,24 +242,22 @@ def register_user():
     mutation createUser(
         $completeName: String!,
         $email: String!,
-        $password: String!,
         $phone: String!,
         $cpf: String!,
         $apartment: String!,
         $block: String!,
         $voiceData: String,
-        $voiceMfcc: String,
+        $mfccData: String,
         ){
         createUser(
             completeName: $completeName,
             email: $email,
-            password: $password,
             cpf: $cpf,
             phone: $phone,
             apartment: $apartment,
             block: $block,
             voiceData: $voiceData
-            voiceMfcc: $voiceMfcc
+            mfccData: $mfccData
         ){
             user{
                 completeName
@@ -291,13 +278,12 @@ def register_user():
     variables_user = {
             'completeName': data['name'],
             'email': data['email'],
-            'password': data['password'],
             'phone': data['phone'],
             'cpf': data['cpf'],
             'apartment': data['apartment'],
             'block': data['block'],
             'voiceData': data['voice_reg'],
-            'voiceMfcc': data['voice_mfcc']
+            'mfccData': data['voice_mfcc']
             }
 
     user_response = requests.post(path, json={'query':query_user, 'variables':variables_user})
@@ -460,15 +446,15 @@ def authenticate():
     query = """
     query voiceBelongsUser(
         $cpf: String!,
-        $voiceMfcc: String
+        $mfccData: String
     ){
-        voiceBelongsUser(cpf: $cpf, voiceMfcc: $voiceMfcc)
+        voiceBelongsUser(cpf: $cpf, mfccData: $mfccData)
     }
     """
 
     variables = {
             'cpf': auth_data['cpf'],
-            'voiceMfcc': auth_data['voice_mfcc']
+            'mfccData': auth_data['voice_mfcc']
     }
 
     response = requests.post(path, json={'query': query, 'variables':variables})
@@ -493,7 +479,6 @@ if __name__ == '__main__':
             NAME:[MessageHandler(Filters.text, name)],
             PHONE:[MessageHandler(Filters.text | Filters.contact, phone)],
             EMAIL:[MessageHandler(Filters.text, email)],
-            PASSWORD:[MessageHandler(Filters.text, password)],
             CPF:[MessageHandler(Filters.text, cpf)],
             APARTMENT:[MessageHandler(Filters.text, apartment)],
             BLOCK:[MessageHandler(Filters.text, block)],
