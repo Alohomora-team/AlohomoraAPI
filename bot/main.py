@@ -17,8 +17,8 @@ NAME, PHONE, EMAIL, CPF, BLOCK, APARTMENT, VOICE_REGISTER = range(7)
 
 CPF_AUTH, VOICE_AUTH = range(2)
 
-data = {}
-auth_data = {}
+chat = {}
+auth_chat= {}
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s - %(message)s', level=logging.INFO)
 
@@ -30,13 +30,17 @@ def start(update, context):
     update.message.reply_text('Caso deseje fazer a autenticação por voz, digite /autenticar')
 
 def register(update, context):
+    chat_id = update.message.chat_id
+
     update.message.reply_text('Ok, vamos iniciar o cadastro!')
     update.message.reply_text('Caso deseje interromper o processo digite /cancelar')
     update.message.reply_text('Nome:')
+    chat[chat_id] = {}
 
     return NAME
 
 def name(update, context):
+    chat_id = update.message.chat_id
     name = update.message.text
 
     if("nome" in name.lower()):
@@ -52,7 +56,7 @@ def name(update, context):
         update.message.reply_text('Nome excedeu tamanho máximo (80), tente novamente:')
         return NAME
 
-    data['name'] = name
+    chat[chat_id]['name'] = name
 
     contact_keyboard = KeyboardButton('Enviar meu número de telefone', request_contact=True)
     custom_keyboard = [[ contact_keyboard ]]
@@ -62,6 +66,8 @@ def name(update, context):
     return PHONE
 
 def phone(update, context):
+    chat_id = update.message.chat_id
+
     if(update.message.text is not None):
         phone = update.message.text
 
@@ -87,12 +93,13 @@ def phone(update, context):
         phone = contact.phone_number
         phone = phone.replace('+','')
 
-    data['phone'] = phone
+    chat[chat_id]['phone'] = phone
 
     update.message.reply_text('Email:')
     return EMAIL
 
 def email(update, context):
+    chat_id = update.message.chat_id
     email = update.message.text
 
     if("@" not in email or " " in email or len(email)<4 or "." not in email):
@@ -103,9 +110,9 @@ def email(update, context):
         update.message.reply_text('Email excedeu tamanho máximo (90), tente novamente:')
         return EMAIL
 
-    data['email'] = email
+    chat[chat_id]['email'] = email
 
-    check = check_email()
+    check = check_email(chat_id)
 
     if 'errors' not in check.keys():
         update.message.reply_text('Já existe um morador com este email, tente novamente:')
@@ -115,6 +122,7 @@ def email(update, context):
     return CPF
 
 def cpf(update, context):
+    chat_id = update.message.chat_id
     cpf = update.message.text
 
     if(len(cpf) > 11 and cpf[3] == "." and cpf[7] == "." and cpf[11] == "-"):
@@ -135,18 +143,19 @@ def cpf(update, context):
         update.message.reply_text('CPF inválido, tente novamente:')
         return CPF
 
-    data['cpf'] = cpf
+    chat[chat_id]['cpf'] = cpf
 
-    check = check_cpf()
+    check = check_cpf(chat_id)
 
     if 'errors' not in check.keys():
         update.message.reply_text('Já existe um morador com este CPF, tente novamente:')
         return CPF
-    
+
     update.message.reply_text('Bloco:')
     return BLOCK
 
 def block(update, context):
+    chat_id = update.message.chat_id
     block = update.message.text
 
     if("bloco" in block.lower() or " " in block):
@@ -157,9 +166,9 @@ def block(update, context):
         update.message.reply_text('Digte um bloco de até 4 caracteres:')
         return BLOCK
 
-    data['block'] = block
+    chat[chat_id]['block'] = block
 
-    check = check_block()
+    check = check_block(chat_id)
 
     if 'errors' in check.keys():
         update.message.reply_text('Por favor, digite um bloco existente:')
@@ -169,6 +178,7 @@ def block(update, context):
     return APARTMENT
 
 def apartment(update, context):
+    chat_id = update.message.chat_id
     apartment = update.message.text
 
     if(any(i.isalpha() for i in apartment) or " " in apartment):
@@ -179,9 +189,9 @@ def apartment(update, context):
         update.message.reply_text('Digite um apartamente de até 6 caracteres:')
         return APARTMENT
 
-    data['apartment'] = apartment
+    chat[chat_id]['apartment'] = apartment
 
-    check = check_apartment()
+    check = check_apartment(chat_id)
 
     if 'errors' in check.keys():
         update.message.reply_text('Por favor, digite um apartamento existente:')
@@ -192,6 +202,7 @@ def apartment(update, context):
     return VOICE_REGISTER
 
 def voice_register(update, context):
+    chat_id = update.message.chat_id
     voice_register = update.message.voice
 
     if((voice_register.duration)<1.0):
@@ -218,26 +229,30 @@ def voice_register(update, context):
     mfcc_data = mfcc_data.tolist()
     mfcc_data = json.dumps(mfcc_data)
 
-    data['voice_reg'] = None
-    data['voice_mfcc'] = mfcc_data
+    chat[chat_id]['voice_reg'] = None
+    chat[chat_id]['voice_mfcc'] = mfcc_data
 
-    response = register_user()
+    response = register_user(chat_id)
 
     if(response.status_code == 200):
         update.message.reply_text('Morador cadastrado no sistema!')
     else:
         update.message.reply_text('Falha ao cadastrar no sistema!')
 
+    chat[chat_id] = {}
+
     return ConversationHandler.END
 
 def end(update, context):
+    chat_id = update.message.chat_id
+
     update.message.reply_text('Cadastro cancelado!')
-    data = {}
+
+    chat[chat_id] = {}
+
     return ConversationHandler.END
 
-def register_user():
-    print(data)
-
+def register_user(chat_id):
     query_user = """
     mutation createUser(
         $completeName: String!,
@@ -276,25 +291,21 @@ def register_user():
     """
 
     variables_user = {
-            'completeName': data['name'],
-            'email': data['email'],
-            'phone': data['phone'],
-            'cpf': data['cpf'],
-            'apartment': data['apartment'],
-            'block': data['block'],
-            'voiceData': data['voice_reg'],
-            'mfccData': data['voice_mfcc']
+            'completeName': chat[chat_id]['name'],
+            'email': chat[chat_id]['email'],
+            'phone': chat[chat_id]['phone'],
+            'cpf': chat[chat_id]['cpf'],
+            'apartment': chat[chat_id]['apartment'],
+            'block': chat[chat_id]['block'],
+            'voiceData': chat[chat_id]['voice_reg'],
+            'mfccData': chat[chat_id]['voice_mfcc']
             }
 
     user_response = requests.post(path, json={'query':query_user, 'variables':variables_user})
 
-
-    print("status code: " + str(user_response.status_code))
-    print(user_response.json())
-
     return user_response
 
-def check_block():
+def check_block(chat_id):
     query = """
     query block($number: String!){
         block(number: $number){
@@ -304,14 +315,14 @@ def check_block():
     """
 
     variables = {
-            'number': data['block']
+            'number': chat[chat_id]['block']
             }
 
     response = requests.post(path, json={'query': query, 'variables':variables})
 
     return response.json()
 
-def check_apartment():
+def check_apartment(chat_id):
     query = """
     query apartment($number: String!, $block: String!){
         apartment(number: $number, block: $block){
@@ -324,15 +335,15 @@ def check_apartment():
     """
 
     variables = {
-            'number': data['apartment'],
-            'block': data['block']
+            'number': chat[chat_id]['apartment'],
+            'block': chat[chat_id]['block']
             }
 
     response = requests.post(path, json={'query': query, 'variables':variables})
 
     return response.json()
 
-def check_email():
+def check_email(chat_id):
     query = """
     query user($email: String!){
         user(email: $email){
@@ -342,14 +353,14 @@ def check_email():
     """
 
     variables = {
-            'email': data['email']
+            'email': chat[chat_id]['email']
             }
 
     response = requests.post(path, json={'query': query, 'variables':variables})
 
     return response.json()
 
-def check_cpf():
+def check_cpf(chat_id):
     query = """
     query user($cpf: String!){
         user(cpf: $cpf){
@@ -359,7 +370,7 @@ def check_cpf():
     """
 
     variables = {
-            'cpf': data['cpf']
+            'cpf': chat[chat_id]['cpf']
             }
 
     response = requests.post(path, json={'query': query, 'variables':variables})
@@ -367,12 +378,16 @@ def check_cpf():
     return response.json()
 
 def auth(update, context):
+    chat_id = update.message.chat_id
+
     update.message.reply_text("Ok, vamos te autenticar!")
     update.message.reply_text("Por favor, informe seu CPF.")
+    auth_chat[chat_id] = {}
     return CPF_AUTH
 
 def cpf_auth(update, context):
     cpf = update.message.text
+    chat_id = update.message.chat_id
 
     if(len(cpf) > 11 and cpf[3] == "." and cpf[7] == "." and cpf[11] == "-"):
         cpf = cpf.replace('.','').replace('-','')
@@ -392,13 +407,14 @@ def cpf_auth(update, context):
         update.message.reply_text('CPF inválido, tente novamente:')
         return CPF_AUTH
 
-    auth_data['cpf'] = cpf
+    auth_chat[chat_id]['cpf'] = cpf
 
     update.message.reply_text('Grave um áudio de no mínimo 1 segundo dizendo "Sou eu".')
 
     return VOICE_AUTH
 
 def voice_auth(update, context):
+    chat_id = update.message.chat_id
     voice_auth = update.message.voice
 
     if((voice_auth.duration)<1.0):
@@ -425,9 +441,9 @@ def voice_auth(update, context):
     mfcc_data = mfcc_data.tolist()
     mfcc_data = json.dumps(mfcc_data)
 
-    auth_data['voice_mfcc'] = mfcc_data
+    auth_chat[chat_id]['voice_mfcc'] = mfcc_data
 
-    response = authenticate()
+    response = authenticate(chat_id)
 
     valid = response['data']['voiceBelongsUser']
 
@@ -436,13 +452,18 @@ def voice_auth(update, context):
     else:
         update.message.reply_text('Não é você!')
 
+    auth_chat[chat_id] = {}
+
     return ConversationHandler.END
 
 def end_auth(update, context):
     update.message.reply_text('Autenticação cancelada!')
+
+    auth_chat[chat_id] = {}
+
     return ConversationHandler.END
 
-def authenticate():
+def authenticate(chat_id):
     query = """
     query voiceBelongsUser(
         $cpf: String!,
@@ -453,8 +474,8 @@ def authenticate():
     """
 
     variables = {
-            'cpf': auth_data['cpf'],
-            'mfccData': auth_data['voice_mfcc']
+            'cpf': auth_chat[chat_id]['cpf'],
+            'mfccData': auth_chat[chat_id]['voice_mfcc']
     }
 
     response = requests.post(path, json={'query': query, 'variables':variables})
@@ -498,7 +519,7 @@ if __name__ == '__main__':
 
         fallbacks=[CommandHandler('cancelar', end_auth)]
         ))
-    
+
 
     updater.start_polling()
 
