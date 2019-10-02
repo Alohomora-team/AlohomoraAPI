@@ -1,4 +1,5 @@
 from django.test import TestCase
+from django.contrib.auth import get_user_model
 from accounts.models import User
 from accounts.models import Visitor
 
@@ -10,7 +11,6 @@ class UserModelTest(TestCase):
         User.objects.create(
             complete_name='Big',
             email='Bob',
-            password='12345',
             phone='12345',
         )
 
@@ -23,7 +23,6 @@ class UserModelTest(TestCase):
             User.objects.create(
                 complete_name='a'*81,
                 email='test@test.com',
-                password='1234',
                 phone='123412341234'
             )
 
@@ -36,8 +35,7 @@ class UserModelTest(TestCase):
         with self.assertRaises(Exception):
             User.objects.create(
                 complete_name='teste',
-                email='1'*10,
-                password='1234',
+                email='1'*100,
                 phone='123412341234'
             )
 
@@ -54,7 +52,6 @@ class VisitorModelTest(TestCase):
         User.objects.create(
             complete_name='Big',
             email='Bob',
-            password='12345',
             phone='12345',
         )
 
@@ -73,4 +70,26 @@ class VisitorModelTest(TestCase):
                 complete_name='Big',
                 email='a'*100,
                 phone='12345'
+            )
+
+
+class ServiceModelTest(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+
+        get_user_model().objects.create(
+            email='squirtle@exemplo.com',
+            username='Eeeve',
+        )
+
+    def test_email_label(self):
+        service = get_user_model().objects.get(id=1)
+        self.assertEquals(service.email, 'squirtle@exemplo.com')
+
+    def test_email_max_length(self):
+
+        with self.assertRaises(Exception):
+            get_user_model().objects.create(
+                email='1'*100,
             )
