@@ -3,7 +3,7 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, ConversationHa
 from auth import auth, cpf_auth, voice_auth, end_auth
 from register import register, name, phone, email, cpf, apartment, block, voice_register, repeat_voice, end
 
-PATH = 'http://127.0.0.1:8000/graphql/'
+PATH = 'http://api:8000/graphql/'
 NAME, PHONE, EMAIL, CPF, BLOCK, APARTMENT, VOICE_REGISTER, REPEAT_VOICE = range(8)
 CPF_AUTH, VOICE_AUTH = range(2)
 

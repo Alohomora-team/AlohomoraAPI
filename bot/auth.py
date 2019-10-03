@@ -8,7 +8,7 @@ import subprocess
 
 CPF_AUTH, VOICE_AUTH = range(2)
 
-PATH = 'http://127.0.0.1:8000/graphql/'
+PATH = 'http://api:8000/graphql/'
 
 auth_chat = {}
 
