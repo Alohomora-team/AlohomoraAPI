@@ -10,7 +10,7 @@ import subprocess
 
 NAME, PHONE, EMAIL, CPF, BLOCK, APARTMENT, VOICE_REGISTER, REPEAT_VOICE = range(8)
 
-PATH = 'http://127.0.0.1:8000/graphql/'
+PATH = 'http://api:8000/graphql/'
 
 chat = {}
 
