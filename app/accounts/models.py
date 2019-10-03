@@ -3,10 +3,9 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager
 from condos.models import Apartment, Block
 
 class ServiceManager(BaseUserManager):
+    """Creates and saves a Service with the given email and password"""
+
     def create_service(self, email, password=None, **kwars):
-        """
-        Creates and saves a User with the given email and password.
-        """
         if not email:
             raise ValueError('Users must have an email address')
 
@@ -22,6 +21,8 @@ class ServiceManager(BaseUserManager):
         return self.create_user(email, password, **extra_fields)
 
 class Service(AbstractUser):
+    """Based on the user model already created for authentication"""
+
     password = models.CharField(max_length=80)
     email = models.CharField(max_length=40, unique=True)
 

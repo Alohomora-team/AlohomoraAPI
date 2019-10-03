@@ -19,6 +19,8 @@ class VisitorType(DjangoObjectType):
         model = Visitor
 
 class CreateService(graphene.Mutation):
+    """Mutation from graphene for creating service"""
+
     service = graphene.Field(ServiceType)
 
 
@@ -38,6 +40,8 @@ class CreateService(graphene.Mutation):
         return CreateService(service=service)
 
 class CreateUser(graphene.Mutation):
+    """Mutation from graphene for creating user"""
+
     user = graphene.Field(UserType)
 
     class Arguments:
@@ -86,6 +90,8 @@ class CreateUser(graphene.Mutation):
         return CreateUser(user=user)
 
 class CreateVisitor(graphene.Mutation):
+    """Mutation from graphene for creating visitor"""
+
     id = graphene.Int()
     complete_name = graphene.String()
     email = graphene.String()
@@ -137,11 +143,15 @@ class CreateVisitor(graphene.Mutation):
         )
 
 class Mutation(graphene.ObjectType):
+    """Used to write or post values"""
+
     create_user = CreateUser.Field()
     create_visitor = CreateVisitor.Field()
     create_service = CreateService.Field()
 
 class Query(graphene.AbstractType):
+    """Used to read or fetch values"""
+
     me = graphene.Field(ServiceType)
     users = graphene.List(UserType)
     visitors = graphene.List(VisitorType)
