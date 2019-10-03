@@ -1,14 +1,14 @@
-from telegram import KeyboardButton, ReplyKeyboardMarkup
-from telegram.ext import ConversationHandler
+from checks import check_email, check_cpf, check_block, check_apartment
 from python_speech_features import mfcc
 from scipy.io.wavfile import read
+from telegram import KeyboardButton, ReplyKeyboardMarkup
+from telegram.ext import ConversationHandler
 import json
 import numpy
 import requests
 import subprocess
-from checks import check_email, check_cpf, check_block, check_apartment
 
-NAME, PHONE, EMAIL, CPF, BLOCK, APARTMENT, VOICE_REGISTER = range(7)
+NAME, PHONE, EMAIL, CPF, BLOCK, APARTMENT, VOICE_REGISTER, REPEAT_VOICE = range(8)
 
 PATH = 'http://127.0.0.1:8000/graphql/'
 
@@ -142,6 +142,7 @@ def cpf(update, context):
                  int(cpf[8])*3 +
                  int(cpf[9])*2) % 11
 
+    # Validating CPF
     if((int(cpf[9]) != 0 and authCPF_J != 0 and authCPF_J != 1) and (int(cpf[9]) != (11 - authCPF_J))):
         update.message.reply_text('CPF inválido, tente novamente:')
         return CPF
@@ -241,6 +242,23 @@ def voice_register(update, context):
     chat[chat_id]['voice_reg'] = None
     chat[chat_id]['voice_mfcc'] = mfcc_data
 
+    # Repeat and confirm buttons
+    repeat_keyboard = KeyboardButton('Repetir')
+    confirm_keyboard = KeyboardButton('Confirmar')
+    keyboard = [[repeat_keyboard],[confirm_keyboard]]
+    choice = ReplyKeyboardMarkup(keyboard, resize_keyboard=True, one_time_keyboard=True)
+    update.message.reply_text('Escute o seu áudio e confirme se está com boa qualidade', reply_markup = choice)
+
+    return REPEAT_VOICE
+
+def repeat_voice(update, context):
+    chat_id = update.message.chat_id
+    choice = update.message.text
+
+    if choice == "Repetir":
+        update.message.reply_text('Por favor, grave novamente:')
+        return VOICE_REGISTER
+
     response = register_user(chat_id)
 
     if(response.status_code == 200 and 'errors' not in response.json().keys()):
@@ -260,6 +278,7 @@ def end(update, context):
     chat[chat_id] = {}
 
     return ConversationHandler.END
+
 
 def register_user(chat_id):
     query = """
@@ -313,4 +332,3 @@ def register_user(chat_id):
     response = requests.post(PATH, json={'query':query, 'variables':variables})
 
     return response
-

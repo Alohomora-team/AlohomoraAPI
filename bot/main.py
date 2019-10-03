@@ -1,13 +1,13 @@
 import logging
 from telegram.ext import Updater, CommandHandler, MessageHandler, ConversationHandler, Filters
 from auth import auth, cpf_auth, voice_auth, end_auth
-from register import register, name, phone, email, cpf, apartment, block, voice_register, end
+from register import register, name, phone, email, cpf, apartment, block, voice_register, repeat_voice, end
 
 PATH = 'http://127.0.0.1:8000/graphql/'
-NAME, PHONE, EMAIL, CPF, BLOCK, APARTMENT, VOICE_REGISTER = range(7)
+NAME, PHONE, EMAIL, CPF, BLOCK, APARTMENT, VOICE_REGISTER, REPEAT_VOICE = range(8)
 CPF_AUTH, VOICE_AUTH = range(2)
 
-logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s - %(message)s', level=logging.INFO)
+logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s - %(message)s', datefmt='%d/%m/%Y %I:%M:%S', level=logging.INFO)
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +23,7 @@ if __name__ == '__main__':
 
     updater = Updater(token, use_context=True)
 
-    print("Iniciando Bot")
+    logging.info("Iniciando Bot")
 
     dp = updater.dispatcher
 
@@ -40,7 +40,8 @@ if __name__ == '__main__':
             CPF:[MessageHandler(Filters.text, cpf)],
             APARTMENT:[MessageHandler(Filters.text, apartment)],
             BLOCK:[MessageHandler(Filters.text, block)],
-            VOICE_REGISTER: [MessageHandler(Filters.voice, voice_register)]
+            VOICE_REGISTER: [MessageHandler(Filters.voice, voice_register)],
+            REPEAT_VOICE:[MessageHandler(Filters.text, repeat_voice)]
             },
 
         fallbacks=[CommandHandler('cancelar', end)]
