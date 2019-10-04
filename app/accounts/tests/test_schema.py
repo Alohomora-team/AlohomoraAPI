@@ -9,6 +9,7 @@ import accounts.utility as Utility
 from graphql_jwt.testcases import JSONWebTokenTestCase
 
 class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
+    """Test that information can be retrieved and created using graphql"""
 
     def setUp(self):
         self.user_object = User
@@ -245,6 +246,7 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
                                   "password": "12"}
                              }, result.data)
 class VoiceBelongsUserTests(TestCase):
+    """Test using mfcc and fastwd for voice recognition and authentication"""
 
     def setUp(self):
         self.client = Client(schema)
