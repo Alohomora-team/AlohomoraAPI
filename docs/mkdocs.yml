@@ -7,6 +7,8 @@ nav:
 - Gerência:
   - 'Termo de abertura do projeto': 'gerencia/TAP.md'
   - 'Estrutura analítica do projeto': 'gerencia/EAP.md'
+  - 'Plano de gerenciamento de riscos': 'gerencia/plano_riscos.md'
+  - 'Plano de gerencimaneto de custos': 'gerencia/plano_custos.md'
 - Sprints:
   - 'Sprint 0': 'sprints/sprint_0.md'
   - 'Sprint 1': 'sprints/sprint_1.md'
