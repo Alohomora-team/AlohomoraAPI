@@ -8,6 +8,7 @@
 | 20/09/2019 | 1.0 | Formatação da estrutura e criação do documento | Aline Lermen, Rodrigo Lima
 | 25/09/2019 | 1.1 | Edição e complemento dos tópicos 2.2, 2.3, 3.6, 4.2, 4.4, 5, 6 | Luis Fernando Furtado, João Luis Baraky
 | 29/09/2019 | 1.2 | Correção de erros ortográficos e de sintaxe| João Luis Baraky, Victor Jorge Gonçalves
+| 04/10/2019 | 1.3 | Adição do licenciamento do projeto | João Luis Baraky, Victor Jorge Gonçalves
 
 
 ## Sumário
@@ -18,7 +19,7 @@ __[1. Introdução ](#1-introducao)__\
 [1.4 Referências ](#14-referencias)\
 [1.5 Visão Geral ](#15-visao-geral)
 
-__[2. Planejamento ](#2-planejamento)__\
+__[2. Posicionamento ](#2-posicionamento)__\
 [2.1 Oportunidade de Negócios ](#21-oportunidade-de-negocios)\
 [2.2 Instruções do Problema ](#22-instrucao-do-problema)\
 [2.3 Instrução da Posição do Produto ](#23-instrucao-da-posicao-do-produto)
@@ -75,11 +76,11 @@ IBM Knowledge Center - Documento de Visão: A estrutura de tópicos do documento
 Este documento apresenta a visão do projeto Alohomora,  descrevendo seu planejamento geral e expondo tópicos que especificam a descrição do problema a ser solucionado e como o produto pretende solucioná-lo. Aqui também são identificadas as partes constituintes do processo (partes interessadas e  usuários) e apresentados os recursos e restrições que envolvem o uso do produto.
 
 
-## 2. Planejamento
+## 2. Posicionamento
 ### 2.1 Oportunidade de Negócios
 No mundo atual, a tecnologia tem abrangido diferentes áreas e facilitado diversos processos. Em um condomínio residencial, tanto os moradores quanto os visitantes precisam se identificar no momento em que desejam acessar o local. Entretanto, estes últimos necessitam de autorização para efetivar o acesso, outorgada pelo morador cujo apartamento deseja-se visitar.
 
-Baseando-se nisso e dispondo de um sistema de biometria por voz, Alohomora procura automatizar, em certo nível, a dinâmica de permissão de entrada em um condomínio e também reduzir gastos do condomínio. A intenção é funcionar como um sistema seguro e prático para o reconhecimento de um morador e interação com o mesmo, através de um chatbot, para notificá-lo da chegada de um visitante.
+Baseando-se nisso e dispondo de um sistema de biometria por voz, Alohomora procura automatizar, em certo nível, a dinâmica de permissão de entrada e também reduzir gastos do condomínio. A intenção é funcionar como um sistema seguro e prático para o reconhecimento de um morador e interação com o mesmo, através de um chatbot, para notificá-lo da chegada de um visitante.
 
 
 
@@ -91,8 +92,8 @@ Baseando-se nisso e dispondo de um sistema de biometria por voz, Alohomora procu
 ### 2.3 Instrução da Posição do Produto
 | Para | que | Alohomora | que | Diferente de | nosso produto |
 | ---- | --- | --------- | --- | ------------ | ------------- |
-| moradores de condomínios | precisam ter sua identidade verificada para serem autorizados a entrar e precisam ir até o interfone responder uma solicitação do porteiro | é um sistema de portaria virtual com a autenticação via biometria vocal | automatiza as funções de portaria de um condomínio | sistema de portaria convencional | fornece uma forma mais cômoda de o proprietário se autenticar na entrada e permitir a entrada de visitantes. |
-| visitantes de condomínios | precisam ter sua identidade verificada e notificada ao morador cujo apartamento desejam visitar | possui um chatbot integrado | notifica o morador sobre a chegada do visitante e aguarda instrução | sistema de portaria convencional | executa a função de portaria de forma totalmente automatizada evitando falhas |
+| moradores de condomínios | precisam ter sua identidade verificada para serem autorizados a entrar e precisam ir até o interfone responder uma solicitação do porteiro | é um sistema de portaria virtual com a autenticação via biometria vocal | automatiza as funções de portaria de um condomínio | sistema de portaria convencional | fornece uma forma mais cômoda de o proprietário se autenticar e permitir a entrada de visitantes. |
+| visitantes de condomínios | precisam ter sua identidade verificada e notificada ao morador cujo apartamento desejam visitar | possui um chatbot integrado | notifica o morador sobre a chegada do visitante e aguarda instrução | sistema de portaria convencional | executa a função de portaria de forma totalmente automatizada |
 
 
 ## 3. Descrições da Parte Interessada e do Usuário
@@ -181,11 +182,13 @@ O projeto Alohomora busca atuar como uma portaria virtual, a qual intenciona a a
 
 ### 4.4 Licenciamento
 
+- MIT License
+
 
 ## 5. Recursos do Produto
 
 ### 5.1 Interação com o sistema Alohomora via voz
-A comunicação de nossa aplicação com o usuário, a fim de tomadas de decisão para qual a ação que o usuário resolva tomar.
+A comunicação de nossa aplicação com o usuário, a fim de tomadas de decições para qual a ação que o usuário resolva tomar.
 
 ### 5.2 Interação da aplicação com o usuário via Bot Telegram
 A finalidade é de conseguir gerenciar os cadastros, fazer a comunicação de dados com determinados usuários e notificar entrada de um visitante para moradores.
@@ -193,7 +196,7 @@ A finalidade é de conseguir gerenciar os cadastros, fazer a comunicação de da
 ## 6. Restrições
 
 ### 6.1 Restrição de design
-Para o serviço ser executado, deve haver os componentes de hardware necessários para poder integrar com o sistema de software Alohomora.
+Para o serviço ser executado, deve haver os componentes de hardware necessários para poder integrar com o sistema do software Alohomora.
 
 ### 6.2 Restrição de implementação
 A implementação deve seguir de forma que seja padronizada de acordo com o modelo servido pela aplicação Alohomora.
