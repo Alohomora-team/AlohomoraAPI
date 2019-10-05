@@ -207,7 +207,7 @@ def apartment(update, context):
         update.message.reply_text('Por favor, digite um apartamento existente:')
         return APARTMENT
 
-    update.message.reply_text('Vamos agora cadastrar a sua voz! Grave uma breve mensagem de voz dizendo "Sou eu"')
+    update.message.reply_text('Vamos agora cadastrar a sua voz! Grave uma breve mensagem de voz dizendo "Juro que sou eu"')
 
     return VOICE_REGISTER
 
@@ -219,8 +219,8 @@ def voice_register(update, context):
         update.message.reply_text('Muito curto...O áudio deve ter 1 segundo de duração.')
         update.message.reply_text('Por favor, grave novamente:')
         return VOICE_REGISTER
-    elif((voice_register.duration)>1.5):
-        update.message.reply_text('Muito grande...O áudio deve ter 1 segundo de duração.')
+    elif((voice_register.duration)>2.0):
+        update.message.reply_text('Muito grande...O áudio deve ter 2 segundo de duração.')
         update.message.reply_text('Por favor, grave novamente:')
         return VOICE_REGISTER
     else:
