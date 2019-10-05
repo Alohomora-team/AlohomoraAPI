@@ -65,7 +65,7 @@ def cpf_auth(update, context):
 
     auth_chat[chat_id]['cpf'] = cpf
 
-    update.message.reply_text('Grave um áudio de no mínimo 1 segundo dizendo "Sou eu"')
+    update.message.reply_text('Grave um áudio de no mínimo 1 segundo dizendo "Juro que sou eu"')
 
     return VOICE_AUTH
 
@@ -77,8 +77,8 @@ def voice_auth(update, context):
         update.message.reply_text('Muito curto...O áudio deve ter 1 segundo de duração.')
         update.message.reply_text('Por favor, grave novamente:')
         return VOICE_AUTH
-    elif((voice_auth.duration)>1.5):
-        update.message.reply_text('Muito grande...O áudio deve ter 1 segundo de duração.')
+    elif((voice_auth.duration)>2.0):
+        update.message.reply_text('Muito grande...O áudio deve ter 2 segundo de duração.')
         update.message.reply_text('Por favor, grave novamente:')
         return VOICE_AUTH
     else:
