@@ -1,6 +1,6 @@
 ## 1. Introdução
 
-Este documento tem como objetivo apresentar o projeto Alohomora, apresentando uma visão inicial do mesmo. Além disso, serão mostrados os objetivos, propósitos e requisitos de alto nível.
+Este documento tem como objetivo apresentar o projeto Alohomora, introduzindo uma visão inicial do mesmo. Além disso, serão mostrados os objetivos, propósitos e requisitos de alto nível.
 
 ## 2. Descrição do projeto
 
@@ -8,7 +8,7 @@ Alohomora é um sistema de portaria virtual que, com a ajuda da ferramenta de co
 
 ## 3. Propósito e justificativa do projeto
 
-Num condomínio residencial, com o intuito de controlar o acesso, moradores, funcionários ou visitantes precisam se identificar (com a ajuda de um porteiro, biometria, etc.) para entrarem no local. Quando se trata do controle de acesso de visitantes, é requerido que o acesso dele seja autorizado pelo morador do apartamento que ele deseja visitar, que normalmente implica em um porteiro ligar para o morador e confirmar a visita. 
+Num condomínio residencial, com o intuito de controlar o acesso, moradores, funcionários ou visitantes precisam se identificar (com a ajuda de um porteiro, biometria, etc.) para entrarem no local. Quando se trata do gerenciamento de entrada de visitantes, é requerido que o acesso dele seja autorizado pelo morador do apartamento que ele deseja visitar, que normalmente implica em um porteiro ligar para o morador e confirmar a visita. 
 
 Esse processo pode ficar demorado e entendiante ao longo que o número de visitas aumenta ou imprevistos aconteçam.
 
