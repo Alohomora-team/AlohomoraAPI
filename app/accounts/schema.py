@@ -52,9 +52,11 @@ class CreateUser(graphene.Mutation):
         apartment = graphene.String(required=True)
         block = graphene.String(required=True)
         voice_data = graphene.String()
+        mfcc_data = graphene.String()
 
     def mutate(self, info, **kwargs):
         voice_data = kwargs.get('voice_data')
+        mfcc_data = kwargs.get('mfcc_data')
         cpf = kwargs.get('cpf')
         complete_name = kwargs.get('complete_name')
         phone = kwargs.get('phone')
@@ -69,6 +71,8 @@ class CreateUser(graphene.Mutation):
                 voice_data = Utility.json_voice_data_to_json_mfcc(voice_data)
             except:
                 raise Exception('Invalid voice data')
+        else:
+            voice_data = mfcc_data
 
         if block_obj is None:
             raise Exception('Block not found')
@@ -159,7 +163,8 @@ class Query(graphene.AbstractType):
 
     voice_belongs_user = graphene.Boolean(
         cpf=graphene.String(required=True),
-        voice_data=graphene.String(required=True)
+        voice_data=graphene.String(),
+        mfcc_data=graphene.String()
     )
 
     user = graphene.Field(
@@ -217,8 +222,12 @@ class Query(graphene.AbstractType):
     def resolve_voice_belongs_user(self, info, **kwargs):
         user_cpf = kwargs.get('cpf')
         voice_data = kwargs.get('voice_data')
+        mfcc_data = kwargs.get('mfcc_data')
 
-        voice_sample = Utility.json_voice_data_to_mfcc(voice_data)
+        if voice_data is not None:
+            voice_sample = Utility.json_voice_data_to_mfcc(voice_data)
+        else:
+            voice_sample = Utility.json_to_numpy_array(mfcc_data)
 
         user = User.objects.get(cpf=user_cpf)
         others_users = User.objects.exclude(cpf=user_cpf)

@@ -14,7 +14,8 @@ RUN apk add --update --no-cache \
         g++ \
         gcc \
         py3-numpy \
-        py3-scipy
+        py3-scipy \
+        ffmpeg
 
 RUN pip3 install --no-cache-dir -r requirements.txt
 
