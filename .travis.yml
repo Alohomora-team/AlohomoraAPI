@@ -43,5 +43,5 @@ jobs:
         app: alohomora-epsmds
         on:
           repo: fga-eps-mds/2019.2-Alohomora
-          branch: devel
+          branch: 111-rodar-migrate-deploy
           
