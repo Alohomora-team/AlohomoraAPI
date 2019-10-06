@@ -7,6 +7,9 @@ import json
 import numpy
 import requests
 import subprocess
+import logging
+
+logger = logging.getLogger('Alohomora')
 
 NAME, PHONE, EMAIL, CPF, BLOCK, APARTMENT, VOICE_REGISTER, REPEAT_VOICE = range(8)
 
@@ -15,11 +18,14 @@ PATH = 'http://api:8000/graphql/'
 chat = {}
 
 def register(update, context):
+    logger.info("Introducing registration session")
+
     chat_id = update.message.chat_id
 
     update.message.reply_text('Ok, vamos iniciar o cadastro!')
     update.message.reply_text('Caso deseje interromper o processo digite /cancelar')
     update.message.reply_text('Nome:')
+    logger.info("Asking for name")
 
     chat[chat_id] = {}
 
@@ -30,15 +36,19 @@ def name(update, context):
     name = update.message.text
 
     if("nome" in name.lower()):
+        logger.error("User informing his name in a sentence - asking again")
         update.message.reply_text('Por favor, digite apenas o seu nome:')
         return NAME
     if(any(i.isdigit() for i in name)):
+        logger.error("Numbers in name - asking again")
         update.message.reply_text('Por favor, não digite números no nome, tente novamente:')
         return NAME
     if("@" in name or len(name)<3):
+        logger.error("Email instead name - asking again")
         update.message.reply_text('Neste momento é hora de digitar o seu nome, tente novamente:')
         return NAME
     if(len(name) > 80):
+        looging.error("Name out of range - asking again")
         update.message.reply_text('Nome excedeu tamanho máximo (80), tente novamente:')
         return NAME
 
@@ -49,6 +59,7 @@ def name(update, context):
     reply_markup = ReplyKeyboardMarkup(custom_keyboard, one_time_keyboard=True, resize_keyboard=True)
 
     update.message.reply_text('Telefone:', reply_markup=reply_markup)
+    logger.info("Asking for phone")
 
     return PHONE
 
@@ -59,19 +70,24 @@ def phone(update, context):
         phone = update.message.text
 
         if("-" in phone):
+            logger.info("Removing dashes from phone")
             phone = phone.replace('-','')
 
         if(" " in phone):
+            logger.info("Removing white-spaces from phone")
             phone = phone.replace(' ','')
 
         if("+" in phone):
+            logger.info("Removing '+' from phone")
             phone = phone.replace('+','')
 
         if(any(i.isalpha() for i in phone)):
+            logger.error("Alphabetic character in phone - asking again")
             update.message.reply_text('Por favor, digite seu telefone corretamente:')
             return PHONE
 
         if(len(phone) > 15):
+            logger.error("Phone out of range - asking again")
             update.message.reply_text('Telefone excedeu tamanho máximo (15), tente novamente:')
             return PHONE
 
@@ -83,6 +99,7 @@ def phone(update, context):
     chat[chat_id]['phone'] = phone
 
     update.message.reply_text('Email:')
+    logger.info("Asking for email")
 
     return EMAIL
 
@@ -91,10 +108,12 @@ def email(update, context):
     email = update.message.text
 
     if("@" not in email or " " in email or len(email)<4 or "." not in email):
+        logger.error("Invalid email - asking again")
         update.message.reply_text('Por favor, digite um email válido:')
         return EMAIL
 
     if(len(email) > 90):
+        logger.error("Email out of range - asking again")
         update.message.reply_text('Email excedeu tamanho máximo (90), tente novamente:')
         return EMAIL
 
@@ -103,10 +122,12 @@ def email(update, context):
     check = check_email(chat, chat_id)
 
     if 'errors' not in check.keys():
+        logger.error("Email already exists in database - asking again")
         update.message.reply_text('Já existe um morador com este email, tente novamente:')
         return EMAIL
 
     update.message.reply_text('CPF:')
+    logger.info("Asking for CPF")
 
     return CPF
 
@@ -115,9 +136,11 @@ def cpf(update, context):
     cpf = update.message.text
 
     if(len(cpf) > 11 and cpf[3] == "." and cpf[7] == "." and cpf[11] == "-"):
+        logger.info("Removing dots and dash from CPF")
         cpf = cpf.replace('.','').replace('-','')
 
     if(any(i.isalpha() for i in cpf) or "." in cpf or "-" in cpf or len(cpf) != 11):
+        logger.error("CPF in wrong formatation - asking again")
         update.message.reply_text('Por favor, digite o CPF com os 11 digitos: (Ex: 123.456.789-10)')
         return CPF
 
@@ -144,10 +167,12 @@ def cpf(update, context):
 
     # Validating CPF
     if((int(cpf[9]) != 0 and authCPF_J != 0 and authCPF_J != 1) and (int(cpf[9]) != (11 - authCPF_J))):
+        logger.error("Invalid CPF - asking again")
         update.message.reply_text('CPF inválido, tente novamente:')
         return CPF
 
     if((int(cpf[10]) != 0 and authCPF_K != 0 and authCPF_K != 1) and (int(cpf[10]) != (11 - authCPF_K))):
+        logger.error("Invalid CPF - asking again")
         update.message.reply_text('CPF inválido, tente novamente:')
         return CPF
 
@@ -156,10 +181,12 @@ def cpf(update, context):
     check = check_cpf(chat, chat_id)
 
     if 'errors' not in check.keys():
+        logger.error("CPF already exists in database - asking again")
         update.message.reply_text('Já existe um morador com este CPF, tente novamente:')
         return CPF
 
     update.message.reply_text('Bloco:')
+    logger.info("Asking for block number")
 
     return BLOCK
 
@@ -168,10 +195,12 @@ def block(update, context):
     block = update.message.text
 
     if("bloco" in block.lower() or " " in block):
+        logger.error("User informing the block number in a sentence - asking again")
         update.message.reply_text('Por favor, digite apenas o bloco: (Ex: 1)')
         return BLOCK
 
     if(len(block) > 4):
+        logger.error("Block number out of range - asking again")
         update.message.reply_text('Digte um bloco de até 4 caracteres:')
         return BLOCK
 
@@ -180,10 +209,12 @@ def block(update, context):
     check = check_block(chat, chat_id)
 
     if 'errors' in check.keys():
+        logger.error("Block not found - asking again")
         update.message.reply_text('Por favor, digite um bloco existente:')
         return BLOCK
 
     update.message.reply_text('Apartamento:')
+    logger.info("Asking for apartment number")
 
     return APARTMENT
 
@@ -192,10 +223,12 @@ def apartment(update, context):
     apartment = update.message.text
 
     if(any(i.isalpha() for i in apartment) or " " in apartment):
+        loggin.error("Alphabetic character in apartment number - asking again")
         update.message.reply_text('Por favor, digite apenas o apartamento: (Ex: 101)')
         return APARTMENT
 
     if(len(apartment) > 6):
+        logger.error("Apartment out of range - asking again")
         update.message.reply_text('Digite um apartamente de até 6 caracteres:')
         return APARTMENT
 
@@ -204,10 +237,12 @@ def apartment(update, context):
     check = check_apartment(chat, chat_id)
 
     if 'errors' in check.keys():
+        logger.error("Apartment not found - asking again")
         update.message.reply_text('Por favor, digite um apartamento existente:')
         return APARTMENT
 
     update.message.reply_text('Vamos agora cadastrar a sua voz! Grave uma breve mensagem de voz dizendo "Juro que sou eu"')
+    logger.info("Requesting voice audio")
 
     return VOICE_REGISTER
 
@@ -216,10 +251,12 @@ def voice_register(update, context):
     voice_register = update.message.voice
 
     if((voice_register.duration)<1.0):
+        logger.error("Audio too short - asking again")
         update.message.reply_text('Muito curto...O áudio deve ter 1 segundo de duração.')
         update.message.reply_text('Por favor, grave novamente:')
         return VOICE_REGISTER
     elif((voice_register.duration)>2.0):
+        logger.error("Audio too long - asking again")
         update.message.reply_text('Muito grande...O áudio deve ter 2 segundo de duração.')
         update.message.reply_text('Por favor, grave novamente:')
         return VOICE_REGISTER
@@ -248,6 +285,7 @@ def voice_register(update, context):
     keyboard = [[repeat_keyboard],[confirm_keyboard]]
     choice = ReplyKeyboardMarkup(keyboard, resize_keyboard=True, one_time_keyboard=True)
     update.message.reply_text('Escute o seu áudio e confirme se está com boa qualidade', reply_markup = choice)
+    logger.info("Asking to confirm or repeat voice audio")
 
     return REPEAT_VOICE
 
@@ -256,14 +294,19 @@ def repeat_voice(update, context):
     choice = update.message.text
 
     if choice == "Repetir":
+        logger.info("Repeating voice audio")
         update.message.reply_text('Por favor, grave novamente:')
         return VOICE_REGISTER
+
+    logger.info("Confirming voice audio")
 
     response = register_user(chat_id)
 
     if(response.status_code == 200 and 'errors' not in response.json().keys()):
+        logger.info("User registered in database")
         update.message.reply_text('Morador cadastrado no sistema!')
     else:
+        logger.error("Registration failed")
         update.message.reply_text('Falha ao cadastrar no sistema!')
 
     chat[chat_id] = {}
@@ -271,6 +314,7 @@ def repeat_voice(update, context):
     return ConversationHandler.END
 
 def end(update, context):
+    logger.info("Canceling registration")
     chat_id = update.message.chat_id
 
     update.message.reply_text('Cadastro cancelado!')
@@ -281,6 +325,8 @@ def end(update, context):
 
 
 def register_user(chat_id):
+    logger.info("Registering user")
+
     query = """
     mutation createUser(
         $completeName: String!,
