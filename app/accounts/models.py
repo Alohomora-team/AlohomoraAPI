@@ -16,14 +16,9 @@ class MyUserManager(BaseUserManager):
         service.save(using=self._db)
         return service
 
-    def create_superuser(self, email, password, **extra_fields):
-        return self.create_user(email, password, **extra_fields)
-
     def create_superuser(self, username, password):
         """Creates and saves a superuser with the given email and password."""
-        u = self.create_user(username,
-                        password=password,
-                    )
+        u = self.create_user(username, password=password)
         u.is_admin = True
         u.save(using=self._db)
         return u

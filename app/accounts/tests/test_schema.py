@@ -92,13 +92,13 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
         result = self.client.execute(mutation)
         self.assertIsNone(result.errors)
         self.assertDictEqual({
-                            "createResident": {
-                              "resident": {
-                                "completeName": "bob o construtor",
-                                "email": "resident@exemplo.com"
-                              }
-                            }
-                          }, result.data)
+            "createResident": {
+                "resident": {
+                    "completeName": "bob o construtor",
+                    "email": "resident@exemplo.com"
+                }
+            }
+        }, result.data)
 
     def test_query_residents(self):
 
@@ -116,15 +116,15 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
         result = self.client.execute(query)
         self.assertIsNone(result.errors)
         self.assertDictEqual({
-                                "residents": [
-                                  {
-                                    "completeName": "resident-evil",
-                                    "email": "raccoon-city@exemplo.com",
-                                    "phone": "42",
-                                    "cpf": "12345678910"
-                                  }
-                                ]
-                              }, result.data)
+            "residents": [
+                {
+                    "completeName": "resident-evil",
+                    "email": "raccoon-city@exemplo.com",
+                    "phone": "42",
+                    "cpf": "12345678910"
+                }
+            ]
+        }, result.data)
 
 
     def test_query_resident_email(self):
@@ -216,27 +216,27 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
         result = self.client.execute(mutation)
         self.assertIsNone(result.errors)
         self.assertDictEqual({
-                                "createVisitor": {
-                                  "visitor": {
-                                    "email": "oi@oi",
-                                    "phone": "123",
-                                    "completeName": "visitor",
-                                    "cpf": "123",
-                                    "owner": {
-                                      "completeName": "resident-evil",
-                                      "cpf": "12345678910",
-                                      "email": "raccoon-city@exemplo.com",
-                                      "phone": "42",
-                                      "apartment": {
-                                        "number": "101",
-                                        "block": {
-                                          "number": "1"
-                                        }
-                                      }
-                                    }
-                                  }
-                                }
-                              }, result.data)
+            "createVisitor": {
+                "visitor": {
+                    "email": "oi@oi",
+                    "phone": "123",
+                    "completeName": "visitor",
+                    "cpf": "123",
+                    "owner": {
+                        "completeName": "resident-evil",
+                        "cpf": "12345678910",
+                        "email": "raccoon-city@exemplo.com",
+                        "phone": "42",
+                        "apartment": {
+                            "number": "101",
+                            "block": {
+                                "number": "1"
+                            }
+                        }
+                    }
+                }
+            }
+        }, result.data)
 
     def test_query_services(self):
 
@@ -251,13 +251,13 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
         result = self.client.execute(query)
         self.assertIsNone(result.errors)
         self.assertDictEqual({
-                            "services": [
-                              {
-                                "completeName": "bob esponja",
-                                "email": "service@exemplo.com"
-                              }
-                            ]
-                          }, result.data)
+            "services": [
+                {
+                    "completeName": "bob esponja",
+                    "email": "service@exemplo.com"
+                }
+            ]
+        }, result.data)
 
     def test_mutation_services(self):
 
@@ -277,13 +277,13 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
         result = self.client.execute(mutation)
         self.assertIsNone(result.errors)
         self.assertDictEqual({
-                            "createService": {
-                              "service": {
-                                "email": "ibis@ni",
-                                "completeName": "colheita-feliz"
-                              }
-                            }
-                          }, result.data)
+            "createService": {
+                "service": {
+                    "email": "ibis@ni",
+                    "completeName": "colheita-feliz"
+                }
+            }
+        }, result.data)
         self.assertNotEqual(get_user_model().objects.get(email="ibis@ni").password, '123')
 
     def test_authentication(self):
@@ -360,7 +360,7 @@ class VoiceBelongsUserTests(TestCase):
             email="sereihokage@konoha.com",
             phone="6133941597",
             cpf="0123456781",
-            user = get_user_model().objects.get(email='resident2@example.com'),
+            user=get_user_model().objects.get(email='resident2@example.com'),
             voice_data=Utility.json_voice_data_to_json_mfcc(
                 json.dumps([3 * x for x in range(32000)])
             ),
@@ -371,7 +371,7 @@ class VoiceBelongsUserTests(TestCase):
             email="modoturbo@yahoo.com",
             phone="6133941596",
             cpf="0123456782",
-            user = get_user_model().objects.get(email='resident3@example.com'),
+            user=get_user_model().objects.get(email='resident3@example.com'),
             voice_data=Utility.json_voice_data_to_json_mfcc(
                 json.dumps([x**2  - 50 * x + 20 for x in range(32000)])
             ),
@@ -382,7 +382,7 @@ class VoiceBelongsUserTests(TestCase):
             email="ben10@omnitrix.com",
             phone="33941595",
             cpf="0123456783",
-            user = get_user_model().objects.get(email='resident4@example.com'),
+            user=get_user_model().objects.get(email='resident4@example.com'),
             voice_data=Utility.json_voice_data_to_json_mfcc(
                 json.dumps([x - 200 for x in range(32000)])
             ),
@@ -393,7 +393,7 @@ class VoiceBelongsUserTests(TestCase):
             email="i_hate_marleyans@eldia.com",
             phone="99999999",
             cpf="0000000000",
-            user = get_user_model().objects.get(email='resident5@example.com'),
+            user=get_user_model().objects.get(email='resident5@example.com'),
             voice_data=Utility.json_voice_data_to_json_mfcc(
                 json.dumps([x * 0.5 for x in range(32000)])
             ),

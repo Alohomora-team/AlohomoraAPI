@@ -239,13 +239,13 @@ class Query(graphene.AbstractType):
 
     def resolve_me(self, info):
         user = info.context.user
-        if user.is_service == True:
+        if user.is_service is True:
             raise Exception('User is service')
-        if user.is_visitor == True:
+        if user.is_visitor is True:
             raise Exception('User is visitor')
-        if user.is_resident == True:
+        if user.is_resident is True:
             raise Exception('User is resident')
-        if user.is_admin == True:
+        if user.is_admin is True:
             raise Exception('User is admin')
         return user
 
@@ -289,7 +289,8 @@ class Query(graphene.AbstractType):
 
         for current_resident in residents:
             current_resident_voice_data = Utility.json_to_numpy_array(current_resident.voice_data)
-            current_measure = Utility.compute_dtw_distance(voice_sample, current_resident_voice_data)
+            current_measure = Utility.compute_dtw_distance(voice_sample,
+                                                           current_resident_voice_data)
 
             if current_measure < lowest_dtw_score:
                 lowest_dtw_score = current_measure
