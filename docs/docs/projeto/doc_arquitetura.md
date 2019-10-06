@@ -8,6 +8,7 @@
 | ------------- | ----------- | ---------------------------------------------------- | ---------- |
 |  26/09/2019  | 1.0 | Criação da primeira versão do documento | Paulo Batista, Rodrigo Lima, Victor Gonçalves |
 |  01/10/2019  | 1.1 | Revisão de erros ortográficos e sintaxe | João Luis Baraky, Victor Jorge Gonçalves |
+| 06/10/2019 | 1.2 | Incremento de uma explicação básica do que é significa MVT | Rodrigo Lima, João Luis Baraky |
 
 ## Sumário
 __[1. Introdução](#1-introducao)__ \
@@ -18,6 +19,7 @@ __[1. Introdução](#1-introducao)__ \
 
 __[2. Representação da Arquitetura](#2-representacao-da-arquitetura)__ \
 [2.1 Django](#21-django) \
+[2.1.1 MVT](#211-mvt)\
 [2.2 GraphQL](#22-graphql) \
 [2.2.1 Graphene-Python](#221-graphene-python) \
 [2.2.2 Graphene-Django](#222-graphene-django) \
@@ -46,15 +48,22 @@ Alohomora, é um projeto realizado para as disciplinas Métodos de Desenvolvimen
 | API | Application Programming Interface |
 | MDS | Métodos de Desenvolvimento de Software |
 | EPS | Engenharia de Produto de Software |
+|MVT|Model, View, Template|
 
 ### 1.4 Referências
 Sistema de Registro em Curso - Documento de Arquitetura de Software; Disponível em: [http://mds.cultura.gov.br/extend.formal_resources/guidances/examples/resources/sadoc_v1.htm](http://mds.cultura.gov.br/extend.formal_resources/guidances/examples/resources/sadoc_v1.htm). Acesso em: 26 de setembro de 2019.
-PATROCÍNIO, Sofia; GOUVEIA, Micaella; PEREIRA, Samuel; TAIRA, Luis; MUNIZ, Amanda. Chatbot Gaia: Arquitetura. Disponível em: [https://github.com/fga-eps-mds/2019.1-Gaia/blob/master/docs/projeto/DocArquitetura.md](https://github.com/fga-eps-mds/2019.1-Gaia/blob/master/docs/projeto/DocArquitetura.md). Acesso em: 26 de setembro de 2019.
+PATROCÍNIO, Sofia; GOUVEIA, Micaella; PEREIRA, Samuel; TAIRA, Luis; MUNIZ, Amanda. Chatbot Gaia: Arquitetura. Disponível em: [https://github.com/fga-eps-mds/2019.1-Gaia/blob/master/docs/projeto/DocArquitetura.md](https://github.com/fga-eps-mds/2019.1-Gaia/blob/master/docs/projeto/DocArquitetura.md). Acesso em: 26 de setembro de 2019. Padrões Arquiteturais MVC X Arquitetura do Django; Disponível em: [https://github.com/fga-eps-mds/A-Disciplina/wiki/Padr%C3%B5es-Arquiteturais---MVC-X-Arquitetura-do-Django](https://github.com/fga-eps-mds/A-Disciplina/wiki/Padr%C3%B5es-Arquiteturais---MVC-X-Arquitetura-do-Django). Acesso em: 05 de outubro de 2019. 
 
 ## 2. Representação da Arquitetura
 ### 2.1 Django
-Django é um Python Web framework de alto-nível que encoraja o desenvolvimento rápido e organizado. O framework enfatiza a reusabilidade e conectividade de componentes, sendo assim, utiliza-se menos código.
-Aplica-se a arquitetura Model-Template-View (MTV).
+Django é um Python Web framework de alto-nível que encoraja o desenvolvimento rápido e organizado. O framework enfatiza a reusabilidade e conectividade de componentes, sendo assim,utiliza-se menos código.
+Aplica-se a arquitetura Model-View-Template (MVT).
+### 2.1.1 MVT
+* Model - É a parte que representa as classes, além de ser a parte responsavel por ler e escrever informações no banco de dados, para isso cada classe da model representa uma tabela do banco de dados.
+* View - É a comunicação entre a Model e a Template. É nela que há o tratamento de informações recebidas e o retorno para o usuário.
+* Template - É a parte da visão de usuário. Geralmente usa HTML, CSS, javascript, etc. Normalmente é focada na apresentação da aplicação para o usuário.
+
+
 ### 2.2 GraphQL
 GraphQL é uma linguagem de busca para APIs que fornece uma descrição completa dos dados da API e dispoẽ o poder de solicitar exatamento o que o usuário necessita. Tais funcionalidades contribuem na eficiência e velocidade no desenvolvimento de aplicações.
 ### 2.2.1 Graphene-Python
