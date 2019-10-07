@@ -34,7 +34,7 @@ def cpf_auth(update, context):
     chat_id = update.message.chat_id
 
     if(len(cpf) > 11 and cpf[3] == "." and cpf[7] == "." and cpf[11] == "-"):
-        logger.info("Removing dots and dash from CPF")
+        logger.debug("Removing dots and dash from CPF")
         cpf = cpf.replace('.','').replace('-','')
 
     if(any(i.isalpha() for i in cpf) or "." in cpf or "-" in cpf or len(cpf) != 11):
@@ -156,6 +156,8 @@ def authenticate(chat_id):
     }
 
     response = requests.post(PATH, json={'query':query, 'variables':variables})
+
+    logger.debug("Response: " + str(response.json()))
 
     return response.json()
 

@@ -70,15 +70,15 @@ def phone(update, context):
         phone = update.message.text
 
         if("-" in phone):
-            logger.info("Removing dashes from phone")
+            logger.debug("Removing dashes from phone")
             phone = phone.replace('-','')
 
         if(" " in phone):
-            logger.info("Removing white-spaces from phone")
+            logger.debug("Removing white-spaces from phone")
             phone = phone.replace(' ','')
 
         if("+" in phone):
-            logger.info("Removing '+' from phone")
+            logger.debug("Removing '+' from phone")
             phone = phone.replace('+','')
 
         if(any(i.isalpha() for i in phone)):
@@ -136,7 +136,7 @@ def cpf(update, context):
     cpf = update.message.text
 
     if(len(cpf) > 11 and cpf[3] == "." and cpf[7] == "." and cpf[11] == "-"):
-        logger.info("Removing dots and dash from CPF")
+        logger.debug("Removing dots and dash from CPF")
         cpf = cpf.replace('.','').replace('-','')
 
     if(any(i.isalpha() for i in cpf) or "." in cpf or "-" in cpf or len(cpf) != 11):
@@ -166,12 +166,12 @@ def cpf(update, context):
                  int(cpf[9])*2) % 11
 
     # Validating CPF
-    if((int(cpf[9]) != 0 and authCPF_J != 0 and authCPF_J != 1) and (int(cpf[9]) != (11 - authCPF_J))):
+    if((int(cpf[9]) != 0 and (authCPF_J == 0 or authCPF_J == 1)) and (int(cpf[9]) != (11 - authCPF_J))):
         logger.error("Invalid CPF - asking again")
         update.message.reply_text('CPF inválido, tente novamente:')
         return CPF
 
-    if((int(cpf[10]) != 0 and authCPF_K != 0 and authCPF_K != 1) and (int(cpf[10]) != (11 - authCPF_K))):
+    if((int(cpf[10]) != 0 and (authCPF_K == 0 or authCPF_K == 1)) and (int(cpf[10]) != (11 - authCPF_K))):
         logger.error("Invalid CPF - asking again")
         update.message.reply_text('CPF inválido, tente novamente:')
         return CPF
@@ -294,11 +294,11 @@ def repeat_voice(update, context):
     choice = update.message.text
 
     if choice == "Repetir":
-        logger.info("Repeating voice audio")
+        logger.debug("Repeating voice audio")
         update.message.reply_text('Por favor, grave novamente:')
         return VOICE_REGISTER
 
-    logger.info("Confirming voice audio")
+    logger.debug("Confirming voice audio")
 
     response = register_user(chat_id)
 
@@ -376,5 +376,7 @@ def register_user(chat_id):
             }
 
     response = requests.post(PATH, json={'query':query, 'variables':variables})
+
+    logger.debug("Response: " + str(response.json()))
 
     return response
