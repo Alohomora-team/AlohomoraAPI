@@ -13,6 +13,8 @@ class ApartmentType(DjangoObjectType):
         model = Apartment
 
 class Query():
+    """Used to read or fetch values"""
+
     all_blocks = graphene.List(BlockType)
     all_apartments = graphene.List(ApartmentType)
 
@@ -64,9 +66,9 @@ class Query():
 
         return None
 
-# Mutations
-
 class CreateApartment(graphene.Mutation):
+    """Mutation from graphene for creating apartment"""
+
     number = graphene.String()
     block_number = graphene.String()
     block = graphene.Field(BlockType)
@@ -87,6 +89,8 @@ class CreateApartment(graphene.Mutation):
             block=apartment.block)
 
 class CreateBlock(graphene.Mutation):
+    """Mutation from graphene for creating block"""
+
     number = graphene.String()
 
     class Arguments:
