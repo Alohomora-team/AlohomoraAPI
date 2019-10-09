@@ -27,7 +27,7 @@ class CreateUser(graphene.Mutation):
     user = graphene.Field(UserType)
     class Arguments:
         username = graphene.String(required=True)
-        password = graphene.String(required=True)
+        password = graphene.String(required=False)
 
     def mutate(self, info, password, username):
         user = get_user_model()(
@@ -77,7 +77,7 @@ class CreateResident(graphene.Mutation):
         cpf = graphene.String(required=True)
         apartment = graphene.String(required=True)
         block = graphene.String(required=True)
-        password = graphene.String(required=True)
+        password = graphene.String(required=False)
         voice_data = graphene.String()
         mfcc_data = graphene.String()
 

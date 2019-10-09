@@ -19,7 +19,7 @@ def start(update, context):
 
 if __name__ == '__main__':
 
-    token = '959215527:AAG3K2izQIOGmi82pwFnWyGvr0flkq0K3do'
+    token = ''
 
     updater = Updater(token, use_context=True)
 
