@@ -36,12 +36,3 @@ services:
     - "./docs:/home"
     ports:
     - "8080:8080"
-
-  bot:
-    build:
-      context: . 
-      dockerfile: docker/bot/Dockerfile
-    volumes:
-    - "./bot:/home"
-    depends_on:
-    - api
