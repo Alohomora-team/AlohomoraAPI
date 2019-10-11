@@ -3,23 +3,25 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager
 from condos.models import Apartment, Block
 
 class MyUserManager(BaseUserManager):
-    """Creates and saves a Service with the given email and password"""
-    def create_service(self, email, password=None, **kwars):
+    """Creates and saves a User with the given email and password"""
+    def create_user(self, email, password=None, **kwars):
         if not email:
             raise ValueError('Users must have an email address')
 
-        service = self.model(
+        user = self.model(
             email=self.normalize_email(email),
         )
 
-        service.set_password(password)
-        service.save(using=self._db)
-        return service
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
 
-    def create_superuser(self, username, password):
+    def create_superuser(self, email, password):
         """Creates and saves a superuser with the given email and password."""
-        u = self.create_user(username, password=password)
+        u = self.create_user(email, password=password)
         u.is_admin = True
+        u.is_staff = True
+        u.is_superuser = True
         u.save(using=self._db)
         return u
 

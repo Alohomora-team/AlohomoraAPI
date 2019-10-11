@@ -5,6 +5,7 @@ from accounts.models import Visitor, Resident, Service
 import accounts.utility as Utility
 from condos.models import Apartment, Block
 from django.contrib.auth import get_user_model
+from graphql_jwt.decorators import superuser_required
 
 class ResidentType(DjangoObjectType):
     class Meta:
@@ -200,19 +201,15 @@ class Query(graphene.AbstractType):
         email=graphene.String(),
         cpf=graphene.String()
         )
-
     def resolve_visitors(self, info, **kwargs):
         return Visitor.objects.all()
-
+    @superuser_required
     def resolve_residents(self, info, **kwargs):
         return Resident.objects.all()
-
     def resolve_services(self, info, **kwargs):
         return Service.objects.all()
-
     def resolve_users(self, info, **kwargs):
         return get_user_model().objects.all()
-
     def resolve_resident(self, info, **kwargs):
         email = kwargs.get('email')
         cpf = kwargs.get('cpf')
@@ -224,7 +221,6 @@ class Query(graphene.AbstractType):
             return Resident.objects.get(cpf=cpf)
 
         return None
-
     def resolve_visitor(self, info, **kwargs):
         email = kwargs.get('email')
         cpf = kwargs.get('cpf')
@@ -236,7 +232,6 @@ class Query(graphene.AbstractType):
             return Visitor.objects.get(cpf=cpf)
 
         return None
-
     def resolve_me(self, info):
         user = info.context.user
         if user.is_service is True:
