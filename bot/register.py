@@ -28,6 +28,7 @@ def register(update, context):
     logger.info("Asking for name")
 
     chat[chat_id] = {}
+    logger.debug("data['%s']: %s" % (chat_id, chat[chat_id]))
 
     return NAME
 
@@ -53,6 +54,7 @@ def name(update, context):
         return NAME
 
     chat[chat_id]['name'] = name
+    logger.debug("'name': '%s'" % chat[chat_id]['name'])
 
     contact_keyboard = KeyboardButton('Enviar meu número de telefone', request_contact=True)
     custom_keyboard = [[ contact_keyboard ]]
@@ -97,6 +99,7 @@ def phone(update, context):
         phone = phone.replace('+','')
 
     chat[chat_id]['phone'] = phone
+    logger.debug("'phone': '%s'" % chat[chat_id]['phone'])
 
     update.message.reply_text('Email:')
     logger.info("Asking for email")
@@ -118,6 +121,7 @@ def email(update, context):
         return EMAIL
 
     chat[chat_id]['email'] = email
+    logger.debug("'email': '%s'" % chat[chat_id]['email'])
 
     check = check_email(chat, chat_id)
 
@@ -125,6 +129,8 @@ def email(update, context):
         logger.error("Email already exists in database - asking again")
         update.message.reply_text('Já existe um morador com este email, tente novamente:')
         return EMAIL
+
+    logger.debug("Available email - proceed")
 
     update.message.reply_text('CPF:')
     logger.info("Asking for CPF")
@@ -177,6 +183,7 @@ def cpf(update, context):
         return CPF
 
     chat[chat_id]['cpf'] = cpf
+    logger.debug("'cpf': '%s'" % chat[chat_id]['cpf'])
 
     check = check_cpf(chat, chat_id)
 
@@ -184,6 +191,8 @@ def cpf(update, context):
         logger.error("CPF already exists in database - asking again")
         update.message.reply_text('Já existe um morador com este CPF, tente novamente:')
         return CPF
+
+    logger.debug("Available CPF - proceed")
 
     update.message.reply_text('Bloco:')
     logger.info("Asking for block number")
@@ -205,6 +214,7 @@ def block(update, context):
         return BLOCK
 
     chat[chat_id]['block'] = block
+    logger.debug("'block': '%s'" % chat[chat_id]['block'])
 
     check = check_block(chat, chat_id)
 
@@ -212,6 +222,8 @@ def block(update, context):
         logger.error("Block not found - asking again")
         update.message.reply_text('Por favor, digite um bloco existente:')
         return BLOCK
+
+    logger.debug("Existing block - proceed")
 
     update.message.reply_text('Apartamento:')
     logger.info("Asking for apartment number")
@@ -233,6 +245,7 @@ def apartment(update, context):
         return APARTMENT
 
     chat[chat_id]['apartment'] = apartment
+    logger.debug("'apartment': '%s'" % chat[chat_id]['apartment'])
 
     check = check_apartment(chat, chat_id)
 
@@ -240,6 +253,8 @@ def apartment(update, context):
         logger.error("Apartment not found - asking again")
         update.message.reply_text('Por favor, digite um apartamento existente:')
         return APARTMENT
+
+    logger.debug("Existing apartment - proceed")
 
     update.message.reply_text('Vamos agora cadastrar a sua voz! Grave uma breve mensagem de voz dizendo "Juro que sou eu"')
     logger.info("Requesting voice audio")
@@ -278,6 +293,8 @@ def voice_register(update, context):
 
     chat[chat_id]['voice_reg'] = None
     chat[chat_id]['voice_mfcc'] = mfcc_data
+    logger.debug("'voice_reg': '%s'" % chat[chat_id]['voice_reg'])
+    logger.debug("'voice_mfcc': '%s...%s'" % (chat[chat_id]['voice_mfcc'][:5], chat[chat_id]['voice_mfcc'][-5:]))
 
     # Repeat and confirm buttons
     repeat_keyboard = KeyboardButton('Repetir')
@@ -310,6 +327,7 @@ def repeat_voice(update, context):
         update.message.reply_text('Falha ao cadastrar no sistema!')
 
     chat[chat_id] = {}
+    logger.debug("data['%s']: %s" % (chat_id, chat[chat_id]))
 
     return ConversationHandler.END
 
@@ -320,6 +338,7 @@ def end(update, context):
     update.message.reply_text('Cadastro cancelado!')
 
     chat[chat_id] = {}
+    logger.debug("data['%s']: %s" % (chat_id, chat[chat_id]))
 
     return ConversationHandler.END
 

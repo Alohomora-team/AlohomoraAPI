@@ -26,6 +26,7 @@ def auth(update, context):
     logger.info("Asking for CPF")
 
     auth_chat[chat_id] = {}
+    logger.debug("data['%s']: %s" % (chat_id, auth_chat[chat_id]))
 
     return CPF_AUTH
 
@@ -74,6 +75,7 @@ def cpf_auth(update, context):
         return CPF_AUTH
 
     auth_chat[chat_id]['cpf'] = cpf
+    logger.debug("'auth-cpf': '%s'" % auth_chat[chat_id]['cpf'])
 
     update.message.reply_text('Grave um áudio de no mínimo 1 segundo dizendo "Juro que sou eu"')
     logger.info("Requesting voice audio")
@@ -112,6 +114,7 @@ def voice_auth(update, context):
     mfcc_data = json.dumps(mfcc_data)
 
     auth_chat[chat_id]['voice_mfcc'] = mfcc_data
+    logger.debug("'auth-voice-mfcc': %s...%s" % (auth_chat[chat_id]['voice_mfcc'][:5], auth_chat[chat_id]['voice_mfcc'][-5:]))
 
     response = authenticate(chat_id)
 

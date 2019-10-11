@@ -7,17 +7,18 @@ PATH = 'http://api:8000/graphql/'
 NAME, PHONE, EMAIL, CPF, BLOCK, APARTMENT, VOICE_REGISTER, REPEAT_VOICE = range(8)
 CPF_AUTH, VOICE_AUTH = range(2)
 
-logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', datefmt='%d/%m/%Y %I:%M:%S', level=logging.DEBUG)
+# Filtering the logs from 'telegram' and 'JobQueue' API
+logging.getLogger("telegram").setLevel(logging.CRITICAL)
+logging.getLogger("JobQueue").setLevel(logging.CRITICAL)
 
+logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', datefmt='%d/%m/%Y %I:%M:%S', level=logging.DEBUG)
 logger = logging.getLogger('Alohomora')
 
+# FileHandler
 file_handler = logging.FileHandler('file.log')
 file_handler.setLevel(logging.DEBUG)
-
 f_format = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s', datefmt='%d/%m/%Y %I:%M:%S')
-
 file_handler.setFormatter(f_format)
-
 logger.addHandler(file_handler)
 
 def start(update, context):
