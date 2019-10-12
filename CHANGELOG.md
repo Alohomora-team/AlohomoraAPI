@@ -6,7 +6,9 @@
 * Estrutura padrão do condominio
 * Adicionado docker-compose para rodar o site locamente
 
+### Versao 1
 
-### Bug FIX 
+ * Adição de autenticação para várias models
+### Bug FIX
 
 * 
