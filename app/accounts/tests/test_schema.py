@@ -15,8 +15,12 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
     def setUp(self):
         self._client = Client(schema)
         self.user = get_user_model().objects.create(email='user@exemplo',
-                                                    password='12',
+                                                    password='123',
                                                     username='user')
+        self.super_user = get_user_model().objects.create_superuser(email='admin@exemplo',
+                                                                    password='123')
+        self.client.authenticate(self.super_user)
+
     def query(self, query: str):
         resp = self._client.execute(query)
         return resp
@@ -288,7 +292,6 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
 
     def test_authentication(self):
 
-        self.user.set_password('12')
         self.client.authenticate(self.user)
 
         query = '''
@@ -306,7 +309,7 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
                               {
                                   "username": "user",
                                   "email": "user@exemplo",
-                                  "password": "12"}
+                                  "password": "123"}
                              }, result.data)
 
 class VoiceBelongsUserTests(TestCase):

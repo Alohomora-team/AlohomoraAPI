@@ -1,10 +1,9 @@
 from django.test import TestCase
+from django.contrib.auth import get_user_model
 from condos.models import Apartment, Block
 from graphene.test import Client
 from alohomora.schema import schema
 from graphql_jwt.testcases import JSONWebTokenTestCase
-
-
 
 class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
     """Test that information can be retrieved and created using graphql"""
@@ -13,6 +12,9 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
         self._client = Client(schema)
         block = Block.objects.create(number="1")
         Apartment.objects.create(number="101", block=block)
+        self.super_user = get_user_model().objects.create_superuser(email='admin@exemplo',
+                                                                    password='123')
+        self.client.authenticate(self.super_user)
 
     def query(self, query: str):
         resp = self._client.execute(query)

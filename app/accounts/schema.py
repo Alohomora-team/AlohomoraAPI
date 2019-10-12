@@ -201,15 +201,19 @@ class Query(graphene.AbstractType):
         email=graphene.String(),
         cpf=graphene.String()
         )
+    @superuser_required
     def resolve_visitors(self, info, **kwargs):
         return Visitor.objects.all()
     @superuser_required
     def resolve_residents(self, info, **kwargs):
         return Resident.objects.all()
+    @superuser_required
     def resolve_services(self, info, **kwargs):
         return Service.objects.all()
+    @superuser_required
     def resolve_users(self, info, **kwargs):
         return get_user_model().objects.all()
+    @superuser_required
     def resolve_resident(self, info, **kwargs):
         email = kwargs.get('email')
         cpf = kwargs.get('cpf')
@@ -221,6 +225,7 @@ class Query(graphene.AbstractType):
             return Resident.objects.get(cpf=cpf)
 
         return None
+    @superuser_required
     def resolve_visitor(self, info, **kwargs):
         email = kwargs.get('email')
         cpf = kwargs.get('cpf')
@@ -240,8 +245,6 @@ class Query(graphene.AbstractType):
             raise Exception('User is visitor')
         if user.is_resident is True:
             raise Exception('User is resident')
-        if user.is_admin is True:
-            raise Exception('User is admin')
         return user
 
     def resolve_voice_belongs_resident(self, info, **kwargs):
