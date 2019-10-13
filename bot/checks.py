@@ -22,7 +22,7 @@ def check_block(chat, chat_id):
 
     response = requests.post(PATH, json={'query': query, 'variables':variables})
 
-    logger.debug("Response: " + str(response.json()))
+    logger.debug(f"Response: {response.json()}")
 
     return response.json()
 
@@ -47,7 +47,7 @@ def check_apartment(chat, chat_id):
 
     response = requests.post(PATH, json={'query': query, 'variables':variables})
 
-    logger.debug("Response: " + str(response.json()))
+    logger.debug(f"Response: {response.json()}")
 
     return response.json()
 
@@ -68,7 +68,7 @@ def check_email(chat, chat_id):
 
     response = requests.post(PATH, json={'query': query, 'variables':variables})
 
-    logger.debug("Response: " + str(response.json()))
+    logger.debug(f"Response: {response.json()}")
 
     return response.json()
 
@@ -89,7 +89,7 @@ def check_cpf(chat, chat_id):
 
     response = requests.post(PATH, json={'query': query, 'variables':variables})
 
-    logger.debug("Response: " + str(response.json()))
+    logger.debug(f"Response: {response.json()}")
 
     return response.json()
 

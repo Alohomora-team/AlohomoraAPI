@@ -1,4 +1,5 @@
 import logging
+import os
 from telegram.ext import Updater, CommandHandler, MessageHandler, ConversationHandler, Filters
 from auth import auth, cpf_auth, voice_auth, end_auth
 from register import register, name, phone, email, cpf, apartment, block, voice_register, repeat_voice, end
@@ -11,8 +12,9 @@ CPF_AUTH, VOICE_AUTH = range(2)
 logging.getLogger("telegram").setLevel(logging.CRITICAL)
 logging.getLogger("JobQueue").setLevel(logging.CRITICAL)
 
-logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', datefmt='%d/%m/%Y %I:%M:%S', level=logging.DEBUG)
+logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', datefmt='%d/%m/%Y %I:%M:%S')
 logger = logging.getLogger('Alohomora')
+logger.setLevel(logging.DEBUG)
 
 # FileHandler
 file_handler = logging.FileHandler('file.log')

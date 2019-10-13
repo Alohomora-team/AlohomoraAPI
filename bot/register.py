@@ -28,7 +28,7 @@ def register(update, context):
     logger.info("Asking for name")
 
     chat[chat_id] = {}
-    logger.debug("data['%s']: %s" % (chat_id, chat[chat_id]))
+    logger.debug(f"data['{chat_id}']: {chat[chat_id]}")
 
     return NAME
 
@@ -54,7 +54,7 @@ def name(update, context):
         return NAME
 
     chat[chat_id]['name'] = name
-    logger.debug("'name': '%s'" % chat[chat_id]['name'])
+    logger.debug(f"'name': '{chat[chat_id]['name']}'")
 
     contact_keyboard = KeyboardButton('Enviar meu número de telefone', request_contact=True)
     custom_keyboard = [[ contact_keyboard ]]
@@ -99,7 +99,7 @@ def phone(update, context):
         phone = phone.replace('+','')
 
     chat[chat_id]['phone'] = phone
-    logger.debug("'phone': '%s'" % chat[chat_id]['phone'])
+    logger.debug(f"'phone': '{chat[chat_id]['phone']}'")
 
     update.message.reply_text('Email:')
     logger.info("Asking for email")
@@ -121,7 +121,7 @@ def email(update, context):
         return EMAIL
 
     chat[chat_id]['email'] = email
-    logger.debug("'email': '%s'" % chat[chat_id]['email'])
+    logger.debug(f"'email': '{chat[chat_id]['email']}'")
 
     check = check_email(chat, chat_id)
 
@@ -183,7 +183,7 @@ def cpf(update, context):
         return CPF
 
     chat[chat_id]['cpf'] = cpf
-    logger.debug("'cpf': '%s'" % chat[chat_id]['cpf'])
+    logger.debug(f"'cpf': '{chat[chat_id]['cpf']}'")
 
     check = check_cpf(chat, chat_id)
 
@@ -214,7 +214,7 @@ def block(update, context):
         return BLOCK
 
     chat[chat_id]['block'] = block
-    logger.debug("'block': '%s'" % chat[chat_id]['block'])
+    logger.debug(f"'block': '{chat[chat_id]['block']}'")
 
     check = check_block(chat, chat_id)
 
@@ -245,7 +245,7 @@ def apartment(update, context):
         return APARTMENT
 
     chat[chat_id]['apartment'] = apartment
-    logger.debug("'apartment': '%s'" % chat[chat_id]['apartment'])
+    logger.debug(f"'apartment': '{chat[chat_id]['apartment']}'")
 
     check = check_apartment(chat, chat_id)
 
@@ -293,8 +293,8 @@ def voice_register(update, context):
 
     chat[chat_id]['voice_reg'] = None
     chat[chat_id]['voice_mfcc'] = mfcc_data
-    logger.debug("'voice_reg': '%s'" % chat[chat_id]['voice_reg'])
-    logger.debug("'voice_mfcc': '%s...%s'" % (chat[chat_id]['voice_mfcc'][:5], chat[chat_id]['voice_mfcc'][-5:]))
+    logger.debug(f"'voice_reg': '{chat[chat_id]['voice_reg']}'")
+    logger.debug(f"'voice_mfcc': '{chat[chat_id]['voice_mfcc'][:1]}...{chat[chat_id]['voice_mfcc'][-1:]}'")
 
     # Repeat and confirm buttons
     repeat_keyboard = KeyboardButton('Repetir')
@@ -327,7 +327,7 @@ def repeat_voice(update, context):
         update.message.reply_text('Falha ao cadastrar no sistema!')
 
     chat[chat_id] = {}
-    logger.debug("data['%s']: %s" % (chat_id, chat[chat_id]))
+    logger.debug(f"data['{chat_id}']: {chat[chat_id]}")
 
     return ConversationHandler.END
 
@@ -338,7 +338,7 @@ def end(update, context):
     update.message.reply_text('Cadastro cancelado!')
 
     chat[chat_id] = {}
-    logger.debug("data['%s']: %s" % (chat_id, chat[chat_id]))
+    logger.debug(f"data['{chat_id}']: {chat[chat_id]}")
 
     return ConversationHandler.END
 
@@ -396,6 +396,6 @@ def register_user(chat_id):
 
     response = requests.post(PATH, json={'query':query, 'variables':variables})
 
-    logger.debug("Response: " + str(response.json()))
+    logger.debug(f"Response: {response.json()}")
 
     return response
