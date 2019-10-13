@@ -1,5 +1,5 @@
 from django.apps import AppConfig
 
 
-class FeedbacksConfig(AppConfig):
-    name = 'feedbacks'
+class BotConfig(AppConfig):
+    name = 'bot'

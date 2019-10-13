@@ -13,14 +13,14 @@ class Query():
 
     feedback = graphene.Field(
         FeedbackType,
-        number=graphene.String()
+        comment=graphene.String()
         )
 
     def resolve_feedback(self, info, **kwargs):
-        number = kwargs.get('number')
+        comment = kwargs.get('comment')
 
-        if number is not None:
-            return Feedback.objects.get(number=number)
+        if comment is not None:
+            return Feedback.objects.get(comment=comment)
 
         return None
 
