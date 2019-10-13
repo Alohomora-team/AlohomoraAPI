@@ -2,7 +2,7 @@ import graphene
 
 from graphene_django.types import DjangoObjectType
 
-from feedbacks.models import Feedback
+from bot.models import Feedback
 
 class FeedbackType(DjangoObjectType):
     class Meta:
