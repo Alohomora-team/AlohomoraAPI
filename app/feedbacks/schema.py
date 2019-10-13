@@ -28,3 +28,23 @@ class Query():
         return Feedback.objects.all()
 
 
+#Mutations
+
+class CreateFeedback(graphene.Mutation):
+    comment = graphene.String()
+
+    class Arguments:
+        comment = graphene.String()
+
+    def mutate(self, info, comment):
+        feedback = Feedback(comment=comment)
+        feedback.save()
+
+        return CreateFeedback(
+            comment=feedback.comment
+            )
+
+class Mutation(graphene.ObjectType):
+    create_feedback = CreateFeedback.Field()
+
+
