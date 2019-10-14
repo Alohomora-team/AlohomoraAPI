@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from condos.models import Apartment, Block
 
-class MyUserManager(BaseUserManager):
+class UserManager(BaseUserManager):
     """Creates and saves a User with the given email and password"""
     def create_user(self, email, password=None, **kwars):
         if not email:
@@ -37,7 +37,7 @@ class User(AbstractUser):
     password = models.CharField(max_length=80)
 
     is_admin = models.BooleanField(default=False)
-    objects = MyUserManager()
+    objects = UserManager()
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
