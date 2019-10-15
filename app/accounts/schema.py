@@ -79,8 +79,14 @@ class CreateResident(graphene.Mutation):
         apartment = graphene.String(required=True)
         block = graphene.String(required=True)
         password = graphene.String(required=False)
+
+        # TODO() - Remover um desses campos
+        # talvez substituir voice_data por mfcc_data
+        # A remoção é complicada pois existem dependencias
         voice_data = graphene.String()
         mfcc_data = graphene.String()
+
+        mfcc_audio_speaking_name = graphene.String()
 
     def mutate(self, info, **kwargs):
         voice_data = kwargs.get('voice_data')
@@ -92,6 +98,7 @@ class CreateResident(graphene.Mutation):
         apartment = kwargs.get('apartment')
         block = kwargs.get('block')
         password = kwargs.get('password')
+        mfcc_audio_speaking_name = kwargs.get('mfcc_audio_speaking_name')
 
         user = get_user_model()(email=email)
         user.set_password(password)
@@ -123,7 +130,9 @@ class CreateResident(graphene.Mutation):
             cpf=cpf,
             voice_data=voice_data,
             user=user,
-            apartment=Apartment.objects.get(number=apartment, block=block_obj))
+            apartment=Apartment.objects.get(number=apartment, block=block_obj),
+            mfcc_audio_speaking_name=mfcc_audio_speaking_name
+        )
 
         resident.save()
 
@@ -186,6 +195,9 @@ class Query(graphene.AbstractType):
 
     voice_belongs_resident = graphene.Boolean(
         cpf=graphene.String(required=True),
+        # TODO() - Remover um desses campos
+        # talvez substituir voice_data por mfcc_data
+        # A remoção é complicada pois existem dependencias
         voice_data=graphene.String(),
         mfcc_data=graphene.String()
     )

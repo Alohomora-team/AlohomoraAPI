@@ -84,10 +84,13 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
                         apartment: "101",
                         block: "1",
                         password: "resident",
-                        voiceData: "[[1],[2],[3]]",,
+                        mfccData: "[1,2,3]",
+                        mfccAudioSpeakingName: "[1,2,3]"
                       ){ resident{
                          completeName
                          email
+                         mfccAudioSpeakingName
+                         voiceData
                       }
                       }
                     }
@@ -99,7 +102,9 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
             "createResident": {
                 "resident": {
                     "completeName": "bob o construtor",
-                    "email": "resident@exemplo.com"
+                    "email": "resident@exemplo.com",
+                    "voiceData": "[1,2,3]",
+                    "mfccAudioSpeakingName": "[1,2,3]"
                 }
             }
         }, result.data)
