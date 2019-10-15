@@ -63,6 +63,7 @@ class Resident(models.Model):
     admin = models.BooleanField(default=False)
     voice_data = models.TextField(null=True)
     password = models.CharField(max_length=80)
+    mfcc_audio_speaking_name = models.TextField(null=True)
 
     #objects = UserManager()
 
