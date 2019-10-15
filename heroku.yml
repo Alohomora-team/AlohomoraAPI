@@ -1,0 +1,7 @@
+build:
+  docker:
+    web: deploy.Dockerfile
+release:
+  image: web
+  command:
+    - python manage.py migrate

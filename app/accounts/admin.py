@@ -1,9 +1,8 @@
 from django.contrib import admin
 
-from accounts.models import User, Visitor, Service
+from accounts.models import User, Visitor, Service, Resident
 
 admin.site.register(User)
 admin.site.register(Service)
 admin.site.register(Visitor)
-
-# Register your models here.
+admin.site.register(Resident)

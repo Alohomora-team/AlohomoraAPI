@@ -1,6 +1,7 @@
 import graphene
 
 from graphene_django.types import DjangoObjectType
+from graphql_jwt.decorators import superuser_required
 
 from condos.models import Block, Apartment
 
@@ -13,6 +14,8 @@ class ApartmentType(DjangoObjectType):
         model = Apartment
 
 class Query():
+    """Used to read or fetch values"""
+
     all_blocks = graphene.List(BlockType)
     all_apartments = graphene.List(ApartmentType)
 
@@ -64,9 +67,9 @@ class Query():
 
         return None
 
-# Mutations
-
 class CreateApartment(graphene.Mutation):
+    """Mutation from graphene for creating apartment"""
+
     number = graphene.String()
     block_number = graphene.String()
     block = graphene.Field(BlockType)
@@ -75,7 +78,7 @@ class CreateApartment(graphene.Mutation):
         number = graphene.String()
         block_number = graphene.String()
 
-
+    @superuser_required
     def mutate(self, info, number, block_number):
         block = Block.objects.filter(number=block_number).first()
 
@@ -87,11 +90,14 @@ class CreateApartment(graphene.Mutation):
             block=apartment.block)
 
 class CreateBlock(graphene.Mutation):
+    """Mutation from graphene for creating block"""
+
     number = graphene.String()
 
     class Arguments:
         number = graphene.String()
 
+    @superuser_required
     def mutate(self, info, number):
         block = Block(number=number)
         block.save()
