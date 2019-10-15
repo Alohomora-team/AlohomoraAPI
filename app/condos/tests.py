@@ -123,3 +123,16 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
                                       "number": "1"}
                               }]
                               }, result.data)
+
+    def test_delete_apartment(self):
+        mutation = '''
+                        mutation{
+                          deleteApartment(apartmentNumber: 101)
+                          {
+                            apartmentNumber
+                          }
+                        }
+                            '''
+        result = self.client.execute(mutation)
+        self.assertIsNone(result.errors)
+        self.assertEqual(Apartment.objects.count(), 0)

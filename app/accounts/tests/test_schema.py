@@ -312,6 +312,51 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
                                   "password": "123"}
                              }, result.data)
 
+    def test_delete_service(self):
+        user = get_user_model().objects.create(email='service@exemplo.com', password='123')
+
+        mutation = '''
+                    mutation{
+                      deleteService(serviceEmail: "service@exemplo.com")
+                      {
+                        serviceEmail
+                      }
+                    }
+                            '''
+        result = self.client.execute(mutation)
+        self.assertIsNone(result.errors)
+        self.assertEqual(Service.objects.count(), 0)
+
+    def test_delete_resident(self):
+        user = get_user_model().objects.create(email='raccoon-city@exemplo.com', password='123')
+
+        mutation = '''
+                    mutation{
+                      deleteResident(residentEmail: "raccoon-city@exemplo.com")
+                      {
+                        residentEmail
+                      }
+                    }
+                            '''
+        result = self.client.execute(mutation)
+        self.assertIsNone(result.errors)
+        self.assertEqual(Resident.objects.count(), 0)
+
+    def test_delete_visitor(self):
+        mutation = '''
+                    mutation{
+                      deleteVisitor(visitorEmail: "charizard@exemplo.com")
+                      {
+                        visitorEmail
+                      }
+                    }
+                            '''
+        result = self.client.execute(mutation)
+        self.assertIsNone(result.errors)
+        self.assertEqual(Visitor.objects.count(), 0)
+
+
+
 class VoiceBelongsUserTests(TestCase):
     """Test using mfcc and fastwd for voice recognition and authentication"""
 
