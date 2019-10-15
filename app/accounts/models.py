@@ -61,8 +61,12 @@ class Resident(models.Model):
     phone = models.CharField(max_length=15)
     cpf = models.CharField(max_length=11)
     admin = models.BooleanField(default=False)
-    voice_data = models.TextField(null=True)
     password = models.CharField(max_length=80)
+
+    # TODO() - Colocar null como false nestes 2 campos
+    # A mudança deve ser cuidadosa pois existem
+    # dependencias, principalmente nos testes
+    voice_data = models.TextField(null=True)
     mfcc_audio_speaking_name = models.TextField(null=True)
 
     #objects = UserManager()
