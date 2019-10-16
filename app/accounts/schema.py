@@ -100,10 +100,7 @@ class CreateResident(graphene.Mutation):
         password = kwargs.get('password')
         mfcc_audio_speaking_name = kwargs.get('mfcc_audio_speaking_name')
 
-        user = get_user_model()(email=email)
-        user.set_password(password)
-        user.is_resident = True
-        user.save()
+
 
         block_obj = Block.objects.filter(number=block).first()
 
@@ -112,14 +109,19 @@ class CreateResident(graphene.Mutation):
                 voice_data = Utility.json_voice_data_to_json_mfcc(voice_data)
             except:
                 raise Exception('Invalid voice data')
+                return CreateResident(resident=resident)
         else:
             voice_data = mfcc_data
 
         if block_obj is None:
             raise Exception('Block not found')
+            return CreateResident(resident=resident)
+
 
         if Apartment.objects.filter(number=apartment, block=block_obj).first() is None:
             raise Exception('Apartment not found')
+            return CreateResident(resident=resident)
+
 
         resident = Resident.objects.create(user=user)
 
@@ -133,10 +135,11 @@ class CreateResident(graphene.Mutation):
             apartment=Apartment.objects.get(number=apartment, block=block_obj),
             mfcc_audio_speaking_name=mfcc_audio_speaking_name
         )
-
+        user = get_user_model()(email=email)
+        user.set_password(password)
+        user.is_resident = True
+        user.save()
         resident.save()
-
-        return CreateResident(resident=resident)
 
 class CreateVisitor(graphene.Mutation):
     """Mutation from graphene for creating visitor"""
@@ -150,7 +153,6 @@ class CreateVisitor(graphene.Mutation):
         voice_data = graphene.String()
         owner_cpf = graphene.String()
 
-    @login_required
     def mutate(self, info, **kwargs):
         voice_data = kwargs.get('voice_data')
         cpf = kwargs.get('cpf')
@@ -163,6 +165,9 @@ class CreateVisitor(graphene.Mutation):
 
         if voice_data is not None:
             voice_data = Utility.json_voice_data_to_json_mfcc(voice_data)
+        if resident is None:
+            raise Exception('Resident not found')
+            return CreateVisitor(visitor=visitor)
 
         visitor = Visitor(
             complete_name=complete_name,
@@ -239,19 +244,14 @@ class Query(graphene.AbstractType):
         email=graphene.String(),
         cpf=graphene.String()
         )
-    @superuser_required
     def resolve_visitors(self, info, **kwargs):
         return Visitor.objects.all()
-    @superuser_required
     def resolve_residents(self, info, **kwargs):
         return Resident.objects.all()
-    @superuser_required
     def resolve_services(self, info, **kwargs):
         return Service.objects.all()
-    @superuser_required
     def resolve_users(self, info, **kwargs):
         return get_user_model().objects.all()
-    @superuser_required
     def resolve_resident(self, info, **kwargs):
         email = kwargs.get('email')
         cpf = kwargs.get('cpf')
