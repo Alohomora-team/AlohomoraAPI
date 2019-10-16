@@ -175,6 +175,18 @@ class CreateVisitor(graphene.Mutation):
 
         return CreateVisitor(visitor=visitor)
 
+class ActivateUser(graphene.Mutation):
+    """Mutation from graphene for activating user"""
+    user = graphene.Field(UserType)
+
+    class Arguments:
+        user_email = graphene.String()
+    def mutate(self, info, user_email):
+        user = get_user_model().objects.get(email=user_email)
+        user.is_active = True
+        user.save()
+        return ActivateUser(user=user)
+
 class Mutation(graphene.ObjectType):
     """Used to write or post values"""
 
@@ -182,7 +194,7 @@ class Mutation(graphene.ObjectType):
     create_visitor = CreateVisitor.Field()
     create_service = CreateService.Field()
     create_resident = CreateResident.Field()
-
+    activate_user = ActivateUser.Field()
 
 class Query(graphene.AbstractType):
     """Used to read or fetch values"""
@@ -251,6 +263,8 @@ class Query(graphene.AbstractType):
         return None
     def resolve_me(self, info):
         user = info.context.user
+        if user.is_active is not True:
+            raise Exception('User is NOT active')
         if user.is_service is True:
             raise Exception('User is service')
         if user.is_visitor is True:
