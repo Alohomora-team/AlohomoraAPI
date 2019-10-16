@@ -1,0 +1,85 @@
+[
+{
+    "model": "accounts.visitor",
+    "pk": 1,
+    "fields": {
+        "owner": 2,
+        "complete_name": "Visitante Exemplo",
+        "email": "visitante@exemplo.com",
+        "phone": "900000000",
+        "cpf": "00000000000",
+        "voice_data": null
+    }
+},
+{
+    "model": "accounts.user",
+    "pk": 1,
+    "fields": {
+        "last_login": null,
+        "is_superuser": false,
+        "first_name": "",
+        "last_name": "",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2019-10-15T23:55:01.442Z",
+        "is_resident": false,
+        "is_service": true,
+        "is_visitor": false,
+        "username": "",
+        "email": "service@exemplo.com",
+        "password": "pbkdf2_sha256$150000$9KR3Yu9RmGlM$0GIiflaTIX/V/LkkLZnTzMfHiC7RBUMLSkpLQ4Pnvs8=",
+        "is_admin": false,
+        "admin": false,
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "accounts.user",
+    "pk": 2,
+    "fields": {
+        "last_login": null,
+        "is_superuser": false,
+        "first_name": "",
+        "last_name": "",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2019-10-15T23:55:07.594Z",
+        "is_resident": true,
+        "is_service": false,
+        "is_visitor": false,
+        "username": "",
+        "email": "morador@exemplo.com",
+        "password": "!IbO33q60GQpgothcfonGRf4u41VbtWF27jRXYdHp",
+        "is_admin": false,
+        "admin": false,
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "accounts.resident",
+    "pk": 2,
+    "fields": {
+        "complete_name": "Morador Exemplo",
+        "email": "morador@exemplo.com",
+        "phone": "999999999",
+        "cpf": "12345678910",
+        "admin": false,
+        "password": "",
+        "voice_data": null,
+        "mfcc_audio_speaking_name": null,
+        "apartment": 1,
+        "block": null
+    }
+},
+{
+    "model": "accounts.service",
+    "pk": 1,
+    "fields": {
+        "complete_name": "Service Exemplo",
+        "email": "service@exemplo.com",
+        "password": ""
+    }
+}
+]
