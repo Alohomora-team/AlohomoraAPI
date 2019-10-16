@@ -24,7 +24,7 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
 
         mutation = '''
                         mutation{
-                          createBlock(number: "1"){
+                          createBlock(number: "2"){
                           number
                           }
                         }
@@ -34,7 +34,7 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
         self.assertIsNone(result.errors)
         self.assertDictEqual({"createBlock":
                               {
-                                  "number": "1"}
+                                  "number": "2"}
                               }, result.data)
 
     def test_block_query(self):
@@ -162,7 +162,7 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
                             '''
         result = self.client.execute(mutation)
         self.assertIsNone(result.errors)
-        self.assertEqual(Block.objects.count(), 2)
+        self.assertEqual(Block.objects.count(), 1)
         self.assertDictEqual({"updateBlock":
                               {
                                   "block": {

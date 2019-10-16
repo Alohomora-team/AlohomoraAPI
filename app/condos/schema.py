@@ -80,6 +80,8 @@ class CreateApartment(graphene.Mutation):
 
     def mutate(self, info, number, block_number):
         block = Block.objects.filter(number=block_number).first()
+        if block is None:
+            raise Exception('Block not found')
 
         apartment = Apartment(number=number, block=block)
         apartment.save()
@@ -92,12 +94,11 @@ class CreateBlock(graphene.Mutation):
     """Mutation from graphene for creating block"""
 
     number = graphene.String()
-
     class Arguments:
         number = graphene.String()
 
     def mutate(self, info, number):
-        block = Block(number=number)
+        block = Block(number=number, number_id=number)
         block.save()
 
         return CreateBlock(
@@ -135,8 +136,10 @@ class UpdateBlock(graphene.Mutation):
 
     def mutate(self, info, number, block_number):
         block = Block.objects.get(number=block_number)
+        print(block.number)
         block.number = number
-        block.full_clean()
+        print(block.number)
+        print("MKOOOOOOOOOOOOOOOO")
         block.save()
         return UpdateBlock(block=block)
 

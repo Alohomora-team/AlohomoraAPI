@@ -122,7 +122,6 @@ class CreateResident(graphene.Mutation):
         user = get_user_model()(email=email)
         user.set_password(password)
         user.is_resident = True
-        user.save()
 
         block_obj = Block.objects.filter(number=block).first()
 
@@ -139,7 +138,7 @@ class CreateResident(graphene.Mutation):
 
         if Apartment.objects.filter(number=apartment, block=block_obj).first() is None:
             raise Exception('Apartment not found')
-
+        user.save()
         resident = Resident.objects.create(user=user)
 
         resident = Resident(
