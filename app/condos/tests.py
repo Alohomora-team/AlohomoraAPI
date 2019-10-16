@@ -162,13 +162,12 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
                             '''
         result = self.client.execute(mutation)
         self.assertIsNone(result.errors)
-        self.assertEqual(Block.objects.count(),2)
-        self.assertDictEqual({
-                                "updateBlock": {
+        self.assertEqual(Block.objects.count(), 2)
+        self.assertDictEqual({"updateBlock":
+                              {
                                   "block": {
-                                    "number": "2"
+                                      "number": "2"}
                                   }
-                                }
                               }, result.data)
 
     def test_update_apartment(self):
@@ -184,10 +183,9 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
         result = self.client.execute(mutation)
         self.assertIsNone(result.errors)
         self.assertEqual(Block.objects.count(), 1)
-        self.assertDictEqual({
-                                    "updateApartment": {
-                                      "apartment": {
-                                        "number": "202"
-                                      }
-                                    }
-                                  }, result.data)
+        self.assertDictEqual({"updateApartment":
+                              {
+                                  "apartment": {
+                                      "number": "202"}
+                                  }
+                              }, result.data)

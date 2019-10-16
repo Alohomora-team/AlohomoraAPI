@@ -1,13 +1,13 @@
 import secrets
 import graphene
 from graphene_django import DjangoObjectType
+from django.contrib.auth import get_user_model
 from accounts.models import Visitor, Resident, Service
 import accounts.utility as Utility
 from condos.models import Apartment, Block
-from django.contrib.auth import get_user_model
 from graphql_jwt.decorators import superuser_required
 from graphql_jwt.decorators import login_required
-from django.core.exceptions import ValidationError
+
 class ResidentType(DjangoObjectType):
     class Meta:
         model = Resident
@@ -228,19 +228,6 @@ class DeleteVisitor(graphene.Mutation):
         visitor = Visitor.objects.get(email=visitor_email)
         visitor.delete()
 
-class DeleteService(graphene.Mutation):
-    service_email = graphene.String()
-
-    class Arguments:
-        service_email = graphene.String(required=True)
-
-    @superuser_required
-    def mutate(self, info, service_email):
-        service = Service.objects.get(email=service_email)
-        user = get_user_model().objects.get(email=service_email)
-        user.delete()
-        service.delete()
-
 class UpdateService(graphene.Mutation):
     user = graphene.Field(UserType)
     service = graphene.Field(ServiceType)
@@ -312,7 +299,7 @@ class UpdateVisitor(graphene.Mutation):
         visitor = Visitor.objects.get(owner=resident)
 
         for k, v in visitor_data.items():
-                setattr(visitor, k, v)
+            setattr(visitor, k, v)
 
         visitor.save()
         return UpdateVisitor(user=user, visitor=visitor)

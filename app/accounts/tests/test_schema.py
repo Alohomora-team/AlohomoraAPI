@@ -354,23 +354,7 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
 
     def test_update_service(self):
 
-        mutation = '''
-
-            mutation{
-              createService(
-                completeName: "service",
-                email: "service2@example.com",
-                password: "123"
-              ){ service{
-                 completeName
-                 email
-              }
-              }
-            }
-
-            '''
-        result = self.client.execute(mutation)
-        self.user = get_user_model().objects.get(email='service2@example.com')
+        self.user = get_user_model().objects.get(email='service@example.com')
         self.client.authenticate(self.user)
 
         mutation = '''
@@ -388,41 +372,20 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
             '''
         result = self.client.execute(mutation)
         self.assertIsNone(result.errors)
-
-        self.assertDictEqual({
-                                "updateService": {
+        self.assertEqual(Resident.objects.count(), 1)
+        self.assertDictEqual({"updateService":
+                              {
                                   "service": {
-                                    "email": "service2@example.com",
-                                    "completeName": "service"
-                                  },
+                                      "email": "service2@example.com",
+                                      "completeName": "bob esponja"},
                                   "user": {
-                                    "email": "service2@example.com"
+                                      "email": "service2@example.com"}
                                   }
-                                }
                               }, result.data)
 
     def test_update_resident(self):
 
-        mutation = '''
-mutation{
-  createResident(
-    completeName: "resident-evil2",
-    email: "raccoon-city2@example.com",
-    cpf: "12345678910",
-    phone: "42",
-    apartment: "101",
-    block: "1",
-    password: "resident",
-    voiceData: "[[1],[2],[3]]",,
-  ){ resident{
-     completeName
-     email
-  }
-  }
-}
-            '''
-        result = self.client.execute(mutation)
-        self.user = get_user_model().objects.get(email='raccoon-city2@example.com')
+        self.user = get_user_model().objects.get(email='resident@example.com')
         print("MOKKKKKKKKKKK")
         print(self.user.email)
         self.client.authenticate(self.user)
@@ -442,53 +405,55 @@ mutation {
             '''
         result = self.client.execute(mutation)
         self.assertIsNone(result.errors)
-        self.assertDictEqual({
-    "updateResident": {
-      "resident": {
-        "email": "service42@example.com",
-        "completeName": "resident-evil2",
-        "phone": "42"
-      },
-      "user": {
-        "email": "service42@example.com",
-      }
-    }
-  }, result.data)
+        self.assertEqual(Resident.objects.count(), 1)
+
+        self.assertDictEqual({"updateResident":
+                              {
+                                  "resident": {
+                                      "email": "service42@example.com",
+                                      "completeName": "resident-evil",
+                                      "phone": "42"},
+                                  "user": {
+                                      "email": "service42@example.com",}
+                                  }
+                              }, result.data)
 
     def test_update_visitor(self):
 
-          mutation = '''
-mutation {
-  createVisitor(completeName: "visitor", cpf: "123"
-  email: "visitor@example.com", phone: "123", voiceData: "[[1],[2],[3]]",, ownerCpf: "12345678910") {
-   visitor{
-    id
-    email
-    phone
-    completeName
-    cpf
-    owner {
-      completeName
-      cpf
-      email
-      phone
-      apartment {
-        number
-              block {
-        		 	number
-      			}
-      }
-    }
-  }
-}
-}
+        mutation = '''
+                    mutation {
+                      createVisitor(completeName: "visitor", cpf: "123"
+                      email: "visitor@example.com", phone: "123", voiceData: "[[1],[2],[3]]",, ownerCpf: "12345678910") {
+                       visitor{
+                        id
+                        email
+                        phone
+                        completeName
+                        cpf
+                        owner {
+                          completeName
+                          cpf
+                          email
+                          phone
+                          apartment {
+                            number
+                                  block {
+                            		 	number
+                          			}
+                          }
+                        }
+                      }
+                    }
+                    }
               '''
-          result = self.client.execute(mutation)
-          self.user = get_user_model().objects.get(email='resident@example.com')
-          print("MOKKKKKKKKKKK")
-          print(self.user.email)
-          self.client.authenticate(self.user)
-          mutation = '''
+        result = self.client.execute(mutation)
+        self.user = get_user_model().objects.get(email='resident@example.com')
+        print("MOKKKKKKKKKKK")
+        print(self.user.email)
+        self.client.authenticate(self.user)
+        self.assertEqual(Resident.objects.count(), 1)
+
+        mutation = '''
 mutation {
   updateVisitor(visitorData: {email: "visitor3@example.com", completeName: "pedreiro"}){
     visitor {
@@ -502,20 +467,18 @@ mutation {
   }
 }
               '''
-          result = self.client.execute(mutation)
-          self.assertIsNone(result.errors)
-          self.assertDictEqual({
-    "updateVisitor": {
-      "visitor": {
-        "email": "visitor3@example.com",
-        "completeName": "pedreiro",
-        "phone": "123"
-      },
-      "user": {
-        "email": "resident@example.com",
-      }
-    }
-  }, result.data)
+        result = self.client.execute(mutation)
+        self.assertIsNone(result.errors)
+        self.assertDictEqual({"updateVisitor":
+                              {
+                                  "visitor": {
+                                      "email": "visitor3@example.com",
+                                      "completeName": "pedreiro",
+                                      "phone": "123"},
+                                  "user": {
+                                      "email": "resident@example.com",}
+                                  }
+                              }, result.data)
 
 class VoiceBelongsUserTests(TestCase):
     """Test using mfcc and fastwd for voice recognition and authentication"""
