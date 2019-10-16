@@ -5,7 +5,7 @@ from accounts.models import Visitor, Resident, Service
 import accounts.utility as Utility
 from condos.models import Apartment, Block
 from django.contrib.auth import get_user_model
-from graphql_jwt.decorators import superuser_required
+from graphql_jwt.decorators import superuser_required, login_required
 
 class ResidentType(DjangoObjectType):
     class Meta:
@@ -150,6 +150,7 @@ class CreateVisitor(graphene.Mutation):
         voice_data = graphene.String()
         owner_cpf = graphene.String()
 
+    @login_required
     def mutate(self, info, **kwargs):
         voice_data = kwargs.get('voice_data')
         cpf = kwargs.get('cpf')
@@ -187,6 +188,18 @@ class ActivateUser(graphene.Mutation):
         user.save()
         return ActivateUser(user=user)
 
+class DeactivateUser(graphene.Mutation):
+    """Mutation from graphene for activating user"""
+    user = graphene.Field(UserType)
+
+    class Arguments:
+        user_email = graphene.String()
+    def mutate(self, info, user_email):
+        user = get_user_model().objects.get(email=user_email)
+        user.is_active = False
+        user.save()
+        return ActivateUser(user=user)
+
 class Mutation(graphene.ObjectType):
     """Used to write or post values"""
 
@@ -195,6 +208,7 @@ class Mutation(graphene.ObjectType):
     create_service = CreateService.Field()
     create_resident = CreateResident.Field()
     activate_user = ActivateUser.Field()
+    deactivate_user = DeactivateUser.Field()
 
 class Query(graphene.AbstractType):
     """Used to read or fetch values"""

@@ -8,5 +8,6 @@
  * Guia de contribuição do projeto
  * Estrutura padrão do condominio
  * Adicionado docker-compose para rodar o site locamente
+ * Criação do mecanismo de ativação dos usuários
  ---
  Modelo padrão do changelog disponível [aqui](https://keepachangelog.com/en/0.3.0/).
