@@ -29,7 +29,7 @@ class CreateUser(graphene.Mutation):
     class Arguments:
         username = graphene.String(required=True)
         password = graphene.String(required=False)
-
+    @login_required
     def mutate(self, info, password, username):
         user = get_user_model()(
             username=username,
@@ -49,7 +49,7 @@ class CreateService(graphene.Mutation):
         password = graphene.String(required=True)
         email = graphene.String(required=True)
         complete_name = graphene.String(required=True)
-
+    @superuser_required
     def mutate(self, info, email, password, complete_name):
         user = get_user_model()(email=email)
         user.set_password(password)
@@ -87,7 +87,6 @@ class CreateResident(graphene.Mutation):
         mfcc_data = graphene.String()
 
         mfcc_audio_speaking_name = graphene.String()
-
     def mutate(self, info, **kwargs):
         voice_data = kwargs.get('voice_data')
         mfcc_data = kwargs.get('mfcc_data')
@@ -100,7 +99,9 @@ class CreateResident(graphene.Mutation):
         password = kwargs.get('password')
         mfcc_audio_speaking_name = kwargs.get('mfcc_audio_speaking_name')
 
-
+        user = get_user_model()(email=email)
+        user.set_password(password)
+        user.is_resident = True
 
         block_obj = Block.objects.filter(number=block).first()
 
@@ -109,22 +110,18 @@ class CreateResident(graphene.Mutation):
                 voice_data = Utility.json_voice_data_to_json_mfcc(voice_data)
             except:
                 raise Exception('Invalid voice data')
-                return CreateResident(resident=resident)
         else:
             voice_data = mfcc_data
 
         if block_obj is None:
             raise Exception('Block not found')
-            return CreateResident(resident=resident)
 
 
         if Apartment.objects.filter(number=apartment, block=block_obj).first() is None:
             raise Exception('Apartment not found')
-            return CreateResident(resident=resident)
 
-
+        user.save()
         resident = Resident.objects.create(user=user)
-
         resident = Resident(
             complete_name=complete_name,
             email=email,
@@ -135,11 +132,8 @@ class CreateResident(graphene.Mutation):
             apartment=Apartment.objects.get(number=apartment, block=block_obj),
             mfcc_audio_speaking_name=mfcc_audio_speaking_name
         )
-        user = get_user_model()(email=email)
-        user.set_password(password)
-        user.is_resident = True
-        user.save()
         resident.save()
+        return CreateResident(resident=resident)
 
 class CreateVisitor(graphene.Mutation):
     """Mutation from graphene for creating visitor"""
@@ -152,7 +146,8 @@ class CreateVisitor(graphene.Mutation):
         cpf = graphene.String()
         voice_data = graphene.String()
         owner_cpf = graphene.String()
-
+        
+    @login_required
     def mutate(self, info, **kwargs):
         voice_data = kwargs.get('voice_data')
         cpf = kwargs.get('cpf')
@@ -165,9 +160,6 @@ class CreateVisitor(graphene.Mutation):
 
         if voice_data is not None:
             voice_data = Utility.json_voice_data_to_json_mfcc(voice_data)
-        if resident is None:
-            raise Exception('Resident not found')
-            return CreateVisitor(visitor=visitor)
 
         visitor = Visitor(
             complete_name=complete_name,
@@ -177,6 +169,9 @@ class CreateVisitor(graphene.Mutation):
             voice_data=voice_data,
             owner=resident,
         )
+        if resident is None:
+            raise Exception('Resident not found')
+
         visitor.save()
 
         return CreateVisitor(visitor=visitor)
@@ -244,14 +239,19 @@ class Query(graphene.AbstractType):
         email=graphene.String(),
         cpf=graphene.String()
         )
+    @superuser_required
     def resolve_visitors(self, info, **kwargs):
         return Visitor.objects.all()
+    @superuser_required
     def resolve_residents(self, info, **kwargs):
         return Resident.objects.all()
+    @superuser_required
     def resolve_services(self, info, **kwargs):
         return Service.objects.all()
+    @superuser_required
     def resolve_users(self, info, **kwargs):
         return get_user_model().objects.all()
+    @superuser_required
     def resolve_resident(self, info, **kwargs):
         email = kwargs.get('email')
         cpf = kwargs.get('cpf')
