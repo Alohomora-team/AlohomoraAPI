@@ -1,7 +1,7 @@
 from django.db import models
 
 class Block(models.Model):
-    number = models.CharField(max_length=4, primary_key=True)
+    number = models.CharField(max_length=4, primary_key=True, unique=True)
 
     def __str__(self):
         return self.number

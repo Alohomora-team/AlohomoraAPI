@@ -14,10 +14,10 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
 
     def setUp(self):
         self._client = Client(schema)
-        self.user = get_user_model().objects.create(email='user@exemplo',
+        self.user = get_user_model().objects.create(email='user@example',
                                                     password='123',
                                                     username='user')
-        self.super_user = get_user_model().objects.create_superuser(email='admin@exemplo',
+        self.super_user = get_user_model().objects.create_superuser(email='admin@example',
                                                                     password='123')
         self.client.authenticate(self.super_user)
 
@@ -36,11 +36,13 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
             email='service@example.com',
             password='service-password',
             username='service-username',
+            is_service=True,
         )
         get_user_model().objects.create(
             email='resident@example.com',
             password='resident-password',
             username='resident-username',
+            is_resident=True,
         )
 
         block = Block.objects.create(number="1")
@@ -48,7 +50,7 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
         Resident.objects.create(
             complete_name='resident-evil',
             password='resident-password',
-            email='raccoon-city@exemplo.com',
+            email='resident@example.com',
             cpf='12345678910',
             phone='42',
             voice_data=json.dumps([x*10 for x in range(32000)]),
@@ -59,7 +61,7 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
         )
         Visitor.objects.create(
             complete_name='bob o construtor',
-            email='charizard@exemplo.com',
+            email='charizard@example.com',
             cpf='12345678910',
             phone='42',
             voice_data='[[1],[2],[3]]',
@@ -67,7 +69,7 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
         Service.objects.create(
             complete_name='bob esponja',
             password='service-password',
-            email='service@exemplo.com',
+            email='service@example.com',
             user=get_user_model().objects.get(email='service@example.com'),
         )
 
@@ -78,7 +80,7 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
                     mutation{
                       createResident(
                         completeName: "bob o construtor",
-                        email: "resident@exemplo.com",
+                        email: "resident2@example.com",
                         cpf: "12345678910",
                         phone: "42",
                         apartment: "101",
@@ -99,7 +101,7 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
             "createResident": {
                 "resident": {
                     "completeName": "bob o construtor",
-                    "email": "resident@exemplo.com"
+                    "email": "resident2@example.com"
                 }
             }
         }, result.data)
@@ -123,7 +125,7 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
             "residents": [
                 {
                     "completeName": "resident-evil",
-                    "email": "raccoon-city@exemplo.com",
+                    "email": "resident@example.com",
                     "phone": "42",
                     "cpf": "12345678910"
                 }
@@ -135,11 +137,10 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
 
         query = """
         {
-            resident(email:"raccoon-city@exemplo.com"){
+            resident(email:"resident@example.com"){
                 completeName
             }
         }
-
         """
 
         result = self.client.execute(query)
@@ -157,7 +158,6 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
                 completeName
             }
         }
-
         """
 
         result = self.client.execute(query)
@@ -185,7 +185,7 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
         self.assertDictEqual({"visitors":
                               [{
                                   "completeName": "bob o construtor",
-                                  "email": "charizard@exemplo.com",
+                                  "email": "charizard@example.com",
                                   "phone": "42"}]
                               }, result.data)
 
@@ -215,7 +215,6 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
                           }
                         }
                         }
-
         '''
         result = self.client.execute(mutation)
         self.assertIsNone(result.errors)
@@ -229,7 +228,7 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
                     "owner": {
                         "completeName": "resident-evil",
                         "cpf": "12345678910",
-                        "email": "raccoon-city@exemplo.com",
+                        "email": "resident@example.com",
                         "phone": "42",
                         "apartment": {
                             "number": "101",
@@ -258,7 +257,7 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
             "services": [
                 {
                     "completeName": "bob esponja",
-                    "email": "service@exemplo.com"
+                    "email": "service@example.com"
                 }
             ]
         }, result.data)
@@ -308,16 +307,15 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
         self.assertDictEqual({"me":
                               {
                                   "username": "user",
-                                  "email": "user@exemplo",
+                                  "email": "user@example",
                                   "password": "123"}
                              }, result.data)
 
     def test_delete_service(self):
-        user = get_user_model().objects.create(email='service@exemplo.com', password='123')
 
         mutation = '''
                     mutation{
-                      deleteService(serviceEmail: "service@exemplo.com")
+                      deleteService(serviceEmail: "service@example.com")
                       {
                         serviceEmail
                       }
@@ -328,11 +326,10 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
         self.assertEqual(Service.objects.count(), 0)
 
     def test_delete_resident(self):
-        user = get_user_model().objects.create(email='raccoon-city@exemplo.com', password='123')
 
         mutation = '''
                     mutation{
-                      deleteResident(residentEmail: "raccoon-city@exemplo.com")
+                      deleteResident(residentEmail: "resident@example.com")
                       {
                         residentEmail
                       }
@@ -345,7 +342,7 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
     def test_delete_visitor(self):
         mutation = '''
                     mutation{
-                      deleteVisitor(visitorEmail: "charizard@exemplo.com")
+                      deleteVisitor(visitorEmail: "charizard@example.com")
                       {
                         visitorEmail
                       }
@@ -355,7 +352,170 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
         self.assertIsNone(result.errors)
         self.assertEqual(Visitor.objects.count(), 0)
 
+    def test_update_service(self):
 
+        mutation = '''
+
+            mutation{
+              createService(
+                completeName: "service",
+                email: "service2@example.com",
+                password: "123"
+              ){ service{
+                 completeName
+                 email
+              }
+              }
+            }
+
+            '''
+        result = self.client.execute(mutation)
+        self.user = get_user_model().objects.get(email='service2@example.com')
+        self.client.authenticate(self.user)
+
+        mutation = '''
+                    mutation {
+                      updateService(serviceData: {email: "service2@example.com", password: "k"}){
+                        service {
+                          email
+                          completeName
+                        }
+                        user {
+                          	email
+                          }
+                      }
+                    }
+            '''
+        result = self.client.execute(mutation)
+        self.assertIsNone(result.errors)
+
+        self.assertDictEqual({
+                                "updateService": {
+                                  "service": {
+                                    "email": "service2@example.com",
+                                    "completeName": "service"
+                                  },
+                                  "user": {
+                                    "email": "service2@example.com"
+                                  }
+                                }
+                              }, result.data)
+
+    def test_update_resident(self):
+
+        mutation = '''
+mutation{
+  createResident(
+    completeName: "resident-evil2",
+    email: "raccoon-city2@example.com",
+    cpf: "12345678910",
+    phone: "42",
+    apartment: "101",
+    block: "1",
+    password: "resident",
+    voiceData: "[[1],[2],[3]]",,
+  ){ resident{
+     completeName
+     email
+  }
+  }
+}
+            '''
+        result = self.client.execute(mutation)
+        self.user = get_user_model().objects.get(email='raccoon-city2@example.com')
+        print("MOKKKKKKKKKKK")
+        print(self.user.email)
+        self.client.authenticate(self.user)
+        mutation = '''
+mutation {
+  updateResident(residentData: {email: "service42@example.com", password: "k"}){
+    resident {
+      email
+      completeName
+      phone
+    }
+    user {
+      	email
+      }
+  }
+}
+            '''
+        result = self.client.execute(mutation)
+        self.assertIsNone(result.errors)
+        self.assertDictEqual({
+    "updateResident": {
+      "resident": {
+        "email": "service42@example.com",
+        "completeName": "resident-evil2",
+        "phone": "42"
+      },
+      "user": {
+        "email": "service42@example.com",
+      }
+    }
+  }, result.data)
+
+    def test_update_visitor(self):
+
+          mutation = '''
+mutation {
+  createVisitor(completeName: "visitor", cpf: "123"
+  email: "visitor@example.com", phone: "123", voiceData: "[[1],[2],[3]]",, ownerCpf: "12345678910") {
+   visitor{
+    id
+    email
+    phone
+    completeName
+    cpf
+    owner {
+      completeName
+      cpf
+      email
+      phone
+      apartment {
+        number
+              block {
+        		 	number
+      			}
+      }
+    }
+  }
+}
+}
+              '''
+          result = self.client.execute(mutation)
+          self.user = get_user_model().objects.get(email='resident@example.com')
+          print("MOKKKKKKKKKKK")
+          print(self.user.email)
+          self.client.authenticate(self.user)
+          mutation = '''
+mutation {
+  updateVisitor(visitorData: {email: "visitor3@example.com", completeName: "pedreiro"}){
+    visitor {
+      email
+      completeName
+      phone
+    }
+    user {
+      	email
+      }
+  }
+}
+              '''
+          result = self.client.execute(mutation)
+          self.assertIsNone(result.errors)
+          self.assertDictEqual({
+    "updateVisitor": {
+      "visitor": {
+        "email": "visitor3@example.com",
+        "completeName": "pedreiro",
+        "phone": "123"
+      },
+      "user": {
+        "email": "resident@example.com",
+      }
+    }
+  }, result.data)
 
 class VoiceBelongsUserTests(TestCase):
     """Test using mfcc and fastwd for voice recognition and authentication"""

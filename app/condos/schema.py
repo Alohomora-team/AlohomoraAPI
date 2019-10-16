@@ -120,24 +120,9 @@ class DeleteBlock(graphene.Mutation):
     class Arguments:
         block_number = graphene.String(required=True)
 
-    @superuser_required
     def mutate(self, info, block_number):
         block = Block.objects.get(number=block_number)
         block.delete()
-class UpdateBlock(graphene.Mutation):
-    block = graphene.Field(BlockType)
-    number = graphene.String()
-    block_number = graphene.String()
-
-    class Arguments:
-        number = graphene.String(required=True)
-        block_number = graphene.String(required=True)
-
-    def mutate(self, info, number, block_number):
-        block = Block.objects.get(number=block_number)
-        block.number = number
-        block.save()
-        return UpdateBlock(block=block)
 
 class UpdateBlock(graphene.Mutation):
     block = graphene.Field(BlockType)
@@ -151,6 +136,7 @@ class UpdateBlock(graphene.Mutation):
     def mutate(self, info, number, block_number):
         block = Block.objects.get(number=block_number)
         block.number = number
+        block.full_clean()
         block.save()
         return UpdateBlock(block=block)
 

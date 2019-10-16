@@ -136,3 +136,58 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
         result = self.client.execute(mutation)
         self.assertIsNone(result.errors)
         self.assertEqual(Apartment.objects.count(), 0)
+
+    def test_delete_block(self):
+        mutation = '''
+                        mutation{
+                          deleteBlock(blockNumber: "1")
+                          {
+                            blockNumber
+                          }
+                        }
+                            '''
+        result = self.client.execute(mutation)
+        self.assertIsNone(result.errors)
+        self.assertEqual(Block.objects.count(), 0)
+
+    def test_update_block(self):
+        mutation = '''
+                    mutation {
+                      updateBlock(number: "2", blockNumber: "1"){
+                        block {
+                          number
+                        }
+                      }
+                    }
+                            '''
+        result = self.client.execute(mutation)
+        self.assertIsNone(result.errors)
+        self.assertEqual(Block.objects.count(),2)
+        self.assertDictEqual({
+                                "updateBlock": {
+                                  "block": {
+                                    "number": "2"
+                                  }
+                                }
+                              }, result.data)
+
+    def test_update_apartment(self):
+        mutation = '''
+                        mutation {
+                          updateApartment(number: "202", apartmentNumber: "101"){
+                            apartment {
+                              number
+                            }
+                          }
+                        }
+                            '''
+        result = self.client.execute(mutation)
+        self.assertIsNone(result.errors)
+        self.assertEqual(Block.objects.count(), 1)
+        self.assertDictEqual({
+                                    "updateApartment": {
+                                      "apartment": {
+                                        "number": "202"
+                                      }
+                                    }
+                                  }, result.data)
