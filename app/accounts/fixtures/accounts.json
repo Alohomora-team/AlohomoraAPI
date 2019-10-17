@@ -81,5 +81,28 @@
         "email": "service@exemplo.com",
         "password": ""
     }
+},
+{
+    "model": "accounts.user",
+    "pk": 3,
+    "fields": {
+        "last_login": null,
+        "is_superuser": true,
+        "first_name": "",
+        "last_name": "",
+        "is_staff": true,
+        "is_active": true,
+        "date_joined": "2019-10-17T10:48:32.958Z",
+        "is_resident": false,
+        "is_service": false,
+        "is_visitor": false,
+        "username": "",
+        "email": "admin@admin.com",
+        "password": "pbkdf2_sha256$150000$6WEw8bbW54Nm$bLOi9HJmwrXhANtXDdbMLqMD+pxIndoBKDzWNeSLNPs=",
+        "is_admin": true,
+        "admin": false,
+        "groups": [],
+        "user_permissions": []
+    }
 }
 ]
