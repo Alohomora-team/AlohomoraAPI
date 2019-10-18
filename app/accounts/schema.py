@@ -7,6 +7,10 @@ from condos.models import Apartment, Block
 from django.contrib.auth import get_user_model
 from graphql_jwt.decorators import superuser_required
 
+class EntryType(DjangoObjectType):
+    class Meta:
+        model = Entry
+
 class ResidentType(DjangoObjectType):
     class Meta:
         model = Resident
@@ -22,6 +26,7 @@ class VisitorType(DjangoObjectType):
 class UserType(DjangoObjectType):
     class Meta:
         model = get_user_model()
+
 
 class CreateUser(graphene.Mutation):
     """Mutation from graphene for creating service"""
@@ -192,6 +197,7 @@ class Query(graphene.AbstractType):
     visitors = graphene.List(VisitorType)
     services = graphene.List(ServiceType)
     users = graphene.List(UserType)
+    entries = graphene.List(EntryType)
 
     voice_belongs_resident = graphene.Boolean(
         cpf=graphene.String(required=True),
@@ -213,6 +219,10 @@ class Query(graphene.AbstractType):
         email=graphene.String(),
         cpf=graphene.String()
         )
+    
+    @superuser_required
+    def resolve_entries(self, info, **kwargs):
+        return Entry.objects.all()
     @superuser_required
     def resolve_visitors(self, info, **kwargs):
         return Visitor.objects.all()

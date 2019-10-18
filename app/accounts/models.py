@@ -74,11 +74,7 @@ class Resident(models.Model):
     apartment = models.ForeignKey(Apartment, models.SET_NULL, null=True)
     block = models.ForeignKey(Block, models.SET_NULL, null=True)
 
-    entries = models.ManyToManyField(
-        Apartment,
-        related_name='entries',
-         through='Entry'
-         )
+    entries = models.ManyToManyField(Apartment, related_name='entries', through='Entry')
 
 class Visitor(models.Model):
     owner = models.ForeignKey(Resident, on_delete=models.CASCADE, null=True)
