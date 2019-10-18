@@ -7,6 +7,7 @@ from condos.models import Apartment, Block
 from condos.schema import ApartmentType
 from django.contrib.auth import get_user_model
 from graphql_jwt.decorators import superuser_required
+from django.utils import timezone
 
 class ResidentType(DjangoObjectType):
     class Meta:
@@ -66,9 +67,7 @@ class CreateEntry(graphene.Mutation):
         entry = Entry(resident=resident, apartment=apartment)
         entry.save()
 
-        return CreateEntry(
-            resident = entry.resident,
-            apartment = entry.apartment)
+        return CreateEntry(resident = entry.resident, apartment = entry.apartment)
 
 
 
@@ -253,13 +252,13 @@ class Query(graphene.AbstractType):
     @superuser_required
     def resolve_visitors(self, info, **kwargs):
         return Visitor.objects.all()
-    # @superuser_required
+    @superuser_required
     def resolve_residents(self, info, **kwargs):
         return Resident.objects.all()
     @superuser_required
     def resolve_services(self, info, **kwargs):
         return Service.objects.all()
-    # @superuser_required
+    @superuser_required
     def resolve_users(self, info, **kwargs):
         return get_user_model().objects.all()
     @superuser_required

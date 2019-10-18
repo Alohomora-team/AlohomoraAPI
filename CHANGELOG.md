@@ -11,6 +11,10 @@
 *  Novo atributo na model User que carrega os dados MFCC do áudio do usuário dizendo o próprio nome. Juntamente de um campo na mutation de criação de User pra esse novo atributo.
 *  Adicionado query e mutation para criar e buscar feedbacks do sistema
 
+## [0.2.0] - 2019-10-15
+### Adicionado
+*  Novo modelo que permite registrar o horário de entrada toda vez que um Morador entrar no condomínio
+
 
 
 
