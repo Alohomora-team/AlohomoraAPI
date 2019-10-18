@@ -9,7 +9,7 @@ class Query(
         bot.schema.Query,
         condos.schema.Query,
         accounts.schema.Query,
-        graphene.ObjectType
+        graphene.ObjectType,
         ):
 
     pass

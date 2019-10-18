@@ -1,19 +1,20 @@
 import secrets
 import graphene
 from graphene_django import DjangoObjectType
-from accounts.models import Visitor, Resident, Service
+from accounts.models import Visitor, Resident, Service, Entry
 import accounts.utility as Utility
 from condos.models import Apartment, Block
+from condos.schema import ApartmentType
 from django.contrib.auth import get_user_model
 from graphql_jwt.decorators import superuser_required
-
-class EntryType(DjangoObjectType):
-    class Meta:
-        model = Entry
 
 class ResidentType(DjangoObjectType):
     class Meta:
         model = Resident
+
+class EntryType(DjangoObjectType):
+    class Meta:
+        model = Entry
 
 class ServiceType(DjangoObjectType):
     class Meta:
@@ -44,6 +45,32 @@ class CreateUser(graphene.Mutation):
         user.save()
 
         return CreateUser(user=user)
+
+class CreateEntry(graphene.Mutation):
+    """Mutation from graphene for creating entry"""
+    
+    resident = graphene.Field(ResidentType)
+    apartment = graphene.Field(ApartmentType)
+
+    resident_cpf = graphene.String()
+    apartment_number = graphene.String()
+    
+    class Arguments:
+        resident_cpf = graphene.String()
+        apartment_number = graphene.String()
+
+    def mutate(self, info, resident_cpf, apartment_number):
+        resident = Resident.objects.filter(cpf=resident_cpf).first()
+        apartment = Apartment.objects.filter(number=apartment_number).first()
+
+        entry = Entry(resident=resident, apartment=apartment)
+        entry.save()
+
+        return CreateEntry(
+            resident = entry.resident,
+            apartment = entry.apartment)
+
+
 
 class CreateService(graphene.Mutation):
     """Mutation from graphene for creating service"""
@@ -185,6 +212,7 @@ class Mutation(graphene.ObjectType):
 
     create_user = CreateUser.Field()
     create_visitor = CreateVisitor.Field()
+    create_entry = CreateEntry.Field()
     create_service = CreateService.Field()
     create_resident = CreateResident.Field()
 
@@ -220,19 +248,18 @@ class Query(graphene.AbstractType):
         cpf=graphene.String()
         )
     
-    @superuser_required
     def resolve_entries(self, info, **kwargs):
         return Entry.objects.all()
     @superuser_required
     def resolve_visitors(self, info, **kwargs):
         return Visitor.objects.all()
-    @superuser_required
+    # @superuser_required
     def resolve_residents(self, info, **kwargs):
         return Resident.objects.all()
     @superuser_required
     def resolve_services(self, info, **kwargs):
         return Service.objects.all()
-    @superuser_required
+    # @superuser_required
     def resolve_users(self, info, **kwargs):
         return get_user_model().objects.all()
     @superuser_required
