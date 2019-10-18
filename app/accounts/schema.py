@@ -8,6 +8,8 @@ from condos.schema import ApartmentType
 from django.contrib.auth import get_user_model
 from graphql_jwt.decorators import superuser_required
 from django.utils import timezone
+import datetime
+import django.utils
 
 class ResidentType(DjangoObjectType):
     class Meta:
@@ -49,13 +51,13 @@ class CreateUser(graphene.Mutation):
 
 class CreateEntry(graphene.Mutation):
     """Mutation from graphene for creating entry"""
-    
+
     resident = graphene.Field(ResidentType)
     apartment = graphene.Field(ApartmentType)
 
     resident_cpf = graphene.String()
     apartment_number = graphene.String()
-    
+
     class Arguments:
         resident_cpf = graphene.String()
         apartment_number = graphene.String()
@@ -65,6 +67,7 @@ class CreateEntry(graphene.Mutation):
         apartment = Apartment.objects.filter(number=apartment_number).first()
 
         entry = Entry(resident=resident, apartment=apartment)
+        entry.date = timezone.now()
         entry.save()
 
         return CreateEntry(resident = entry.resident, apartment = entry.apartment)
@@ -246,7 +249,7 @@ class Query(graphene.AbstractType):
         email=graphene.String(),
         cpf=graphene.String()
         )
-    
+
     def resolve_entries(self, info, **kwargs):
         return Entry.objects.all()
     @superuser_required
