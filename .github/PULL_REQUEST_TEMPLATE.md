@@ -1,17 +1,11 @@
-## Issue
-    
-Resolve #XXX
+## Descrição 
 
-## Descrição
+Descreva a solução implementada aqui. Não esqueça de linkar a issue no PR.
 
-Descreva as mudanças ocorridas
+## Alterações feitas
 
-## Tipo de mudança
-
-- [ ] Bugfix
-- [ ] Funcionalidade nova
-- [ ] Mudança de funcionalidade
+Copy-Past suas alterações no CHANGELOG aqui.
 
 ## Comentários adicionais
 
-Informações complementares
+Informações complementares para o revisor do PR.
