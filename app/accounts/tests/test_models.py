@@ -16,7 +16,8 @@ class ResidentModelTest(TestCase):
             complete_name='Big',
             email='Bob',
             phone='12345',
-            user=get_user_model().objects.get(email='exemplo@.com')
+            user=get_user_model().objects.get(email='exemplo@.com'),
+            mfcc_audio_speaking_name='[1,2,3,4,5]'
         )
 
     def test_complete_name_label(self):
@@ -50,6 +51,10 @@ class ResidentModelTest(TestCase):
     def test_phone_value(self):
         resident = Resident.objects.get(user_id=1)
         self.assertEquals(resident.phone, '12345')
+
+    def test_mfcc_audio_speaking_name_value(self):
+        resident = Resident.objects.get(user_id=1)
+        self.assertEquals(resident.mfcc_audio_speaking_name, '[1,2,3,4,5]')
 
 
 class VisitorModelTest(TestCase):

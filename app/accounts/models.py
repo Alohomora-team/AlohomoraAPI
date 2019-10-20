@@ -61,13 +61,20 @@ class Resident(models.Model):
     phone = models.CharField(max_length=15)
     cpf = models.CharField(max_length=11)
     admin = models.BooleanField(default=False)
-    voice_data = models.TextField(null=True)
     password = models.CharField(max_length=80)
+
+    # TODO() - Colocar null como false nestes 2 campos
+    # A mudança deve ser cuidadosa pois existem
+    # dependencias, principalmente nos testes
+    voice_data = models.TextField(null=True)
+    mfcc_audio_speaking_name = models.TextField(null=True)
 
     #objects = UserManager()
 
     apartment = models.ForeignKey(Apartment, models.SET_NULL, null=True)
     block = models.ForeignKey(Block, models.SET_NULL, null=True)
+
+    entries = models.ManyToManyField(Apartment, related_name='entries', through='Entry')
 
 class Visitor(models.Model):
     owner = models.ForeignKey(Resident, on_delete=models.CASCADE, null=True)
@@ -76,3 +83,8 @@ class Visitor(models.Model):
     phone = models.CharField(max_length=15)
     cpf = models.CharField(max_length=11)
     voice_data = models.TextField(null=True)
+
+class Entry(models.Model):
+    resident = models.ForeignKey(Resident, on_delete=models.CASCADE)
+    apartment = models.ForeignKey(Apartment, on_delete=models.CASCADE)
+    date = models.DateTimeField(auto_now=True)

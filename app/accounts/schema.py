@@ -7,10 +7,23 @@ import accounts.utility as Utility
 from condos.models import Apartment, Block
 from graphql_jwt.decorators import superuser_required
 from graphql_jwt.decorators import login_required
+from accounts.models import Visitor, Resident, Service, Entry
+import accounts.utility as Utility
+from condos.models import Apartment, Block
+from condos.schema import ApartmentType
+from django.contrib.auth import get_user_model
+from graphql_jwt.decorators import superuser_required, login_required
+from django.utils import timezone
+import datetime
+import django.utils
 
 class ResidentType(DjangoObjectType):
     class Meta:
         model = Resident
+
+class EntryType(DjangoObjectType):
+    class Meta:
+        model = Entry
 
 class ServiceType(DjangoObjectType):
     class Meta:
@@ -48,6 +61,7 @@ class VisitorInput(graphene.InputObjectType):
     voice_data = graphene.String()
     owner_cpf = graphene.String()
 
+
 class CreateUser(graphene.Mutation):
     """Mutation from graphene for creating service"""
     user = graphene.Field(UserType)
@@ -64,6 +78,31 @@ class CreateUser(graphene.Mutation):
         user.save()
 
         return CreateUser(user=user)
+
+class CreateEntry(graphene.Mutation):
+    """Mutation from graphene for creating entry"""
+
+    resident = graphene.Field(ResidentType)
+    apartment = graphene.Field(ApartmentType)
+
+    resident_cpf = graphene.String()
+    apartment_number = graphene.String()
+
+    class Arguments:
+        resident_cpf = graphene.String()
+        apartment_number = graphene.String()
+
+    def mutate(self, info, resident_cpf, apartment_number):
+        resident = Resident.objects.filter(cpf=resident_cpf).first()
+        apartment = Apartment.objects.filter(number=apartment_number).first()
+
+        entry = Entry(resident=resident, apartment=apartment)
+        entry.date = timezone.now()
+        entry.save()
+
+        return CreateEntry(resident = entry.resident, apartment = entry.apartment)
+
+
 
 class CreateService(graphene.Mutation):
     """Mutation from graphene for creating service"""
@@ -105,8 +144,14 @@ class CreateResident(graphene.Mutation):
         apartment = graphene.String(required=True)
         block = graphene.String(required=True)
         password = graphene.String(required=False)
+
+        # TODO() - Remover um desses campos
+        # talvez substituir voice_data por mfcc_data
+        # A remoção é complicada pois existem dependencias
         voice_data = graphene.String()
         mfcc_data = graphene.String()
+
+        mfcc_audio_speaking_name = graphene.String()
 
     def mutate(self, info, **kwargs):
         voice_data = kwargs.get('voice_data')
@@ -118,6 +163,7 @@ class CreateResident(graphene.Mutation):
         apartment = kwargs.get('apartment')
         block = kwargs.get('block')
         password = kwargs.get('password')
+        mfcc_audio_speaking_name = kwargs.get('mfcc_audio_speaking_name')
 
         user = get_user_model()(email=email)
         user.set_password(password)
@@ -148,7 +194,9 @@ class CreateResident(graphene.Mutation):
             cpf=cpf,
             voice_data=voice_data,
             user=user,
-            apartment=Apartment.objects.get(number=apartment, block=block_obj))
+            apartment=Apartment.objects.get(number=apartment, block=block_obj),
+            mfcc_audio_speaking_name=mfcc_audio_speaking_name
+        )
 
         resident.save()
 
@@ -308,6 +356,7 @@ class Mutation(graphene.ObjectType):
 
     create_user = CreateUser.Field()
     create_visitor = CreateVisitor.Field()
+    create_entry = CreateEntry.Field()
     create_service = CreateService.Field()
     create_resident = CreateResident.Field()
     delete_resident = DeleteResident.Field()
@@ -325,9 +374,13 @@ class Query(graphene.AbstractType):
     visitors = graphene.List(VisitorType)
     services = graphene.List(ServiceType)
     users = graphene.List(UserType)
+    entries = graphene.List(EntryType)
 
     voice_belongs_resident = graphene.Boolean(
         cpf=graphene.String(required=True),
+        # TODO() - Remover um desses campos
+        # talvez substituir voice_data por mfcc_data
+        # A remoção é complicada pois existem dependencias
         voice_data=graphene.String(),
         mfcc_data=graphene.String()
     )
@@ -343,6 +396,10 @@ class Query(graphene.AbstractType):
         email=graphene.String(),
         cpf=graphene.String()
         )
+
+    def resolve_entries(self, info, **kwargs):
+        return Entry.objects.all()
+    @superuser_required
     def resolve_visitors(self, info, **kwargs):
         return Visitor.objects.all()
     def resolve_residents(self, info, **kwargs):
