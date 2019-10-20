@@ -4,6 +4,7 @@ from graphene_django import DjangoObjectType
 from accounts.models import Visitor, Resident, Service, EntryVisitor
 import accounts.utility as Utility
 from condos.models import Apartment, Block
+from condos.schema import ApartmentType
 from django.contrib.auth import get_user_model
 from graphql_jwt.decorators import superuser_required
 
@@ -179,6 +180,31 @@ class CreateVisitor(graphene.Mutation):
 
         return CreateVisitor(visitor=visitor)
 
+class CreateEntryVisitor(graphene.Mutation):
+    """Mutation from graphene for creating entry"""
+
+    visitor = graphene.Field(VisitorType)
+    apartment = graphene.Field(ApartmentType)
+
+    visitor_cpf = graphene.String()
+    apartment_number = graphene.String()
+    entered = graphene.Boolean()
+
+    class Arguments:
+        visitor_cpf = graphene.String()
+        apartment_number = graphene.String()
+        entered = graphene.Boolean()
+
+    def mutate(self, info, visitor_cpf, apartment_number, entered):
+        visitor = Visitor.objects.filter(cpf=visitor_cpf).first()
+        apartment = Apartment.objects.filter(number=apartment_number).first()
+
+        entry = EntryVisitor(visitor=visitor, apartment=apartment, entered=entered)
+        entry.date = timezone.now()
+        entry.save()
+
+        return CreateEntryVisitor(visitor = entry.visitor, apartment = entry.apartment, entered = entered)
+
 class Mutation(graphene.ObjectType):
     """Used to write or post values"""
 
@@ -186,6 +212,7 @@ class Mutation(graphene.ObjectType):
     create_visitor = CreateVisitor.Field()
     create_service = CreateService.Field()
     create_resident = CreateResident.Field()
+    create_entry_visitor = CreateEntryVisitor.Field()
 
 
 class Query(graphene.AbstractType):
