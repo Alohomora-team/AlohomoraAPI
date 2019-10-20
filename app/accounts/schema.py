@@ -222,7 +222,7 @@ class Query(graphene.AbstractType):
     visitors = graphene.List(VisitorType)
     services = graphene.List(ServiceType)
     users = graphene.List(UserType)
-    entries_visitors = graphene.List(EntryVisitorType)
+    entries_visitors = graphene.List(EntryVisitorType, cpf=graphene.String())
 
     voice_belongs_resident = graphene.Boolean(
         cpf=graphene.String(required=True),
@@ -245,9 +245,15 @@ class Query(graphene.AbstractType):
         cpf=graphene.String()
         )
 
+    entries_visitors_filtered = graphene.Field(
+        graphene.List(EntryVisitorType),
+         cpf=graphene.String(),
+         block_number=graphene.String(),
+         apartment_number=graphene.String(),
+         )
+
     def resolve_entries_visitors(self, info, **kwargs):
         return EntryVisitor.objects.all()
-
     @superuser_required
     def resolve_visitors(self, info, **kwargs):
         return Visitor.objects.all()
@@ -282,6 +288,21 @@ class Query(graphene.AbstractType):
 
         if cpf is not None:
             return Visitor.objects.get(cpf=cpf)
+
+        return None
+    def resolve_entries_visitors_filtered(self, info, **kwargs):
+        cpf = kwargs.get('cpf')
+        block_number = kwargs.get('block_number')
+        apartment_number = kwargs.get('apartment_number')
+
+        if cpf is not None:
+            visitor = Visitor.objects.get(cpf=cpf)
+            return EntryVisitor.objects.filter(visitor=visitor)
+
+        elif block_number and apartment_number is not None:
+            block = Block.objects.get(number=block_number)
+            apartment = Apartment.objects.get(block=block, number=apartment_number)
+            return EntryVisitor.objects.filter(apartment=apartment)
 
         return None
     def resolve_me(self, info):
