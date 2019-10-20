@@ -1,7 +1,7 @@
 import secrets
 import graphene
 from graphene_django import DjangoObjectType
-from accounts.models import Visitor, Resident, Service
+from accounts.models import Visitor, Resident, Service, EntryVisitor
 import accounts.utility as Utility
 from condos.models import Apartment, Block
 from django.contrib.auth import get_user_model
@@ -18,6 +18,10 @@ class ServiceType(DjangoObjectType):
 class VisitorType(DjangoObjectType):
     class Meta:
         model = Visitor
+
+class EntryVisitorType(DjangoObjectType):
+    class Meta:
+        model = EntryVisitor
 
 class UserType(DjangoObjectType):
     class Meta:
@@ -192,6 +196,7 @@ class Query(graphene.AbstractType):
     visitors = graphene.List(VisitorType)
     services = graphene.List(ServiceType)
     users = graphene.List(UserType)
+    entries_visitors = graphene.List(EntryVisitorType)
 
     voice_belongs_resident = graphene.Boolean(
         cpf=graphene.String(required=True),
@@ -213,6 +218,10 @@ class Query(graphene.AbstractType):
         email=graphene.String(),
         cpf=graphene.String()
         )
+
+    def resolve_entries_visitors(self, info, **kwargs):
+        return EntryVisitor.objects.all()
+
     @superuser_required
     def resolve_visitors(self, info, **kwargs):
         return Visitor.objects.all()
