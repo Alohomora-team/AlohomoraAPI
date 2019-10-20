@@ -253,7 +253,8 @@ class Query(graphene.AbstractType):
         )
     entries_visitors_pending = graphene.Field(
         graphene.List(EntryVisitorType),
-        entered=graphene.Boolean(),
+        block_number=graphene.String(),
+        apartment_number=graphene.String(),
         )
 
     def resolve_entries_visitors(self, info, **kwargs):
@@ -310,12 +311,18 @@ class Query(graphene.AbstractType):
 
         return None
     def resolve_entries_visitors_pending(self, info, **kwargs):
-        entered = kwargs.get('entered')
+        block_number = kwargs.get('block_number')
+        apartment_number = kwargs.get('apartment_number')
 
-        if not entered:
-            return EntryVisitor.objects.filter(entered=False)
-
-        return EntryVisitor.objects.filter(entered=True)
+        #Lista entradas pendentes de um apartamento de determinado bloco
+        if block_number and apartment_number is not None:
+            block = Block.objects.get(number=block_number)
+            apartment = Apartment.objects.get(block=block, number=apartment_number)
+            return EntryVisitor.objects.filter(
+                entered=False,
+                apartment=apartment
+                )
+        return None
     def resolve_me(self, info):
         user = info.context.user
         if user.is_service is True:
