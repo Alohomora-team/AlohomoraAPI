@@ -136,10 +136,7 @@ class UpdateBlock(graphene.Mutation):
 
     def mutate(self, info, number, block_number):
         block = Block.objects.get(number=block_number)
-        print(block.number)
         block.number = number
-        print(block.number)
-        print("MKOOOOOOOOOOOOOOOO")
         block.save()
         return UpdateBlock(block=block)
 

@@ -120,8 +120,6 @@ class CreateService(graphene.Mutation):
         user.is_service = True
         user.save()
         service = Service.objects.create(user=user)
-        print("oiiiiiiiiiiii")
-        print(user.service.email)
         service = Service(
             complete_name=complete_name,
             email=email,
@@ -402,10 +400,13 @@ class Query(graphene.AbstractType):
     @superuser_required
     def resolve_visitors(self, info, **kwargs):
         return Visitor.objects.all()
+    @superuser_required
     def resolve_residents(self, info, **kwargs):
         return Resident.objects.all()
+    @superuser_required
     def resolve_services(self, info, **kwargs):
         return Service.objects.all()
+    @superuser_required
     def resolve_users(self, info, **kwargs):
         return get_user_model().objects.all()
     @superuser_required
