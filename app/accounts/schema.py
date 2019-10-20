@@ -247,11 +247,10 @@ class Query(graphene.AbstractType):
 
     entries_visitors_filtered = graphene.Field(
         graphene.List(EntryVisitorType),
-         cpf=graphene.String(),
-         block_number=graphene.String(),
-         apartment_number=graphene.String(),
-         )
-    
+        cpf=graphene.String(),
+        block_number=graphene.String(),
+        apartment_number=graphene.String(),
+        )
     entries_visitors_pending = graphene.Field(
         graphene.List(EntryVisitorType),
         entered=graphene.Boolean(),
@@ -304,22 +303,19 @@ class Query(graphene.AbstractType):
             visitor = Visitor.objects.get(cpf=cpf)
             return EntryVisitor.objects.filter(visitor=visitor)
 
-        elif block_number and apartment_number is not None:
+        if block_number and apartment_number is not None:
             block = Block.objects.get(number=block_number)
             apartment = Apartment.objects.get(block=block, number=apartment_number)
             return EntryVisitor.objects.filter(apartment=apartment)
 
         return None
-
     def resolve_entries_visitors_pending(self, info, **kwargs):
         entered = kwargs.get('entered')
 
         if not entered:
             return EntryVisitor.objects.filter(entered=False)
 
-        else:
-            return EntryVisitor.objects.filter(entered=True)
-
+        return EntryVisitor.objects.filter(entered=True)
     def resolve_me(self, info):
         user = info.context.user
         if user.is_service is True:
