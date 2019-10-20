@@ -8,5 +8,11 @@
  * Guia de contribuição do projeto
  * Estrutura padrão do condominio
  * Adicionado docker-compose para rodar o site locamente
+
+ ## Release 2 - 20 Outubro de 2019
+ #### Adicionado
+ * Funcionalidade para armazenamento de dados de entrada de visitante 
+
+
  ---
  Modelo padrão do changelog disponível [aqui](https://keepachangelog.com/en/0.3.0/).
