@@ -200,7 +200,6 @@ class CreateEntryVisitor(graphene.Mutation):
         apartment = Apartment.objects.filter(number=apartment_number).first()
 
         entry = EntryVisitor(visitor=visitor, apartment=apartment, entered=entered)
-        entry.date = timezone.now()
         entry.save()
 
         return CreateEntryVisitor(visitor = entry.visitor, apartment = entry.apartment, entered = entered)
