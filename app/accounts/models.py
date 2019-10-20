@@ -81,3 +81,12 @@ class Visitor(models.Model):
     phone = models.CharField(max_length=15)
     cpf = models.CharField(max_length=11)
     voice_data = models.TextField(null=True)
+
+    entries = models.ManyToManyField(Apartment, through='EntryVisitor')
+
+class EntryVisitor(models.Model):
+    visitor = models.ForeignKey(Visitor, on_delete=models.CASCADE)
+    apartment = models.ForeignKey(Apartment, on_delete=models.CASCADE)
+    date = models.DateTimeField(auto_now=True)
+    entered = models.BooleanField('entry status', default=False)
+
