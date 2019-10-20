@@ -4,21 +4,23 @@ from django.test import TestCase
 from graphene.test import Client
 from alohomora.schema import schema
 from condos.models import Apartment, Block
-from accounts.models import Visitor, Resident, Service
+from accounts.models import Visitor, Resident, Service, Entry
 import accounts.utility as Utility
 from graphql_jwt.testcases import JSONWebTokenTestCase
-
+from django.utils import timezone
 class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
     """Test that information can be retrieved and created using graphql"""
     maxDiff = None
+    current_date_time = timezone.now()
 
     def setUp(self):
         self._client = Client(schema)
-        self.user = get_user_model().objects.create(email='user@exemplo',
+        self.user = get_user_model().objects.create(email='user@example',
                                                     password='123',
                                                     username='user',
                                                     is_active=True,)
-        self.super_user = get_user_model().objects.create_superuser(email='admin@exemplo',
+
+        self.super_user = get_user_model().objects.create_superuser(email='admin@example',
                                                                     password='123')
         self.client.authenticate(self.super_user)
 
@@ -64,7 +66,7 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
         )
         Visitor.objects.create(
             complete_name='bob o construtor',
-            email='charizard@exemplo.com',
+            email='charizard@example.com',
             cpf='12345678910',
             phone='42',
             voice_data='[[1],[2],[3]]',
@@ -83,7 +85,7 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
                     mutation{
                       createResident(
                         completeName: "bob o construtor",
-                        email: "resident@exemplo.com",
+                        email: "resident2@example.com",
                         cpf: "12345678910",
                         phone: "42",
                         apartment: "101",
@@ -107,7 +109,7 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
             "createResident": {
                 "resident": {
                     "completeName": "bob o construtor",
-                    "email": "resident@exemplo.com",
+                    "email": "resident2@example.com",
                     "voiceData": "[1,2,3]",
                     "mfccAudioSpeakingName": "[1,2,3]"
                 }
@@ -195,7 +197,7 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
         self.assertDictEqual({"visitors":
                               [{
                                   "completeName": "bob o construtor",
-                                  "email": "charizard@exemplo.com",
+                                  "email": "charizard@example.com",
                                   "phone": "42"}]
                               }, result.data)
 
@@ -318,7 +320,7 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
         self.assertDictEqual({"me":
                               {
                                   "username": "user",
-                                  "email": "user@exemplo",
+                                  "email": "user@example",
                                   "password": "123"}
                              }, result.data)
     def test_deactivated_user(self):
@@ -378,6 +380,48 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
             '''
         result = self.client.execute(mutation)
         self.assertIsNone(result.errors)
+
+    def test_mutation_entry(self):
+        mutation = '''
+mutation{
+  createEntry(apartmentNumber: "101", residentCpf: "12345678910"){
+	resident{
+    cpf
+  }
+
+}
+}
+        '''
+        result = self.client.execute(mutation)
+        self.assertIsNone(result.errors)
+        self.assertDictEqual({"createEntry":
+                              {
+                                  "resident": {
+                                    "cpf": "12345678910"
+                                  }
+                                }
+                              }, result.data)
+
+    def test_query_entry(self):
+        mutation = '''
+                mutation{
+                  createEntry(apartmentNumber: "101", residentCpf: "12345678910"){
+                	resident{
+                    cpf
+                  }
+
+                }
+                }
+        '''
+        result = self.client.execute(mutation)
+
+        self.assertIsNone(result.errors)
+        resident = Resident.objects.get(cpf='12345678910')
+        entry = Entry.objects.get(resident=resident)
+        self.assertEqual(entry.date.minute, self.current_date_time.minute)
+        self.assertEqual(entry.date.hour, self.current_date_time.hour)
+        self.assertEqual(entry.date.day, self.current_date_time.day)
+
 
 class VoiceBelongsUserTests(TestCase):
     """Test using mfcc and fastwd for voice recognition and authentication"""

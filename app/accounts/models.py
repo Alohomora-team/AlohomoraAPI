@@ -76,6 +76,8 @@ class Resident(models.Model):
     apartment = models.ForeignKey(Apartment, models.SET_NULL, null=True)
     block = models.ForeignKey(Block, models.SET_NULL, null=True)
 
+    entries = models.ManyToManyField(Apartment, related_name='entries', through='Entry')
+
 class Visitor(models.Model):
     owner = models.ForeignKey(Resident, on_delete=models.CASCADE, null=True)
     complete_name = models.CharField(max_length=80)
@@ -83,3 +85,8 @@ class Visitor(models.Model):
     phone = models.CharField(max_length=15)
     cpf = models.CharField(max_length=11)
     voice_data = models.TextField(null=True)
+
+class Entry(models.Model):
+    resident = models.ForeignKey(Resident, on_delete=models.CASCADE)
+    apartment = models.ForeignKey(Apartment, on_delete=models.CASCADE)
+    date = models.DateTimeField(auto_now=True)
