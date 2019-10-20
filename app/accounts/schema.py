@@ -202,7 +202,7 @@ class CreateEntryVisitor(graphene.Mutation):
         entry = EntryVisitor(visitor=visitor, apartment=apartment, entered=entered)
         entry.save()
 
-        return CreateEntryVisitor(visitor = entry.visitor, apartment = entry.apartment, entered = entered)
+        return CreateEntryVisitor(visitor=entry.visitor, apartment=entry.apartment, entered=entered)
 
 class Mutation(graphene.ObjectType):
     """Used to write or post values"""
