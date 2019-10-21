@@ -34,7 +34,7 @@ class User(AbstractUser):
     is_visitor = models.BooleanField('visitor status', default=False)
     is_active = models.BooleanField('active status', default=False)
 
-    username = models.CharField(max_length=40, unique=False)
+    username = models.CharField(max_length=40, unique=False, null=True)
     email = models.CharField(max_length=40, unique=True)
     password = models.CharField(max_length=80)
 

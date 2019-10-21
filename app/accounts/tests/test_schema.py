@@ -151,7 +151,6 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
                 completeName
             }
         }
-
         """
 
         result = self.client.execute(query)
@@ -169,7 +168,6 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
                 completeName
             }
         }
-
         """
 
         result = self.client.execute(query)
@@ -227,7 +225,6 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
                           }
                         }
                         }
-
         '''
         result = self.client.execute(mutation)
         self.assertIsNone(result.errors)
@@ -381,6 +378,170 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
         result = self.client.execute(mutation)
         self.assertIsNone(result.errors)
 
+    def test_delete_service(self):
+
+        mutation = '''
+                    mutation{
+                      deleteService(serviceEmail: "service@example.com")
+                      {
+                        serviceEmail
+                      }
+                    }
+                            '''
+        result = self.client.execute(mutation)
+        self.assertIsNone(result.errors)
+        self.assertEqual(Service.objects.count(), 0)
+
+    def test_delete_resident(self):
+
+        mutation = '''
+                    mutation{
+                      deleteResident(residentEmail: "resident@example.com")
+                      {
+                        residentEmail
+                      }
+                    }
+                            '''
+        result = self.client.execute(mutation)
+        self.assertIsNone(result.errors)
+        self.assertEqual(Resident.objects.count(), 0)
+
+    def test_delete_visitor(self):
+        mutation = '''
+                    mutation{
+                      deleteVisitor(visitorEmail: "charizard@example.com")
+                      {
+                        visitorEmail
+                      }
+                    }
+                            '''
+        result = self.client.execute(mutation)
+        self.assertIsNone(result.errors)
+        self.assertEqual(Visitor.objects.count(), 0)
+
+    def test_update_service(self):
+
+        self.user = get_user_model().objects.get(email='service@example.com')
+        self.client.authenticate(self.user)
+
+        mutation = '''
+                    mutation {
+                      updateService(serviceData: {email: "service2@example.com", password: "k"}){
+                        service {
+                          email
+                          completeName
+                        }
+                        user {
+                          	email
+                          }
+                      }
+                    }
+            '''
+        result = self.client.execute(mutation)
+        self.assertIsNone(result.errors)
+        self.assertEqual(Resident.objects.count(), 1)
+        self.assertDictEqual({"updateService":
+                              {
+                                  "service": {
+                                      "email": "service2@example.com",
+                                      "completeName": "bob esponja"},
+                                  "user": {
+                                      "email": "service2@example.com"}
+                                  }
+                              }, result.data)
+
+    def test_update_resident(self):
+
+        self.user = get_user_model().objects.get(email='resident@example.com')
+        self.client.authenticate(self.user)
+        mutation = '''
+mutation {
+  updateResident(residentData: {email: "service42@example.com", password: "k"}){
+    resident {
+      email
+      completeName
+      phone
+    }
+    user {
+      	email
+      }
+  }
+}
+            '''
+        result = self.client.execute(mutation)
+        self.assertIsNone(result.errors)
+        self.assertEqual(Resident.objects.count(), 1)
+
+        self.assertDictEqual({"updateResident":
+                              {
+                                  "resident": {
+                                      "email": "service42@example.com",
+                                      "completeName": "resident-evil",
+                                      "phone": "42"},
+                                  "user": {
+                                      "email": "service42@example.com",}
+                                  }
+                              }, result.data)
+
+    def test_update_visitor(self):
+
+        mutation = '''
+                    mutation {
+                      createVisitor(completeName: "visitor", cpf: "123"
+                      email: "visitor@example.com", phone: "123", voiceData: "[[1],[2],[3]]",, ownerCpf: "12345678910") {
+                       visitor{
+                        id
+                        email
+                        phone
+                        completeName
+                        cpf
+                        owner {
+                          completeName
+                          cpf
+                          email
+                          phone
+                          apartment {
+                            number
+                                  block {
+                            		 	number
+                          			}
+                          }
+                        }
+                      }
+                    }
+                    }
+              '''
+        result = self.client.execute(mutation)
+        self.user = get_user_model().objects.get(email='resident@example.com')
+        self.client.authenticate(self.user)
+        self.assertEqual(Resident.objects.count(), 1)
+
+        mutation = '''
+mutation {
+  updateVisitor(visitorData: {email: "visitor3@example.com", completeName: "pedreiro"}){
+    visitor {
+      email
+      completeName
+      phone
+    }
+    user {
+      	email
+      }
+  }
+}
+              '''
+        result = self.client.execute(mutation)
+        self.assertIsNone(result.errors)
+        self.assertDictEqual({"updateVisitor":
+                              {
+                                  "visitor": {
+                                      "email": "visitor3@example.com",
+                                      "completeName": "pedreiro",
+                                      "phone": "123"},
+                                  "user": {
+                                      "email": "resident@example.com",}
+                                  }
+                              }, result.data)
     def test_mutation_entry(self):
         mutation = '''
 mutation{

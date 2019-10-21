@@ -1,6 +1,12 @@
 import secrets
 import graphene
 from graphene_django import DjangoObjectType
+from django.contrib.auth import get_user_model
+from accounts.models import Visitor, Resident, Service
+import accounts.utility as Utility
+from condos.models import Apartment, Block
+from graphql_jwt.decorators import superuser_required
+from graphql_jwt.decorators import login_required
 from accounts.models import Visitor, Resident, Service, Entry
 import accounts.utility as Utility
 from condos.models import Apartment, Block
@@ -30,6 +36,30 @@ class VisitorType(DjangoObjectType):
 class UserType(DjangoObjectType):
     class Meta:
         model = get_user_model()
+
+class ServiceInput(graphene.InputObjectType):
+    password = graphene.String()
+    email = graphene.String()
+    complete_name = graphene.String()
+
+class ResidentInput(graphene.InputObjectType):
+    complete_name = graphene.String()
+    email = graphene.String()
+    phone = graphene.String()
+    cpf = graphene.String()
+    apartment = graphene.String()
+    block = graphene.String()
+    password = graphene.String()
+    voice_data = graphene.String()
+    mfcc_data = graphene.String()
+
+class VisitorInput(graphene.InputObjectType):
+    complete_name = graphene.String()
+    email = graphene.String()
+    phone = graphene.String()
+    cpf = graphene.String()
+    voice_data = graphene.String()
+    owner_cpf = graphene.String()
 
 
 class CreateUser(graphene.Mutation):
@@ -90,7 +120,6 @@ class CreateService(graphene.Mutation):
         user.is_service = True
         user.save()
         service = Service.objects.create(user=user)
-
         service = Service(
             complete_name=complete_name,
             email=email,
@@ -210,6 +239,117 @@ class CreateVisitor(graphene.Mutation):
 
         return CreateVisitor(visitor=visitor)
 
+class DeleteResident(graphene.Mutation):
+    resident_email = graphene.String()
+
+    class Arguments:
+        resident_email = graphene.String(required=True)
+
+    @superuser_required
+    def mutate(self, info, resident_email):
+        resident = Resident.objects.get(email=resident_email)
+        user = get_user_model().objects.get(email=resident_email)
+        user.delete()
+        resident.delete()
+
+class DeleteService(graphene.Mutation):
+    service_email = graphene.String()
+
+    class Arguments:
+        service_email = graphene.String(required=True)
+
+    @superuser_required
+    def mutate(self, info, service_email):
+        service = Service.objects.get(email=service_email)
+        user = get_user_model().objects.get(email=service_email)
+        user.delete()
+        service.delete()
+
+class DeleteVisitor(graphene.Mutation):
+    visitor_email = graphene.String()
+
+    class Arguments:
+        visitor_email = graphene.String(required=True)
+
+    def mutate(self, info, visitor_email):
+        visitor = Visitor.objects.get(email=visitor_email)
+        visitor.delete()
+
+class UpdateService(graphene.Mutation):
+    user = graphene.Field(UserType)
+    service = graphene.Field(ServiceType)
+
+    class Arguments:
+        service_data = ServiceInput()
+
+    @login_required
+    def mutate(self, info, service_data=None):
+        user = info.context.user
+        if user.is_service is not True:
+            raise Exception('User is not service')
+        email = user.email
+        service = Service.objects.get(email=email)
+        for k, v in service_data.items():
+            if (k == 'password') and (v is not None):
+                user.set_password(service_data.password)
+            if (k == 'email') and (v is not None):
+                setattr(user, k, v)
+            if (k == 'email') and (v is not None):
+                setattr(service, k, v)
+            else:
+                setattr(service, k, v)
+        service.save()
+        user.save()
+        return UpdateService(user=user, service=service)
+
+class UpdateResident(graphene.Mutation):
+    user = graphene.Field(UserType)
+    resident = graphene.Field(ResidentType)
+
+    class Arguments:
+        resident_data = ResidentInput()
+
+    @login_required
+    def mutate(self, info, resident_data=None):
+        user = info.context.user
+        if user.is_resident is not True:
+            raise Exception('User is not resident')
+        email = user.email
+        resident = Resident.objects.get(email=email)
+        for k, v in resident_data.items():
+            if (k == 'password') and (v is not None):
+                user.set_password(resident_data.password)
+            if (k == 'email') and (v is not None):
+                setattr(user, k, v)
+            if (k == 'email') and (v is not None):
+                setattr(resident, k, v)
+            else:
+                setattr(resident, k, v)
+        resident.save()
+        user.save()
+        return UpdateResident(user=user, resident=resident)
+
+class UpdateVisitor(graphene.Mutation):
+    visitor = graphene.Field(VisitorType)
+    user = graphene.Field(UserType)
+
+    class Arguments:
+        visitor_data = VisitorInput()
+
+    @login_required
+    def mutate(self, info, visitor_data=None):
+        user = info.context.user
+        if user.is_resident is not True:
+            raise Exception('User is not resident')
+        email = user.email
+        resident = Resident.objects.get(email=email)
+        visitor = Visitor.objects.get(owner=resident)
+
+        for k, v in visitor_data.items():
+            setattr(visitor, k, v)
+
+        visitor.save()
+        return UpdateVisitor(user=user, visitor=visitor)
 class ActivateUser(graphene.Mutation):
     """Mutation from graphene for activating user"""
     user = graphene.Field(UserType)
@@ -242,6 +382,12 @@ class Mutation(graphene.ObjectType):
     create_entry = CreateEntry.Field()
     create_service = CreateService.Field()
     create_resident = CreateResident.Field()
+    delete_resident = DeleteResident.Field()
+    delete_service = DeleteService.Field()
+    delete_visitor = DeleteVisitor.Field()
+    update_service = UpdateService.Field()
+    update_resident = UpdateResident.Field()
+    update_visitor = UpdateVisitor.Field()
     activate_user = ActivateUser.Field()
     deactivate_user = DeactivateUser.Field()
 

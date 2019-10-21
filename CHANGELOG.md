@@ -19,6 +19,8 @@
 ## [0.2.0] - 2019-10-15
 ### Adicionado
 *  Novo modelo que permite registrar o horário de entrada toda vez que um Morador entrar no condomínio
+*  Criação de UPDATE e DELETE no schema para a API.
+*  Criação da autenticação por models
 *  Criação da mutation para ativar o usuário
 
 
