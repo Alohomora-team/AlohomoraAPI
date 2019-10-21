@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'accounts',
     'condos',
     'bot',
+    'core',
 ]
 
 GRAPHENE = {
