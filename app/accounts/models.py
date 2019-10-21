@@ -22,6 +22,7 @@ class UserManager(BaseUserManager):
         u.is_admin = True
         u.is_staff = True
         u.is_superuser = True
+        u.is_active = True
         u.save(using=self._db)
         return u
 
@@ -31,6 +32,7 @@ class User(AbstractUser):
     is_admin = models.BooleanField('admin status', default=False)
     is_service = models.BooleanField('service status', default=False)
     is_visitor = models.BooleanField('visitor status', default=False)
+    is_active = models.BooleanField('active status', default=False)
 
     username = models.CharField(max_length=40, unique=False)
     email = models.CharField(max_length=40, unique=True)

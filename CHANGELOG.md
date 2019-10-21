@@ -19,7 +19,7 @@
 ## [0.2.0] - 2019-10-15
 ### Adicionado
 *  Novo modelo que permite registrar o horário de entrada toda vez que um Morador entrar no condomínio
-
+*  Criação da mutation para ativar o usuário
 
 
 

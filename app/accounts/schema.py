@@ -6,7 +6,7 @@ import accounts.utility as Utility
 from condos.models import Apartment, Block
 from condos.schema import ApartmentType
 from django.contrib.auth import get_user_model
-from graphql_jwt.decorators import superuser_required
+from graphql_jwt.decorators import superuser_required, login_required
 from django.utils import timezone
 import datetime
 import django.utils
@@ -38,7 +38,7 @@ class CreateUser(graphene.Mutation):
     class Arguments:
         username = graphene.String(required=True)
         password = graphene.String(required=False)
-
+    @login_required
     def mutate(self, info, password, username):
         user = get_user_model()(
             username=username,
@@ -83,7 +83,7 @@ class CreateService(graphene.Mutation):
         password = graphene.String(required=True)
         email = graphene.String(required=True)
         complete_name = graphene.String(required=True)
-
+    @superuser_required
     def mutate(self, info, email, password, complete_name):
         user = get_user_model()(email=email)
         user.set_password(password)
@@ -121,7 +121,6 @@ class CreateResident(graphene.Mutation):
         mfcc_data = graphene.String()
 
         mfcc_audio_speaking_name = graphene.String()
-
     def mutate(self, info, **kwargs):
         voice_data = kwargs.get('voice_data')
         mfcc_data = kwargs.get('mfcc_data')
@@ -137,7 +136,6 @@ class CreateResident(graphene.Mutation):
         user = get_user_model()(email=email)
         user.set_password(password)
         user.is_resident = True
-        user.save()
 
         block_obj = Block.objects.filter(number=block).first()
 
@@ -152,11 +150,12 @@ class CreateResident(graphene.Mutation):
         if block_obj is None:
             raise Exception('Block not found')
 
+
         if Apartment.objects.filter(number=apartment, block=block_obj).first() is None:
             raise Exception('Apartment not found')
 
+        user.save()
         resident = Resident.objects.create(user=user)
-
         resident = Resident(
             complete_name=complete_name,
             email=email,
@@ -167,9 +166,7 @@ class CreateResident(graphene.Mutation):
             apartment=Apartment.objects.get(number=apartment, block=block_obj),
             mfcc_audio_speaking_name=mfcc_audio_speaking_name
         )
-
         resident.save()
-
         return CreateResident(resident=resident)
 
 class CreateVisitor(graphene.Mutation):
@@ -183,7 +180,8 @@ class CreateVisitor(graphene.Mutation):
         cpf = graphene.String()
         voice_data = graphene.String()
         owner_cpf = graphene.String()
-
+        
+    @login_required
     def mutate(self, info, **kwargs):
         voice_data = kwargs.get('voice_data')
         cpf = kwargs.get('cpf')
@@ -205,9 +203,36 @@ class CreateVisitor(graphene.Mutation):
             voice_data=voice_data,
             owner=resident,
         )
+        if resident is None:
+            raise Exception('Resident not found')
+
         visitor.save()
 
         return CreateVisitor(visitor=visitor)
+
+class ActivateUser(graphene.Mutation):
+    """Mutation from graphene for activating user"""
+    user = graphene.Field(UserType)
+
+    class Arguments:
+        user_email = graphene.String()
+    def mutate(self, info, user_email):
+        user = get_user_model().objects.get(email=user_email)
+        user.is_active = True
+        user.save()
+        return ActivateUser(user=user)
+
+class DeactivateUser(graphene.Mutation):
+    """Mutation from graphene for activating user"""
+    user = graphene.Field(UserType)
+
+    class Arguments:
+        user_email = graphene.String()
+    def mutate(self, info, user_email):
+        user = get_user_model().objects.get(email=user_email)
+        user.is_active = False
+        user.save()
+        return ActivateUser(user=user)
 
 class Mutation(graphene.ObjectType):
     """Used to write or post values"""
@@ -217,7 +242,8 @@ class Mutation(graphene.ObjectType):
     create_entry = CreateEntry.Field()
     create_service = CreateService.Field()
     create_resident = CreateResident.Field()
-
+    activate_user = ActivateUser.Field()
+    deactivate_user = DeactivateUser.Field()
 
 class Query(graphene.AbstractType):
     """Used to read or fetch values"""
@@ -290,6 +316,8 @@ class Query(graphene.AbstractType):
         return None
     def resolve_me(self, info):
         user = info.context.user
+        if user.is_active is not True:
+            raise Exception('User is NOT active')
         if user.is_service is True:
             raise Exception('User is service')
         if user.is_visitor is True:

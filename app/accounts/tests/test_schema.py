@@ -19,6 +19,7 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
                                                     password='123',
                                                     username='user',
                                                     is_active=True,)
+
         self.super_user = get_user_model().objects.create_superuser(email='admin@example',
                                                                     password='123')
         self.client.authenticate(self.super_user)
@@ -322,6 +323,63 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
                                   "email": "user@example",
                                   "password": "123"}
                              }, result.data)
+    def test_deactivated_user(self):
+        mutation = '''
+                    mutation{
+                      deactivateUser(
+                        userEmail: "resident@example.com",)
+                      { user{
+                           isActive
+                      }
+                      }
+                    }
+            '''
+        result = self.client.execute(mutation)
+        self.assertIsNone(result.errors)
+        self.user = get_user_model().objects.get(email="resident@example.com")
+        with self.assertRaises(Exception):
+            self.client.authenticate(self.user)
+            mutation = '''
+                            mutation {
+                              createVisitor(completeName: "visitor", cpf: "123"
+                              email: "oi@oi", phone: "123", voiceData: "[[1],[2],[3]]",, ownerCpf: "12345678910") {
+                               visitor{
+                                email
+                              }
+                            }
+                            }
+
+                '''
+            result = self.client.execute(mutation)
+            self.assertIsNone(result.errors)
+    def test_activated_user(self):
+        mutation = '''
+                    mutation{
+                      activateUser(
+                        userEmail: "resident@example.com",)
+                      { user{
+                           isActive
+                      }
+                      }
+                    }
+            '''
+        result = self.client.execute(mutation)
+        self.assertIsNone(result.errors)
+        self.user = get_user_model().objects.get(email="resident@example.com")
+        self.client.authenticate(self.user)
+        mutation = '''
+                        mutation {
+                          createVisitor(completeName: "visitor", cpf: "123"
+                          email: "oi@oi", phone: "123", voiceData: "[[1],[2],[3]]",, ownerCpf: "12345678910") {
+                           visitor{
+                            email
+                          }
+                        }
+                        }
+
+            '''
+        result = self.client.execute(mutation)
+        self.assertIsNone(result.errors)
 
     def test_mutation_entry(self):
         mutation = '''
