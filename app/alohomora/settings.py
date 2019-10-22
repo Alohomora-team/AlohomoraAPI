@@ -48,6 +48,8 @@ INSTALLED_APPS = [
     #Local apps (our project's apps)
     'accounts',
     'condos',
+    'bot',
+    'core',
 ]
 
 GRAPHENE = {
