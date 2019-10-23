@@ -102,7 +102,7 @@ class CreateBlock(graphene.Mutation):
 
     @superuser_required
     def mutate(self, info, number):
-        block = Block(number=number, number_id=number)
+        block = Block(number=number)
         block.save()
 
         return CreateBlock(
