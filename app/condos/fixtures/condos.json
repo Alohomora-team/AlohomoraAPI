@@ -1,0 +1,15 @@
+[
+    {
+        "model": "condos.apartment",
+        "pk": 1,
+        "fields": {
+            "number": "101",
+            "block": 1
+        }
+    },
+    {
+        "model": "condos.block",
+        "pk": "1",
+        "fields": {}
+    }
+    ]

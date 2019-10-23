@@ -22,6 +22,7 @@ class UserManager(BaseUserManager):
         u.is_admin = True
         u.is_staff = True
         u.is_superuser = True
+        u.is_active = True
         u.save(using=self._db)
         return u
 
@@ -31,8 +32,9 @@ class User(AbstractUser):
     is_admin = models.BooleanField('admin status', default=False)
     is_service = models.BooleanField('service status', default=False)
     is_visitor = models.BooleanField('visitor status', default=False)
+    is_active = models.BooleanField('active status', default=False)
 
-    username = models.CharField(max_length=40, unique=False)
+    username = models.CharField(max_length=40, unique=False, null=True)
     email = models.CharField(max_length=40, unique=True)
     password = models.CharField(max_length=80)
 
@@ -74,6 +76,8 @@ class Resident(models.Model):
     apartment = models.ForeignKey(Apartment, models.SET_NULL, null=True)
     block = models.ForeignKey(Block, models.SET_NULL, null=True)
 
+    entries = models.ManyToManyField(Apartment, related_name='entries', through='Entry')
+
 class Visitor(models.Model):
     owner = models.ForeignKey(Resident, on_delete=models.CASCADE, null=True)
     complete_name = models.CharField(max_length=80)
@@ -90,3 +94,7 @@ class EntryVisitor(models.Model):
     date = models.DateTimeField(auto_now=True)
     entered = models.BooleanField('entry status', default=False)
 
+class Entry(models.Model):
+    resident = models.ForeignKey(Resident, on_delete=models.CASCADE)
+    apartment = models.ForeignKey(Apartment, on_delete=models.CASCADE)
+    date = models.DateTimeField(auto_now=True)
