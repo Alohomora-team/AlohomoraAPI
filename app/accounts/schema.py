@@ -248,7 +248,6 @@ class CreateEntryVisitor(graphene.Mutation):
     """Mutation from graphene for creating entry"""
 
     visitor = graphene.Field(VisitorType)
-    block = graphene.Field(BlockType)
     apartment = graphene.Field(ApartmentType)
 
     visitor_cpf = graphene.String()
@@ -264,13 +263,29 @@ class CreateEntryVisitor(graphene.Mutation):
 
     def mutate(self, info, visitor_cpf, block_number, apartment_number, entered):
         visitor = Visitor.objects.filter(cpf=visitor_cpf).first()
+        
+        if visitor is None:
+            raise Exception('Visitor not found')
+        
         block = Block.objects.filter(number=block_number).first()
+
+        if block is None:
+            raise Exception('Block not found')
+
         apartment = Apartment.objects.filter(block=block, number=apartment_number).first()
+
+        if apartment is None:
+            raise Exception('Apartment not found')
 
         entry = EntryVisitor(visitor=visitor, apartment=apartment, entered=entered)
         entry.save()
 
-        return CreateEntryVisitor(visitor=entry.visitor, apartment=entry.apartment, entered=entered)
+        return CreateEntryVisitor(
+            visitor_cpf=entry.visitor.cpf, 
+            block_number=entry.apartment.block,
+            apartment_number=entry.apartment, 
+            entered=entered
+            )
 class DeleteResident(graphene.Mutation):
     resident_email = graphene.String()
 
