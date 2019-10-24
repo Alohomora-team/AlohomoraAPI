@@ -253,15 +253,15 @@ class CreateEntryVisitor(graphene.Mutation):
     visitor_cpf = graphene.String()
     block_number = graphene.String()
     apartment_number = graphene.String()
-    entered = graphene.Boolean()
+    pending = graphene.Boolean()
 
     class Arguments:
         visitor_cpf = graphene.String()
         block_number = graphene.String()
         apartment_number = graphene.String()
-        entered = graphene.Boolean()
+        pending = graphene.Boolean()
 
-    def mutate(self, info, visitor_cpf, block_number, apartment_number, entered):
+    def mutate(self, info, visitor_cpf, block_number, apartment_number, pending):
         visitor = Visitor.objects.filter(cpf=visitor_cpf).first()
         
         if visitor is None:
@@ -277,14 +277,14 @@ class CreateEntryVisitor(graphene.Mutation):
         if apartment is None:
             raise Exception('Apartment not found')
 
-        entry = EntryVisitor(visitor=visitor, apartment=apartment, entered=entered)
+        entry = EntryVisitor(visitor=visitor, apartment=apartment, pending=pending)
         entry.save()
 
         return CreateEntryVisitor(
             visitor_cpf=entry.visitor.cpf, 
             block_number=entry.apartment.block,
             apartment_number=entry.apartment, 
-            entered=entered
+            pending=pending
             )
 class DeleteResident(graphene.Mutation):
     resident_email = graphene.String()
@@ -548,7 +548,7 @@ class Query(graphene.AbstractType):
             block = Block.objects.get(number=block_number)
             apartment = Apartment.objects.get(block=block, number=apartment_number)
             return EntryVisitor.objects.filter(
-                entered=False,
+                pending=True,
                 apartment=apartment
                 )
         return None

@@ -92,7 +92,7 @@ class EntryVisitor(models.Model):
     visitor = models.ForeignKey(Visitor, on_delete=models.CASCADE)
     apartment = models.ForeignKey(Apartment, on_delete=models.CASCADE)
     date = models.DateTimeField(auto_now=True)
-    entered = models.BooleanField('entry status', default=False)
+    pending = models.BooleanField('entry status', default=True)
 
 class Entry(models.Model):
     resident = models.ForeignKey(Resident, on_delete=models.CASCADE)
