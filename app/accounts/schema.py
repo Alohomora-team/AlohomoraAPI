@@ -11,7 +11,7 @@ from graphql_jwt.decorators import login_required
 from accounts.models import Visitor, Resident, Service, Entry
 import accounts.utility as Utility
 from condos.models import Apartment, Block
-from condos.schema import ApartmentType
+from condos.schema import ApartmentType, BlockType
 from django.contrib.auth import get_user_model
 from graphql_jwt.decorators import superuser_required, login_required
 from django.utils import timezone
@@ -248,20 +248,24 @@ class CreateEntryVisitor(graphene.Mutation):
     """Mutation from graphene for creating entry"""
 
     visitor = graphene.Field(VisitorType)
+    block = graphene.Field(BlockType)
     apartment = graphene.Field(ApartmentType)
 
     visitor_cpf = graphene.String()
+    block_number = graphene.String()
     apartment_number = graphene.String()
     entered = graphene.Boolean()
 
     class Arguments:
         visitor_cpf = graphene.String()
+        block_number = graphene.String()
         apartment_number = graphene.String()
         entered = graphene.Boolean()
 
-    def mutate(self, info, visitor_cpf, apartment_number, entered):
+    def mutate(self, info, visitor_cpf, block_number, apartment_number, entered):
         visitor = Visitor.objects.filter(cpf=visitor_cpf).first()
-        apartment = Apartment.objects.filter(number=apartment_number).first()
+        block = Block.objects.filter(number=block_number).first()
+        apartment = Apartment.objects.filter(block=block, number=apartment_number).first()
 
         entry = EntryVisitor(visitor=visitor, apartment=apartment, entered=entered)
         entry.save()
