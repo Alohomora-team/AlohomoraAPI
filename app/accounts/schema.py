@@ -400,6 +400,7 @@ class Query(graphene.AbstractType):
     services = graphene.List(ServiceType)
     users = graphene.List(UserType)
     entries = graphene.List(EntryType)
+    unactives_users = graphene.List(UserType)
 
     voice_belongs_resident = graphene.Boolean(
         cpf=graphene.String(required=True),
@@ -421,7 +422,9 @@ class Query(graphene.AbstractType):
         email=graphene.String(),
         cpf=graphene.String()
         )
-
+        
+    def resolve_unactives_users(self, info, **kwargs):
+        return get_user_model().objects.filter(is_active=False)
     def resolve_entries(self, info, **kwargs):
         return Entry.objects.all()
     @superuser_required
