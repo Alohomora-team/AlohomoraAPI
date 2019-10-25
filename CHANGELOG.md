@@ -23,6 +23,9 @@
 *  Criação da autenticação por models
 *  Criação da mutation para ativar o usuário
 
+## [0.2.0] - 2019-10-24
+### Adicionado
+*  Nova query que permite listar o usuários não ativados.
 
 
  ---
