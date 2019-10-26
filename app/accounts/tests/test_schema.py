@@ -50,12 +50,11 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
             is_resident=True,
         )
         get_user_model().objects.create(
-            email='unactive@example.com',
-            password='unactive-password',
-            username='unactive-username',
+            email='desativado@example.com',
+            password='desativado-password',
+            username='desativado-username',
             is_active=False,
         )
-
         block = Block.objects.create(number="1")
         apartment = Apartment.objects.create(number="101", block=block)
         Resident.objects.create(
@@ -278,25 +277,24 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
             ]
         }, result.data)
 
-    def test_query_unactives_users(self):
+    def test_query_unactive_users(self):
+        
         query = '''
                     query {
                       unactivesUsers {
                         username
-                        email
                       }
                     }
             '''
         result = self.client.execute(query)
         self.assertIsNone(result.errors)
         self.assertDictEqual({
-            "services": [
+            "unactivesUsers": [
                 {
-                    "username": "unactive-username",
-                    "email":'unactive@example.com',
+                    "username": "desativado-username"
                 }
             ]
-        }, result.data)    
+        }, result.data)
 
     def test_mutation_services(self):
 
@@ -371,7 +369,6 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
                               }
                             }
                             }
-
                 '''
             result = self.client.execute(mutation)
             self.assertIsNone(result.errors)
@@ -399,7 +396,6 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
                           }
                         }
                         }
-
             '''
         result = self.client.execute(mutation)
         self.assertIsNone(result.errors)
@@ -575,7 +571,6 @@ mutation{
 	resident{
     cpf
   }
-
 }
 }
         '''
@@ -596,7 +591,6 @@ mutation{
                 	resident{
                     cpf
                   }
-
                 }
                 }
         '''
