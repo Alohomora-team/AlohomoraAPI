@@ -27,12 +27,3 @@ services:
     # The volume with pylintrc configuration
     volumes:
     - "./:/home"
-  
-  docs:
-    build:
-      context: .
-      dockerfile: docker/docs/Dockerfile
-    volumes:
-    - "./docs:/home"
-    ports:
-    - "8080:8080"
