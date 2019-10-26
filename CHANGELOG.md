@@ -7,7 +7,6 @@
  * Estrutura padrão do condominio
  * Adicionado docker-compose para rodar o site locamente
 
-
 ## [Unreleased]
 
 ## [0.2.0] - 2019-10-15
@@ -23,6 +22,10 @@
 *  Criação de UPDATE e DELETE no schema para a API.
 *  Criação da autenticação por models
 *  Criação da mutation para ativar o usuário
+
+## [0.2.0] - 2019-10-20
+### Adicionado
+*  Funcionalidade para armazenamento de dados de entrada de visitante 
 
 
 
