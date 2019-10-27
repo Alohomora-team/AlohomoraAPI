@@ -7,11 +7,11 @@
  * Estrutura padrão do condominio
  * Adicionado docker-compose para rodar o site locamente
 
-
 ## [Unreleased]
 
 ## [0.2.0] - 2019-10-15
 ### Adicionado
+*  Melhores regras no pytlintrc
 *  Novo atributo na model User que carrega os dados MFCC do áudio do usuário dizendo o próprio nome. Juntamente de um campo na mutation de criação de User pra esse novo atributo.
 *  Adicionado query e mutation para criar e buscar feedbacks do sistema
 *  Adição das fixtures e comando para popular o banco de forma cômoda.
@@ -23,9 +23,15 @@
 *  Criação da autenticação por models
 *  Criação da mutation para ativar o usuário
 
+## [0.2.0] - 2019-10-20
+### Adicionado
+*  Funcionalidade para armazenamento de dados de entrada de visitante 
+
 ## [0.2.0] - 2019-10-24
 ### Adicionado
 *  Nova query que permite listar o usuários não ativados.
+
+
 
 
  ---

@@ -1,5 +1,19 @@
 [
     {
+        "model": "condos.block",
+        "pk": 1,
+        "fields": {
+            "number": "1"
+        }
+    },
+    {
+        "model": "condos.block",
+        "pk": 2,
+        "fields": {
+            "number": "10"
+        }
+    },
+    {
         "model": "condos.apartment",
         "pk": 1,
         "fields": {
@@ -8,8 +22,27 @@
         }
     },
     {
-        "model": "condos.block",
-        "pk": "1",
-        "fields": {}
+        "model": "condos.apartment",
+        "pk": 2,
+        "fields": {
+            "number": "202",
+            "block": 1
+        }
+    },
+    {
+        "model": "condos.apartment",
+        "pk": 3,
+        "fields": {
+            "number": "101",
+            "block": 2
+        }
+    },
+    {
+        "model": "condos.apartment",
+        "pk": 4,
+        "fields": {
+            "number": "202",
+            "block": 2
+        }
     }
-    ]
+]

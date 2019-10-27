@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/fga-eps-mds/2019.2-Alohomora.svg?branch=devel)](https://travis-ci.org/fga-eps-mds/2019.2-Alohomora)
 [![Coverage Status](https://coveralls.io/repos/github/fga-eps-mds/2019.2-Alohomora/badge.svg?branch=devel)](https://coveralls.io/github/fga-eps-mds/2019.2-Alohomora?branch=devel)
+[![Maintainability](https://api.codeclimate.com/v1/badges/2c164a8849badef20a10/maintainability)](https://codeclimate.com/github/Alohomora-team/AlohomoraAPI/maintainability)
 
 ### Como subir a aplicação
 
