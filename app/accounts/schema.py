@@ -202,7 +202,9 @@ class CreateResident(graphene.Mutation):
 
 class CreateVisitor(graphene.Mutation):
     """Mutation from graphene for creating visitor"""
-    visitor = graphene.Field(VisitorType)
+    cpf = graphene.String()
+    complete_name = graphene.String()
+
 
     class Arguments:
         complete_name = graphene.String()
@@ -220,17 +222,16 @@ class CreateVisitor(graphene.Mutation):
 
         visitor.save()
 
-        return CreateVisitor(visitor=visitor)
+        return CreateVisitor(
+                complete_name=complete_name,
+                cpf=cpf
+                )
 
 class CreateEntryVisitor(graphene.Mutation):
     """Mutation from graphene for creating entry"""
 
     visitor = graphene.Field(VisitorType)
     apartment = graphene.Field(ApartmentType)
-
-    visitor_cpf = graphene.String()
-    block_number = graphene.String()
-    apartment_number = graphene.String()
     pending = graphene.Boolean()
 
     class Arguments:
@@ -239,31 +240,44 @@ class CreateEntryVisitor(graphene.Mutation):
         apartment_number = graphene.String()
         pending = graphene.Boolean()
 
-    def mutate(self, info, visitor_cpf, block_number, apartment_number, pending):
-        visitor = Visitor.objects.filter(cpf=visitor_cpf).first()
+    def mutate(self, info, **kwargs):
+        visitor_cpf = kwargs.get('visitor_cpf')
+        block_number = kwargs.get('block_number')
+        apartment_number = kwargs.get('apartment_number')
+        pending = kwargs.get('pending')
+
+        visitor = Visitor.objects.get(cpf=visitor_cpf)
 
         if visitor is None:
             raise Exception('Visitor not found')
 
-        block = Block.objects.filter(number=block_number).first()
+        block = Block.objects.get(number=block_number)
 
         if block is None:
             raise Exception('Block not found')
 
-        apartment = Apartment.objects.filter(block=block, number=apartment_number).first()
+        apartment = Apartment.objects.get(
+                block=block,
+                number=apartment_number
+                )
 
         if apartment is None:
             raise Exception('Apartment not found')
 
-        entry = EntryVisitor(visitor=visitor, apartment=apartment, pending=pending)
+        entry = EntryVisitor(
+                visitor=visitor,
+                apartment=apartment,
+                pending=pending
+                )
+
         entry.save()
 
         return CreateEntryVisitor(
-            visitor_cpf=entry.visitor.cpf,
-            block_number=entry.apartment.block,
-            apartment_number=entry.apartment,
+            visitor=visitor,
+            apartment=apartment,
             pending=pending
             )
+
 class DeleteResident(graphene.Mutation):
     resident_email = graphene.String()
 
@@ -300,6 +314,10 @@ class DeleteVisitor(graphene.Mutation):
     def mutate(self, info, cpf):
         visitor = Visitor.objects.get(cpf=cpf)
         visitor.delete()
+
+        return DeleteVisitor(
+                cpf=cpf
+                )
 
 class UpdateService(graphene.Mutation):
     user = graphene.Field(UserType)
@@ -356,7 +374,8 @@ class UpdateResident(graphene.Mutation):
         return UpdateResident(user=user, resident=resident)
 
 class UpdateVisitor(graphene.Mutation):
-    visitor = graphene.Field(VisitorType)
+    cpf = graphene.String()
+    complete_name = graphene.String()
 
     class Arguments:
         complete_name = graphene.String()
@@ -379,7 +398,10 @@ class UpdateVisitor(graphene.Mutation):
 
         visitor.save()
 
-        return UpdateVisitor(visitor=visitor)
+        return UpdateVisitor(
+                cpf=visitor.cpf,
+                complete_name=visitor.complete_name
+                )
 
 class ActivateUser(graphene.Mutation):
     """Mutation from graphene for activating user"""
@@ -432,7 +454,7 @@ class Query(graphene.AbstractType):
     all_visitors = graphene.List(VisitorType)
     services = graphene.List(ServiceType)
     users = graphene.List(UserType)
-    entries_visitors = graphene.List(EntryVisitorType, cpf=graphene.String())
+    all_entries_visitors = graphene.List(EntryVisitorType)
     entries = graphene.List(EntryType)
 
     voice_belongs_resident = graphene.Boolean(
@@ -455,7 +477,7 @@ class Query(graphene.AbstractType):
         cpf=graphene.String()
         )
 
-    entries_visitors_filtered = graphene.Field(
+    entries_visitor = graphene.Field(
         graphene.List(EntryVisitorType),
         cpf=graphene.String(),
         block_number=graphene.String(),
@@ -467,7 +489,7 @@ class Query(graphene.AbstractType):
         apartment_number=graphene.String(),
         )
 
-    def resolve_entries_visitors(self, info, **kwargs):
+    def resolve_all_entries_visitors(self, info, **kwargs):
         return EntryVisitor.objects.all()
 
     def resolve_entries(self, info, **kwargs):
@@ -508,34 +530,60 @@ class Query(graphene.AbstractType):
 
         return Visitor.objects.get(cpf=cpf)
 
-    def resolve_entries_visitors_filtered(self, info, **kwargs):
+    def resolve_entries_visitor(self, info, **kwargs):
         cpf = kwargs.get('cpf')
         block_number = kwargs.get('block_number')
         apartment_number = kwargs.get('apartment_number')
 
-        if cpf is not None:
+        if cpf and block_number and apartment_number:
+            visitor = Visitor.objects.get(cpf=cpf)
+            block = Block.objects.get(number=block_number)
+            apartment = Apartment.objects.get(
+                    block=block,
+                    number=apartment_number
+                    )
+
+            return EntryVisitor.objects.filter(
+                    apartment=apartment,
+                    visitor=visitor
+                    )
+
+        if block_number and apartment_number:
+            block = Block.objects.get(number=block_number)
+            apartment = Apartment.objects.get(
+                    block=block,
+                    number=apartment_number
+                    )
+
+            return EntryVisitor.objects.filter(apartment=apartment)
+
+        if cpf:
             visitor = Visitor.objects.get(cpf=cpf)
             return EntryVisitor.objects.filter(visitor=visitor)
 
-        if block_number and apartment_number is not None:
-            block = Block.objects.get(number=block_number)
-            apartment = Apartment.objects.get(block=block, number=apartment_number)
-            return EntryVisitor.objects.filter(apartment=apartment)
 
         return None
+
     def resolve_entries_visitors_pending(self, info, **kwargs):
         block_number = kwargs.get('block_number')
         apartment_number = kwargs.get('apartment_number')
 
         #Lista entradas pendentes de um apartamento de determinado bloco
-        if block_number and apartment_number is not None:
+        if block_number and apartment_number:
             block = Block.objects.get(number=block_number)
-            apartment = Apartment.objects.get(block=block, number=apartment_number)
+
+            apartment = Apartment.objects.get(
+                    block=block,
+                    number=apartment_number
+                    )
+
             return EntryVisitor.objects.filter(
                 pending=True,
                 apartment=apartment
                 )
+
         return None
+
     def resolve_me(self, info):
         user = info.context.user
         if user.is_active is not True:
