@@ -60,11 +60,8 @@ class ResidentInput(graphene.InputObjectType):
 
 class VisitorInput(graphene.InputObjectType):
     complete_name = graphene.String()
-    email = graphene.String()
-    phone = graphene.String()
-    cpf = graphene.String()
-    voice_data = graphene.String()
-    owner_cpf = graphene.String()
+    cpf = graphene.String(required=True)
+    new_cpf = graphene.String()
 
 
 class CreateUser(graphene.Mutation):
@@ -209,36 +206,17 @@ class CreateVisitor(graphene.Mutation):
 
     class Arguments:
         complete_name = graphene.String()
-        email = graphene.String()
-        phone = graphene.String()
         cpf = graphene.String()
-        voice_data = graphene.String()
-        owner_cpf = graphene.String()
-        
-    @login_required
+
+    #@superuser_required
     def mutate(self, info, **kwargs):
-        voice_data = kwargs.get('voice_data')
-        cpf = kwargs.get('cpf')
         complete_name = kwargs.get('complete_name')
-        phone = kwargs.get('phone')
-        email = kwargs.get('email')
-        owner_cpf = kwargs.get('owner_cpf')
-
-        resident = Resident.objects.filter(cpf=owner_cpf).first()
-
-        if voice_data is not None:
-            voice_data = Utility.json_voice_data_to_json_mfcc(voice_data)
+        cpf = kwargs.get('cpf')
 
         visitor = Visitor(
             complete_name=complete_name,
-            email=email,
-            cpf=cpf,
-            phone=phone,
-            voice_data=voice_data,
-            owner=resident,
+            cpf=cpf
         )
-        if resident is None:
-            raise Exception('Resident not found')
 
         visitor.save()
 
@@ -263,10 +241,10 @@ class CreateEntryVisitor(graphene.Mutation):
 
     def mutate(self, info, visitor_cpf, block_number, apartment_number, pending):
         visitor = Visitor.objects.filter(cpf=visitor_cpf).first()
-        
+
         if visitor is None:
             raise Exception('Visitor not found')
-        
+
         block = Block.objects.filter(number=block_number).first()
 
         if block is None:
@@ -281,9 +259,9 @@ class CreateEntryVisitor(graphene.Mutation):
         entry.save()
 
         return CreateEntryVisitor(
-            visitor_cpf=entry.visitor.cpf, 
+            visitor_cpf=entry.visitor.cpf,
             block_number=entry.apartment.block,
-            apartment_number=entry.apartment, 
+            apartment_number=entry.apartment,
             pending=pending
             )
 class DeleteResident(graphene.Mutation):
@@ -313,13 +291,14 @@ class DeleteService(graphene.Mutation):
         service.delete()
 
 class DeleteVisitor(graphene.Mutation):
-    visitor_email = graphene.String()
+    cpf = graphene.String()
 
     class Arguments:
-        visitor_email = graphene.String(required=True)
+        cpf = graphene.String(required=True)
 
-    def mutate(self, info, visitor_email):
-        visitor = Visitor.objects.get(email=visitor_email)
+    #@superuser_required
+    def mutate(self, info, cpf):
+        visitor = Visitor.objects.get(cpf=cpf)
         visitor.delete()
 
 class UpdateService(graphene.Mutation):
@@ -378,25 +357,30 @@ class UpdateResident(graphene.Mutation):
 
 class UpdateVisitor(graphene.Mutation):
     visitor = graphene.Field(VisitorType)
-    user = graphene.Field(UserType)
 
     class Arguments:
-        visitor_data = VisitorInput()
+        complete_name = graphene.String()
+        cpf = graphene.String(required=True)
+        new_cpf = graphene.String()
 
-    @login_required
-    def mutate(self, info, visitor_data=None):
-        user = info.context.user
-        if user.is_resident is not True:
-            raise Exception('User is not resident')
-        email = user.email
-        resident = Resident.objects.get(email=email)
-        visitor = Visitor.objects.get(owner=resident)
+    #@superuser_required
+    def mutate(self, info, **kwargs):
+        complete_name = kwargs.get('complete_name')
+        cpf = kwargs.get('cpf')
+        new_cpf = kwargs.get('new_cpf')
 
-        for k, v in visitor_data.items():
-            setattr(visitor, k, v)
+        visitor = Visitor.objects.get(cpf=cpf)
+
+        if new_cpf:
+            visitor.cpf = new_cpf
+
+        if complete_name:
+            visitor.complete_name = complete_name
 
         visitor.save()
-        return UpdateVisitor(user=user, visitor=visitor)
+
+        return UpdateVisitor(visitor=visitor)
+
 class ActivateUser(graphene.Mutation):
     """Mutation from graphene for activating user"""
     user = graphene.Field(UserType)
