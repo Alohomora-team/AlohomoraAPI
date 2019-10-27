@@ -80,7 +80,7 @@ class Resident(models.Model):
 
 class Visitor(models.Model):
     complete_name = models.CharField(max_length=80)
-    cpf = models.CharField(max_length=11)
+    cpf = models.CharField(max_length=11, unique=True)
 
     entries = models.ManyToManyField(Apartment, through='EntryVisitor')
 
