@@ -208,7 +208,7 @@ class CreateVisitor(graphene.Mutation):
         complete_name = graphene.String()
         cpf = graphene.String()
 
-    #@superuser_required
+    @superuser_required
     def mutate(self, info, **kwargs):
         complete_name = kwargs.get('complete_name')
         cpf = kwargs.get('cpf')
@@ -296,7 +296,7 @@ class DeleteVisitor(graphene.Mutation):
     class Arguments:
         cpf = graphene.String(required=True)
 
-    #@superuser_required
+    @superuser_required
     def mutate(self, info, cpf):
         visitor = Visitor.objects.get(cpf=cpf)
         visitor.delete()
@@ -363,7 +363,7 @@ class UpdateVisitor(graphene.Mutation):
         cpf = graphene.String(required=True)
         new_cpf = graphene.String()
 
-    #@superuser_required
+    @superuser_required
     def mutate(self, info, **kwargs):
         complete_name = kwargs.get('complete_name')
         cpf = kwargs.get('cpf')
@@ -429,7 +429,7 @@ class Query(graphene.AbstractType):
 
     me = graphene.Field(UserType)
     residents = graphene.List(ResidentType)
-    visitors = graphene.List(VisitorType)
+    all_visitors = graphene.List(VisitorType)
     services = graphene.List(ServiceType)
     users = graphene.List(UserType)
     entries_visitors = graphene.List(EntryVisitorType, cpf=graphene.String())
@@ -452,7 +452,6 @@ class Query(graphene.AbstractType):
 
     visitor = graphene.Field(
         VisitorType,
-        email=graphene.String(),
         cpf=graphene.String()
         )
 
@@ -470,20 +469,26 @@ class Query(graphene.AbstractType):
 
     def resolve_entries_visitors(self, info, **kwargs):
         return EntryVisitor.objects.all()
+
     def resolve_entries(self, info, **kwargs):
         return Entry.objects.all()
+
     @superuser_required
-    def resolve_visitors(self, info, **kwargs):
+    def resolve_all_visitors(self, info, **kwargs):
         return Visitor.objects.all()
+
     @superuser_required
     def resolve_residents(self, info, **kwargs):
         return Resident.objects.all()
+
     @superuser_required
     def resolve_services(self, info, **kwargs):
         return Service.objects.all()
+
     @superuser_required
     def resolve_users(self, info, **kwargs):
         return get_user_model().objects.all()
+
     @superuser_required
     def resolve_resident(self, info, **kwargs):
         email = kwargs.get('email')
@@ -496,18 +501,13 @@ class Query(graphene.AbstractType):
             return Resident.objects.get(cpf=cpf)
 
         return None
+
     @superuser_required
     def resolve_visitor(self, info, **kwargs):
-        email = kwargs.get('email')
         cpf = kwargs.get('cpf')
 
-        if email is not None:
-            return Visitor.objects.get(email=email)
+        return Visitor.objects.get(cpf=cpf)
 
-        if cpf is not None:
-            return Visitor.objects.get(cpf=cpf)
-
-        return None
     def resolve_entries_visitors_filtered(self, info, **kwargs):
         cpf = kwargs.get('cpf')
         block_number = kwargs.get('block_number')
