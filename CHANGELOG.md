@@ -25,12 +25,12 @@
 
 ## [0.2.0] - 2019-10-20
 ### Adicionado
-*  Funcionalidade para armazenamento de dados de entrada de visitante 
+*  Funcionalidade para armazenamento de dados de entrada de visitante
 
 ## [0.2.0] - 2019-10-24
 ### Adicionado
 *  Nova query que permite listar o usuários não ativados.
-
+*  Remoção de alguns campos da model Visitor
 
 
 
