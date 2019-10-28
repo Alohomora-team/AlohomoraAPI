@@ -32,16 +32,23 @@ jobs:
         - coverage report
         - coveralls
 
-    - stage: deploy
-      install: skip
-      script: skip
-      deploy:
-        provider: heroku
-        skip_cleanup: true
-        api_key:
-          secure: ${HEROKU_KEY}
-        app: alohomora-epsmds
-        on:
-          repo: fga-eps-mds/2019.2-Alohomora
-          branch: devel
+    - stage: deploy-hmg
+      if: branch = devel
+      before_install:
+        - docker build -f docker/Dockerfile -t alohomorateam/api:devel .
+      script: 
+        - docker images alohomorateam/api
+      after_success:
+        - docker login -u="$DOCKER_USER" -p="$DOCKER_PASS";
+        - docker push alohomorateam/api:devel
+
+    - stage: deploy-prod
+      if: branch = master
+      before_install:
+        - docker build -f docker/Dockerfile -t alohomorateam/api:master .
+      script: 
+        - docker images alohomorateam/api
+      after_success:
+        - docker login -u="$DOCKER_USER" -p="$DOCKER_PASS";
+        - docker push alohomorateam/api:master
           
