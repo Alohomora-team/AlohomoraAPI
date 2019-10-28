@@ -441,6 +441,7 @@ class Query(graphene.AbstractType):
     users = graphene.List(UserType)
     all_entries_visitors = graphene.List(EntryVisitorType)
     entries = graphene.List(EntryType)
+    unactives_users = graphene.List(UserType)
 
     voice_belongs_resident = graphene.Boolean(
         cpf=graphene.String(required=True),
@@ -461,6 +462,9 @@ class Query(graphene.AbstractType):
         VisitorType,
         cpf=graphene.String()
         )
+        
+    def resolve_unactives_users(self, info, **kwargs):
+        return get_user_model().objects.filter(is_active=False)
 
     entries_visitor = graphene.Field(
         graphene.List(EntryVisitorType),

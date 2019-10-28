@@ -49,7 +49,12 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
             is_active=True,
             is_resident=True,
         )
-
+        get_user_model().objects.create(
+            email='desativado@example.com',
+            password='desativado-password',
+            username='desativado-username',
+            is_active=False,
+        )
         block = Block.objects.create(number="1")
         apartment = Apartment.objects.create(number="101", block=block)
         Resident.objects.create(
@@ -248,6 +253,25 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
             ]
         }, result.data)
 
+    def test_query_unactive_users(self):
+        
+        query = '''
+                    query {
+                      unactivesUsers {
+                        username
+                      }
+                    }
+            '''
+        result = self.client.execute(query)
+        self.assertIsNone(result.errors)
+        self.assertDictEqual({
+            "unactivesUsers": [
+                {
+                    "username": "desativado-username"
+                }
+            ]
+        }, result.data)
+
     def test_mutation_services(self):
 
         mutation = '''
@@ -322,7 +346,6 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
                       }
                     }
                     }
-
                 '''
             result = self.client.execute(mutation)
             self.assertIsNone(result.errors)
@@ -535,7 +558,6 @@ mutation {
                 	resident{
                     cpf
                   }
-
                 }
                 }
         '''

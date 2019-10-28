@@ -27,6 +27,11 @@
 ### Adicionado
 *  Funcionalidade para armazenamento de dados de entrada de visitante 
 
+## [0.2.0] - 2019-10-24
+### Adicionado
+*  Nova query que permite listar o usuários não ativados.
+
+
 
 
  ---
