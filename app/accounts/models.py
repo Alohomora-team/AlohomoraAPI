@@ -98,3 +98,7 @@ class Entry(models.Model):
     resident = models.ForeignKey(Resident, on_delete=models.CASCADE)
     apartment = models.ForeignKey(Apartment, on_delete=models.CASCADE)
     date = models.DateTimeField(auto_now=True)
+
+class Admin(models.Model):
+    admin = models.ForeignKey(User, on_delete=models.CASCADE, related_name='admins')
+    creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='creator')
