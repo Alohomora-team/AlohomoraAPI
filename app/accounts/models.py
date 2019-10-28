@@ -86,6 +86,14 @@ class Visitor(models.Model):
     cpf = models.CharField(max_length=11)
     voice_data = models.TextField(null=True)
 
+    entries = models.ManyToManyField(Apartment, through='EntryVisitor')
+
+class EntryVisitor(models.Model):
+    visitor = models.ForeignKey(Visitor, on_delete=models.CASCADE)
+    apartment = models.ForeignKey(Apartment, on_delete=models.CASCADE)
+    date = models.DateTimeField(auto_now=True)
+    pending = models.BooleanField('entry status', default=True)
+
 class Entry(models.Model):
     resident = models.ForeignKey(Resident, on_delete=models.CASCADE)
     apartment = models.ForeignKey(Apartment, on_delete=models.CASCADE)

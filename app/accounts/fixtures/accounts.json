@@ -104,5 +104,36 @@
         "groups": [],
         "user_permissions": []
     }
+},
+{
+    "model": "accounts.entryVisitor",
+    "pk": 1,
+    "fields": {
+        "visitor": 1,
+        "apartment": 1,
+        "date": "2019-01-10",
+        "pending": true
+    }
+},
+{
+    "model": "accounts.entryVisitor",
+    "pk": 2,
+    "fields": {
+        "visitor": 1,
+        "apartment": 1,
+        "date": "2019-01-30",
+        "pending": true
+    }
+},
+{
+    "model": "accounts.entryVisitor",
+    "pk": 3,
+    "fields": {
+        "visitor": 1,
+        "apartment": 1,
+        "date": "2018-01-10",
+        "pending": true
+    }
 }
+
 ]
