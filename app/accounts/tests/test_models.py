@@ -75,22 +75,17 @@ class VisitorModelTest(TestCase):
         )
 
         Visitor.objects.create(
-            owner=Resident.objects.get(complete_name='Big'),
-            complete_name='Big',
-            email='Bob',
-            phone='12345',
+            complete_name='visitor',
+            cpf='29950509041',
         )
 
-    def test_email_max_length(self):
+    def test_cpf_max_length(self):
 
         with self.assertRaises(Exception):
             Visitor.objects.create(
-                owner=Resident.objects.get(complete_name='Big'),
-                complete_name='Big',
-                email='a'*100,
-                phone='12345'
+                complete_name='BigBig',
+                email='4'*100,
             )
-
 
 class ServiceModelTest(TestCase):
 
