@@ -254,7 +254,7 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
         }, result.data)
 
     def test_query_unactive_users(self):
-        
+
         query = '''
                     query {
                       unactivesUsers {
