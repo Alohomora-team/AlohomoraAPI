@@ -39,7 +39,7 @@
         "first_name": "",
         "last_name": "",
         "is_staff": false,
-        "is_active": true,
+        "is_active": false,
         "date_joined": "2019-10-15T23:55:07.594Z",
         "is_resident": true,
         "is_service": false,

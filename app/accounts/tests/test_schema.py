@@ -362,8 +362,6 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
             '''
         result = self.client.execute(mutation)
         self.assertIsNone(result.errors)
-        self.user = get_user_model().objects.get(email="resident@example.com")
-        self.client.authenticate(self.user)
         mutation = '''
                     mutation {
                       createVisitor(completeName: "visitor2", cpf: "40982705018") {
@@ -498,9 +496,6 @@ mutation {
                     }
               '''
         result = self.client.execute(mutation)
-        self.user = get_user_model().objects.get(email='resident@example.com')
-        self.client.authenticate(self.user)
-        self.assertEqual(Resident.objects.count(), 1)
 
         mutation = '''
                     mutation {
