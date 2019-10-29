@@ -42,6 +42,10 @@ class UserType(DjangoObjectType):
     class Meta:
         model = get_user_model()
 
+class AdminType(DjangoObjectType):
+    class Meta:
+        model = Admin
+
 class ServiceInput(graphene.InputObjectType):
     password = graphene.String()
     email = graphene.String()
@@ -485,6 +489,7 @@ class Query(graphene.AbstractType):
     entries_visitors = graphene.List(EntryVisitorType, cpf=graphene.String())
     entries = graphene.List(EntryType)
     unactives_users = graphene.List(UserType)
+    all_admins = graphene.List(AdminType)
 
     voice_belongs_resident = graphene.Boolean(
         cpf=graphene.String(required=True),
@@ -505,6 +510,12 @@ class Query(graphene.AbstractType):
         VisitorType,
         email=graphene.String(),
         cpf=graphene.String()
+        )
+
+    admin = graphene.Field(
+        graphene.List(AdminType),
+        creator_email=graphene.String(),
+        admin_email=graphene.String()
         )
 
     def resolve_unactives_users(self, info, **kwargs):
@@ -539,6 +550,10 @@ class Query(graphene.AbstractType):
     def resolve_users(self, info, **kwargs):
         return get_user_model().objects.all()
     @superuser_required
+    def resolve_all_admins(self, info, **kwargs):
+        return Admin.objects.all()
+
+    @superuser_required
     def resolve_resident(self, info, **kwargs):
         email = kwargs.get('email')
         cpf = kwargs.get('cpf')
@@ -562,6 +577,31 @@ class Query(graphene.AbstractType):
             return Visitor.objects.get(cpf=cpf)
 
         return None
+
+    @superuser_required
+    def resolve_admin(self, info, **kwargs):
+        creator_email = kwargs.get('creator_email')
+        admin_email = kwargs.get('admin_email')
+
+        admin = get_user_model().objects.filter(email=admin_email).first()
+        creator = get_user_model().objects.filter(email=creator_email).first()
+
+        if creator_email and admin_email:
+            return Admin.objects.filter(
+                    creator=creator,
+                    admin=admin
+                    )
+
+        if creator_email:
+            return Admin.objects.filter(
+                    creator=creator
+                    )
+
+        if admin_email:
+            return Admin.objects.filter(
+                    admin=admin
+                    )
+
     def resolve_entries_visitors_filtered(self, info, **kwargs):
         cpf = kwargs.get('cpf')
         block_number = kwargs.get('block_number')
