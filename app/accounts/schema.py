@@ -401,7 +401,10 @@ class DeleteAdmin(graphene.Mutation):
         """Method to execute the mutation"""
         user = info.context.user
         admin = get_user_model().objects.get(email=email)
-        creator = Admin.objects.get(admin=admin).creator
+        creator = Admin.objects.filter(admin=admin).first()
+
+        if creator:
+            creator = creator.creator
 
         if user != admin and user != creator:
             raise Exception('Logged in user is not related')
