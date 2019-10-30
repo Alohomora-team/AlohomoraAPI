@@ -5,7 +5,7 @@ from condos.models import Apartment, Block
 class UserManager(BaseUserManager):
     """A model to manage users"""
     def create_user(self, email, password=None, **kwars):
-    """Creates and saves a User with the given email and password"""
+        """Creates and saves a User with the given email and password"""
         if not email:
             raise ValueError('Users must have an email address')
 
