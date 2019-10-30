@@ -235,7 +235,7 @@ class CreateAdmin(graphene.Mutation):
         email = graphene.String()
         password = graphene.String()
 
-    @superuser_required
+   @superuser_required
     def mutate(self, info, email, password):
         admin = get_user_model().objects.create_superuser(
             email=email,
@@ -350,6 +350,27 @@ class DeleteVisitor(graphene.Mutation):
 
         return DeleteVisitor(
                 cpf=cpf
+                )
+
+class DeleteAdmin(graphene.Mutation):
+    email = graphene.String()
+
+    class Arguments:
+        email = graphene.String(required=True)
+
+    @superuser_required
+    def mutate(self, info, email):
+        user = info.context.user
+        admin = get_user_model().objects.get(email=email)
+        creator = Admin.objects.get(admin=admin).creator
+
+        if user != admin and user != creator:
+            raise Exception('Logged in user is not related')
+
+        admin.delete()
+
+        return DeleteAdmin(
+                email=email
                 )
 
 class UpdateService(graphene.Mutation):
@@ -470,9 +491,12 @@ class Mutation(graphene.ObjectType):
     delete_resident = DeleteResident.Field()
     delete_service = DeleteService.Field()
     delete_visitor = DeleteVisitor.Field()
+    delete_admin = DeleteAdmin.Field()
+
     update_service = UpdateService.Field()
     update_resident = UpdateResident.Field()
     update_visitor = UpdateVisitor.Field()
+
     activate_user = ActivateUser.Field()
     deactivate_user = DeactivateUser.Field()
 
