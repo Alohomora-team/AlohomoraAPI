@@ -3,12 +3,8 @@
     "model": "accounts.visitor",
     "pk": 1,
     "fields": {
-        "owner": 2,
         "complete_name": "Visitante Exemplo",
-        "email": "visitante@exemplo.com",
-        "phone": "900000000",
-        "cpf": "00000000000",
-        "voice_data": null
+        "cpf": "00000000000"
     }
 },
 {
@@ -43,7 +39,7 @@
         "first_name": "",
         "last_name": "",
         "is_staff": false,
-        "is_active": true,
+        "is_active": false,
         "date_joined": "2019-10-15T23:55:07.594Z",
         "is_resident": true,
         "is_service": false,

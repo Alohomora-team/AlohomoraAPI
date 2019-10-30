@@ -79,12 +79,8 @@ class Resident(models.Model):
     entries = models.ManyToManyField(Apartment, related_name='entries', through='Entry')
 
 class Visitor(models.Model):
-    owner = models.ForeignKey(Resident, on_delete=models.CASCADE, null=True)
     complete_name = models.CharField(max_length=80)
-    email = models.CharField(max_length=90)
-    phone = models.CharField(max_length=15)
-    cpf = models.CharField(max_length=11)
-    voice_data = models.TextField(null=True)
+    cpf = models.CharField(max_length=11, unique=True)
 
     entries = models.ManyToManyField(Apartment, through='EntryVisitor')
 

@@ -162,7 +162,6 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
                             '''
         result = self.client.execute(mutation)
         self.assertIsNone(result.errors)
-        self.assertEqual(Block.objects.count(), 1)
         self.assertDictEqual({"updateBlock":
                               {
                                   "block": {

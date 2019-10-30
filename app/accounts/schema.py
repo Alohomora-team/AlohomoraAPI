@@ -8,7 +8,7 @@ from condos.schema import ApartmentType
 from django.contrib.auth import get_user_model
 from graphql_jwt.decorators import superuser_required
 from graphql_jwt.decorators import login_required
-from accounts.models import Visitor, Resident, Service, Entry, Admin
+from accounts.models import Visitor, Resident, Service, EntryVisitor, Entry, Admin
 import accounts.utility as Utility
 from condos.models import Apartment, Block
 from condos.schema import ApartmentType, BlockType
@@ -64,11 +64,8 @@ class ResidentInput(graphene.InputObjectType):
 
 class VisitorInput(graphene.InputObjectType):
     complete_name = graphene.String()
-    email = graphene.String()
-    phone = graphene.String()
-    cpf = graphene.String()
-    voice_data = graphene.String()
-    owner_cpf = graphene.String()
+    cpf = graphene.String(required=True)
+    new_cpf = graphene.String()
 
 
 class CreateUser(graphene.Mutation):
@@ -109,7 +106,7 @@ class CreateEntry(graphene.Mutation):
         entry.date = timezone.now()
         entry.save()
 
-        return CreateEntry(resident = entry.resident, apartment = entry.apartment)
+        return CreateEntry(resident=entry.resident, apartment=entry.apartment)
 
 
 
@@ -211,38 +208,20 @@ class CreateVisitor(graphene.Mutation):
     """Mutation from graphene for creating visitor"""
     visitor = graphene.Field(VisitorType)
 
+
     class Arguments:
         complete_name = graphene.String()
-        email = graphene.String()
-        phone = graphene.String()
         cpf = graphene.String()
-        voice_data = graphene.String()
-        owner_cpf = graphene.String()
 
-    @login_required
+    @superuser_required
     def mutate(self, info, **kwargs):
-        voice_data = kwargs.get('voice_data')
-        cpf = kwargs.get('cpf')
         complete_name = kwargs.get('complete_name')
-        phone = kwargs.get('phone')
-        email = kwargs.get('email')
-        owner_cpf = kwargs.get('owner_cpf')
-
-        resident = Resident.objects.filter(cpf=owner_cpf).first()
-
-        if voice_data is not None:
-            voice_data = Utility.json_voice_data_to_json_mfcc(voice_data)
+        cpf = kwargs.get('cpf')
 
         visitor = Visitor(
             complete_name=complete_name,
-            email=email,
-            cpf=cpf,
-            phone=phone,
-            voice_data=voice_data,
-            owner=resident,
+            cpf=cpf
         )
-        if resident is None:
-            raise Exception('Resident not found')
 
         visitor.save()
 
@@ -282,14 +261,10 @@ class CreateAdmin(graphene.Mutation):
 
 
 class CreateEntryVisitor(graphene.Mutation):
-    """Mutation from graphene for creating entry"""
+    """Mutation from graphene for creating entries from visitors"""
 
     visitor = graphene.Field(VisitorType)
     apartment = graphene.Field(ApartmentType)
-
-    visitor_cpf = graphene.String()
-    block_number = graphene.String()
-    apartment_number = graphene.String()
     pending = graphene.Boolean()
 
     class Arguments:
@@ -298,31 +273,44 @@ class CreateEntryVisitor(graphene.Mutation):
         apartment_number = graphene.String()
         pending = graphene.Boolean()
 
-    def mutate(self, info, visitor_cpf, block_number, apartment_number, pending):
-        visitor = Visitor.objects.filter(cpf=visitor_cpf).first()
+    def mutate(self, info, **kwargs):
+        visitor_cpf = kwargs.get('visitor_cpf')
+        block_number = kwargs.get('block_number')
+        apartment_number = kwargs.get('apartment_number')
+        pending = kwargs.get('pending')
+
+        visitor = Visitor.objects.get(cpf=visitor_cpf)
 
         if visitor is None:
             raise Exception('Visitor not found')
 
-        block = Block.objects.filter(number=block_number).first()
+        block = Block.objects.get(number=block_number)
 
         if block is None:
             raise Exception('Block not found')
 
-        apartment = Apartment.objects.filter(block=block, number=apartment_number).first()
+        apartment = Apartment.objects.get(
+                block=block,
+                number=apartment_number
+                )
 
         if apartment is None:
             raise Exception('Apartment not found')
 
-        entry = EntryVisitor(visitor=visitor, apartment=apartment, pending=pending)
+        entry = EntryVisitor(
+                visitor=visitor,
+                apartment=apartment,
+                pending=pending
+                )
+
         entry.save()
 
         return CreateEntryVisitor(
-            visitor_cpf=entry.visitor.cpf,
-            block_number=entry.apartment.block,
-            apartment_number=entry.apartment,
+            visitor=visitor,
+            apartment=apartment,
             pending=pending
             )
+
 class DeleteResident(graphene.Mutation):
     resident_email = graphene.String()
 
@@ -350,14 +338,19 @@ class DeleteService(graphene.Mutation):
         service.delete()
 
 class DeleteVisitor(graphene.Mutation):
-    visitor_email = graphene.String()
+    cpf = graphene.String()
 
     class Arguments:
-        visitor_email = graphene.String(required=True)
+        cpf = graphene.String(required=True)
 
-    def mutate(self, info, visitor_email):
-        visitor = Visitor.objects.get(email=visitor_email)
+    @superuser_required
+    def mutate(self, info, cpf):
+        visitor = Visitor.objects.get(cpf=cpf)
         visitor.delete()
+
+        return DeleteVisitor(
+                cpf=cpf
+                )
 
 class UpdateService(graphene.Mutation):
     user = graphene.Field(UserType)
@@ -373,15 +366,15 @@ class UpdateService(graphene.Mutation):
             raise Exception('User is not service')
         email = user.email
         service = Service.objects.get(email=email)
-        for k, v in service_data.items():
-            if (k == 'password') and (v is not None):
+        for key, value in service_data.items():
+            if (key == 'password') and (value is not None):
                 user.set_password(service_data.password)
-            if (k == 'email') and (v is not None):
-                setattr(user, k, v)
-            if (k == 'email') and (v is not None):
-                setattr(service, k, v)
+            if (key == 'email') and (value is not None):
+                setattr(user, key, value)
+            if (key == 'email') and (value is not None):
+                setattr(service, key, value)
             else:
-                setattr(service, k, v)
+                setattr(service, key, value)
         service.save()
         user.save()
         return UpdateService(user=user, service=service)
@@ -400,40 +393,45 @@ class UpdateResident(graphene.Mutation):
             raise Exception('User is not resident')
         email = user.email
         resident = Resident.objects.get(email=email)
-        for k, v in resident_data.items():
-            if (k == 'password') and (v is not None):
+        for key, value in resident_data.items():
+            if (key == 'password') and (value is not None):
                 user.set_password(resident_data.password)
-            if (k == 'email') and (v is not None):
-                setattr(user, k, v)
-            if (k == 'email') and (v is not None):
-                setattr(resident, k, v)
+            if (key == 'email') and (value is not None):
+                setattr(user, key, value)
+            if (key == 'email') and (value is not None):
+                setattr(resident, key, value)
             else:
-                setattr(resident, k, v)
+                setattr(resident, key, value)
         resident.save()
         user.save()
         return UpdateResident(user=user, resident=resident)
 
 class UpdateVisitor(graphene.Mutation):
     visitor = graphene.Field(VisitorType)
-    user = graphene.Field(UserType)
 
     class Arguments:
-        visitor_data = VisitorInput()
+        complete_name = graphene.String()
+        cpf = graphene.String(required=True)
+        new_cpf = graphene.String()
 
-    @login_required
-    def mutate(self, info, visitor_data=None):
-        user = info.context.user
-        if user.is_resident is not True:
-            raise Exception('User is not resident')
-        email = user.email
-        resident = Resident.objects.get(email=email)
-        visitor = Visitor.objects.get(owner=resident)
+    @superuser_required
+    def mutate(self, info, **kwargs):
+        complete_name = kwargs.get('complete_name')
+        cpf = kwargs.get('cpf')
+        new_cpf = kwargs.get('new_cpf')
 
-        for k, v in visitor_data.items():
-            setattr(visitor, k, v)
+        visitor = Visitor.objects.get(cpf=cpf)
+
+        if new_cpf:
+            visitor.cpf = new_cpf
+
+        if complete_name:
+            visitor.complete_name = complete_name
 
         visitor.save()
-        return UpdateVisitor(user=user, visitor=visitor)
+
+        return UpdateVisitor(visitor=visitor)
+
 class ActivateUser(graphene.Mutation):
     """Mutation from graphene for activating user"""
     user = graphene.Field(UserType)
@@ -483,10 +481,10 @@ class Query(graphene.AbstractType):
 
     me = graphene.Field(UserType)
     residents = graphene.List(ResidentType)
-    visitors = graphene.List(VisitorType)
+    all_visitors = graphene.List(VisitorType)
     services = graphene.List(ServiceType)
     users = graphene.List(UserType)
-    entries_visitors = graphene.List(EntryVisitorType, cpf=graphene.String())
+    all_entries_visitors = graphene.List(EntryVisitorType)
     entries = graphene.List(EntryType)
     unactives_users = graphene.List(UserType)
     all_admins = graphene.List(AdminType)
@@ -508,7 +506,6 @@ class Query(graphene.AbstractType):
 
     visitor = graphene.Field(
         VisitorType,
-        email=graphene.String(),
         cpf=graphene.String()
         )
 
@@ -518,10 +515,7 @@ class Query(graphene.AbstractType):
         admin_email=graphene.String()
         )
 
-    def resolve_unactives_users(self, info, **kwargs):
-        return get_user_model().objects.filter(is_active=False)
-
-    entries_visitors_filtered = graphene.Field(
+    entries_visitor = graphene.Field(
         graphene.List(EntryVisitorType),
         cpf=graphene.String(),
         block_number=graphene.String(),
@@ -533,22 +527,31 @@ class Query(graphene.AbstractType):
         apartment_number=graphene.String(),
         )
 
-    def resolve_entries_visitors(self, info, **kwargs):
+    def resolve_unactives_users(self, info, **kwargs):
+        return get_user_model().objects.filter(is_active=False)
+
+    def resolve_all_entries_visitors(self, info, **kwargs):
         return EntryVisitor.objects.all()
+
     def resolve_entries(self, info, **kwargs):
         return Entry.objects.all()
+
     @superuser_required
-    def resolve_visitors(self, info, **kwargs):
+    def resolve_all_visitors(self, info, **kwargs):
         return Visitor.objects.all()
+
     @superuser_required
     def resolve_residents(self, info, **kwargs):
         return Resident.objects.all()
+
     @superuser_required
     def resolve_services(self, info, **kwargs):
         return Service.objects.all()
+
     @superuser_required
     def resolve_users(self, info, **kwargs):
         return get_user_model().objects.all()
+
     @superuser_required
     def resolve_all_admins(self, info, **kwargs):
         return Admin.objects.all()
@@ -565,18 +568,12 @@ class Query(graphene.AbstractType):
             return Resident.objects.get(cpf=cpf)
 
         return None
+
     @superuser_required
     def resolve_visitor(self, info, **kwargs):
-        email = kwargs.get('email')
         cpf = kwargs.get('cpf')
 
-        if email is not None:
-            return Visitor.objects.get(email=email)
-
-        if cpf is not None:
-            return Visitor.objects.get(cpf=cpf)
-
-        return None
+        return Visitor.objects.get(cpf=cpf)
 
     @superuser_required
     def resolve_admin(self, info, **kwargs):
@@ -602,34 +599,60 @@ class Query(graphene.AbstractType):
                     admin=admin
                     )
 
-    def resolve_entries_visitors_filtered(self, info, **kwargs):
+    def resolve_entries_visitor(self, info, **kwargs):
         cpf = kwargs.get('cpf')
         block_number = kwargs.get('block_number')
         apartment_number = kwargs.get('apartment_number')
 
-        if cpf is not None:
+        if cpf and block_number and apartment_number:
+            visitor = Visitor.objects.get(cpf=cpf)
+            block = Block.objects.get(number=block_number)
+            apartment = Apartment.objects.get(
+                    block=block,
+                    number=apartment_number
+                    )
+
+            return EntryVisitor.objects.filter(
+                    apartment=apartment,
+                    visitor=visitor
+                    )
+
+        if block_number and apartment_number:
+            block = Block.objects.get(number=block_number)
+            apartment = Apartment.objects.get(
+                    block=block,
+                    number=apartment_number
+                    )
+
+            return EntryVisitor.objects.filter(apartment=apartment)
+
+        if cpf:
             visitor = Visitor.objects.get(cpf=cpf)
             return EntryVisitor.objects.filter(visitor=visitor)
 
-        if block_number and apartment_number is not None:
-            block = Block.objects.get(number=block_number)
-            apartment = Apartment.objects.get(block=block, number=apartment_number)
-            return EntryVisitor.objects.filter(apartment=apartment)
 
         return None
+
     def resolve_entries_visitors_pending(self, info, **kwargs):
         block_number = kwargs.get('block_number')
         apartment_number = kwargs.get('apartment_number')
 
         #Lista entradas pendentes de um apartamento de determinado bloco
-        if block_number and apartment_number is not None:
+        if block_number and apartment_number:
             block = Block.objects.get(number=block_number)
-            apartment = Apartment.objects.get(block=block, number=apartment_number)
+
+            apartment = Apartment.objects.get(
+                    block=block,
+                    number=apartment_number
+                    )
+
             return EntryVisitor.objects.filter(
                 pending=True,
                 apartment=apartment
                 )
+
         return None
+
     def resolve_me(self, info):
         user = info.context.user
         if user.is_active is not True:
