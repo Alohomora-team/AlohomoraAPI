@@ -4,7 +4,7 @@ from django.test import TestCase
 from graphene.test import Client
 from alohomora.schema import schema
 from condos.models import Apartment, Block
-from accounts.models import Visitor, Resident, Service, Entry
+from accounts.models import Visitor, Resident, Service, Entry, Admin
 import accounts.utility as Utility
 from graphql_jwt.testcases import JSONWebTokenTestCase
 from django.utils import timezone
@@ -34,7 +34,23 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
 
     @classmethod
     def setUpTestData(cls):
-
+        get_user_model().objects.create(
+            email='creator@example.com',
+            password='creator-password',
+            username='creator-username',
+            is_active=True,
+            is_admin=True,
+            admin=True,
+        )
+        get_user_model().objects.create(
+          email='admin2@example.com',
+          password='admin2-password',
+          is_active=True,
+        )
+        Admin.objects.create(
+          admin = get_user_model().objects.get(email="admin2@example.com"),
+          creator = get_user_model().objects.get(email="creator@example.com")
+        )
         get_user_model().objects.create(
             email='service@example.com',
             password='service-password',
@@ -83,6 +99,69 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
             resident=Resident.objects.get(email='resident@example.com'),
             apartment=Apartment.objects.get(number='101')
         )
+    def test_mutation_createAdmin(self):
+        mutation = '''
+                    mutation{
+                      createAdmin(
+                        email: "admin3@example.com",
+                        password: "admin3-password"
+                      ){ 
+                        email
+                      }
+                    }
+        '''
+
+        result = self.client.execute(mutation)
+        self.assertIsNone(result.errors)
+        self.assertDictEqual({
+            "createAdmin": {
+                "email": "admin3@example.com"
+            }
+        }, result.data)
+
+    def test_query_all_admins(self):
+        query = '''
+                query{
+                  allAdmins{
+                    admin{
+                      email
+                    }
+                  }                  
+                }
+        '''
+        result = self.client.execute(query)
+        self.assertIsNone(result.errors)
+        self.assertDictEqual({
+            "allAdmins": [
+                {
+                  "admin": {
+                    "email": "admin2@example.com"
+                  }
+                }
+            ]
+        }, result.data)
+
+    def test_query_admin(self):
+      query = '''
+                query{
+                  admin(adminEmail:"admin2@example.com"){
+                    admin{
+                      email
+                    }
+                  }
+                }
+      '''
+      result = self.client.execute(query)
+      self.assertIsNone(result.errors)
+      self.assertDictEqual({
+          "admin": [
+              {
+                "admin": {
+                  "email": "admin2@example.com"
+                }
+              }
+          ]
+      }, result.data)
 
     def test_mutation_resident(self):
 
