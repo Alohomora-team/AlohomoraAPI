@@ -18,7 +18,7 @@ class Query():
 
     user_data = graphene.Field(
             UserDataType,
-            chat_id=graphene.String(),
+            chat_id=graphene.Int(),
             cpf=graphene.String()
         )
 
@@ -60,12 +60,12 @@ class CreateFeedback(graphene.Mutation):
             )
 
 class CreateUserData(graphene.Mutation):
-    chat_id = graphene.String()
+    chat_id = graphene.Int()
     cpf = graphene.String()
     user_type = graphene.String()
 
     class Arguments:
-        chat_id = graphene.String()
+        chat_id = graphene.Int()
         cpf = graphene.String()
         user_type = graphene.String()
 

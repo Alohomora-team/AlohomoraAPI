@@ -15,7 +15,7 @@ class UserData(models.Model):
             ('V', 'Visitor'),
         )
 
-    chat_id = models.CharField(max_length=15, unique=True)
+    chat_id = models.IntegerField(unique=True)
     cpf = models.CharField(max_length=11, unique=True)
     user_type = models.CharField(max_length=1, choices=USER_TYPES)
 
