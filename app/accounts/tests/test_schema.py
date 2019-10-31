@@ -48,8 +48,8 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
           is_active=True,
         )
         Admin.objects.create(
-          admin = get_user_model().objects.get(email="admin2@example.com"),
-          creator = get_user_model().objects.get(email="creator@example.com")
+          admin=get_user_model().objects.get(email="admin2@example.com"),
+          creator=get_user_model().objects.get(email="creator@example.com")
         )
         get_user_model().objects.create(
             email='service@example.com',
@@ -119,6 +119,18 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
             }
         }, result.data)
 
+    def test_mutation_deleteAdmin(self):
+        mutation = '''
+                    mutation{
+                      deleteAdmin(email: "admin2@example.com"){ 
+                        email
+                      }
+                    }
+        '''
+
+        result = self.client.execute(mutation)
+        self.assertEqual(Admin.objects.count(), 1)
+
     def test_query_all_admins(self):
         query = '''
                 query{
@@ -142,7 +154,7 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
         }, result.data)
 
     def test_query_admin(self):
-      query = '''
+        query = '''
                 query{
                   admin(adminEmail:"admin2@example.com"){
                     admin{
@@ -150,18 +162,18 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
                     }
                   }
                 }
-      '''
-      result = self.client.execute(query)
-      self.assertIsNone(result.errors)
-      self.assertDictEqual({
-          "admin": [
-              {
-                "admin": {
-                  "email": "admin2@example.com"
-                }
-              }
-          ]
-      }, result.data)
+        '''
+        result = self.client.execute(query)
+        self.assertIsNone(result.errors)
+        self.assertDictEqual({
+            "admin": [
+                {
+                  "admin": {
+                    "email": "admin2@example.com"
+                  }
+               }
+            ]
+        }, result.data)
 
     def test_mutation_resident(self):
 
