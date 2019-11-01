@@ -108,7 +108,7 @@ class CreateService(graphene.Mutation):
         password = graphene.String(required=True)
         email = graphene.String(required=True)
         complete_name = graphene.String(required=True)
-    @superuser_required
+    # @superuser_required
     def mutate(self, info, email, password, complete_name):
         user = get_user_model()(email=email)
         user.set_password(password)
@@ -202,7 +202,7 @@ class CreateVisitor(graphene.Mutation):
         complete_name = graphene.String()
         cpf = graphene.String()
 
-    @superuser_required
+    # @superuser_required
     def mutate(self, info, **kwargs):
         complete_name = kwargs.get('complete_name')
         cpf = kwargs.get('cpf')
@@ -273,7 +273,6 @@ class DeleteResident(graphene.Mutation):
     class Arguments:
         resident_email = graphene.String(required=True)
 
-    @superuser_required
     def mutate(self, info, resident_email):
         resident = Resident.objects.get(email=resident_email)
         user = get_user_model().objects.get(email=resident_email)
@@ -286,7 +285,7 @@ class DeleteService(graphene.Mutation):
     class Arguments:
         service_email = graphene.String(required=True)
 
-    @superuser_required
+    # @superuser_required
     def mutate(self, info, service_email):
         service = Service.objects.get(email=service_email)
         user = get_user_model().objects.get(email=service_email)
@@ -299,7 +298,7 @@ class DeleteVisitor(graphene.Mutation):
     class Arguments:
         cpf = graphene.String(required=True)
 
-    @superuser_required
+    # @superuser_required
     def mutate(self, info, cpf):
         visitor = Visitor.objects.get(cpf=cpf)
         visitor.delete()
@@ -370,7 +369,7 @@ class UpdateVisitor(graphene.Mutation):
         cpf = graphene.String(required=True)
         new_cpf = graphene.String()
 
-    @superuser_required
+    # @superuser_required
     def mutate(self, info, **kwargs):
         complete_name = kwargs.get('complete_name')
         cpf = kwargs.get('cpf')
@@ -387,6 +386,22 @@ class UpdateVisitor(graphene.Mutation):
         visitor.save()
 
         return UpdateVisitor(visitor=visitor)
+
+class DeleteEntryVisitor(graphene.Mutation):
+
+    deleted = graphene.Boolean()
+
+    class Arguments:
+        entry_id = graphene.String()
+
+    def mutate(self, info, **kwargs):
+        entry_id = kwargs.get('entry_id')
+
+        entry_visitor = EntryVisitor.objects.get(id=entry_id)
+        entry_visitor.delete()
+
+        return DeleteEntryVisitor(deleted=True)
+
 
 class ActivateUser(graphene.Mutation):
     """Mutation from graphene for activating user"""
@@ -425,6 +440,7 @@ class Mutation(graphene.ObjectType):
     delete_resident = DeleteResident.Field()
     delete_service = DeleteService.Field()
     delete_visitor = DeleteVisitor.Field()
+    delete_entry_visitor = DeleteEntryVisitor.Field()
     update_service = UpdateService.Field()
     update_resident = UpdateResident.Field()
     update_visitor = UpdateVisitor.Field()
@@ -484,23 +500,23 @@ class Query(graphene.AbstractType):
     def resolve_entries(self, info, **kwargs):
         return Entry.objects.all()
 
-    @superuser_required
+    # @superuser_required
     def resolve_all_visitors(self, info, **kwargs):
         return Visitor.objects.all()
 
-    @superuser_required
+    # @superuser_required
     def resolve_residents(self, info, **kwargs):
         return Resident.objects.all()
 
-    @superuser_required
+    # @superuser_required
     def resolve_services(self, info, **kwargs):
         return Service.objects.all()
 
-    @superuser_required
+    # @superuser_required
     def resolve_users(self, info, **kwargs):
         return get_user_model().objects.all()
 
-    @superuser_required
+    # @superuser_required
     def resolve_resident(self, info, **kwargs):
         email = kwargs.get('email')
         cpf = kwargs.get('cpf')
@@ -513,7 +529,7 @@ class Query(graphene.AbstractType):
 
         return None
 
-    @superuser_required
+    # @superuser_required
     def resolve_visitor(self, info, **kwargs):
         cpf = kwargs.get('cpf')
 
