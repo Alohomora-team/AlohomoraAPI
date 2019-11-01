@@ -32,6 +32,10 @@
 *  Nova query que permite listar o usuários não ativados.
 *  Remoção de alguns campos da model Visitor
 
+## [0.2.0] - 2019-10-31
+### Alterado
+*  Argumento "python -m" adicionado antes do "pip install" no Dockerfile
+
 
 
  ---
