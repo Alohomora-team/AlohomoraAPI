@@ -14,7 +14,7 @@ RUN apk add --update --no-cache \
 
 COPY docker/requirements.txt requirements.txt
 
-RUN pip install --no-cache-dir -r requirements.txt
+RUN python -m pip install --no-cache-dir -r requirements.txt
 
 COPY app/ .
 
