@@ -22,6 +22,12 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
 
         self.super_user = get_user_model().objects.create_superuser(email='admin@example',
                                                                     password='123')
+        
+        self.admin = Admin.objects.create(
+                admin = self.user,
+                creator = self.super_user
+            )
+
         self.client.authenticate(self.super_user)
 
     def query(self, query: str):
@@ -46,10 +52,6 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
           email='admin2@example.com',
           password='admin2-password',
           is_active=True,
-        )
-        Admin.objects.create(
-          admin=get_user_model().objects.get(email="admin2@example.com"),
-          creator=get_user_model().objects.get(email="creator@example.com")
         )
         get_user_model().objects.create(
             email='service@example.com',
@@ -122,14 +124,19 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
     def test_mutation_deleteAdmin(self):
         mutation = '''
                     mutation{
-                      deleteAdmin(email: "admin2@example.com"){ 
+                      deleteAdmin(email: "user@example"){ 
                         email
                       }
                     }
         '''
 
         result = self.client.execute(mutation)
-        self.assertEqual(Admin.objects.count(), 1)
+        self.assertIsNone(result.errors)
+        self.assertDictEqual({
+            "deleteAdmin": {
+                "email": "user@example"
+            }
+        }, result.data)
 
     def test_query_all_admins(self):
         query = '''
@@ -147,7 +154,7 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
             "allAdmins": [
                 {
                   "admin": {
-                    "email": "admin2@example.com"
+                    "email": "user@example"
                   }
                 }
             ]
@@ -156,7 +163,7 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
     def test_query_admin(self):
         query = '''
                 query{
-                  admin(adminEmail:"admin2@example.com"){
+                  admin(adminEmail:"user@example"){
                     admin{
                       email
                     }
@@ -169,7 +176,7 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
             "admin": [
                 {
                   "admin": {
-                    "email": "admin2@example.com"
+                    "email": "user@example"
                   }
                }
             ]
