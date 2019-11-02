@@ -16,8 +16,11 @@ class CreateService(graphene.Mutation):
         complete_name = graphene.String(required=True)
 
     @superuser_required
-    def mutate(self, info, email, password, complete_name):
+    def mutate(self, info, **kwargs):
         """Method to execute the mutation"""
+        email = kwargs.get('email')
+        password = kwargs.get('password')
+        complete_name = kwargs.get('complete_name')
         user = get_user_model()(email=email)
         user.set_password(password)
         user.is_service = True
@@ -45,7 +48,7 @@ class UpdateService(graphene.Mutation):
     def mutate(self, info, service_data=None):
         """Method to execute the mutation"""
         user = info.context.user
-        if user.is_service is not True:
+        if user.is_service is False:
             raise Exception('User is not service')
         email = user.email
         service = Service.objects.get(email=email)

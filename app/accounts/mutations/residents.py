@@ -89,7 +89,7 @@ class UpdateResident(graphene.Mutation):
     def mutate(self, info, resident_data=None):
         """Method to execute the mutation"""
         user = info.context.user
-        if user.is_resident is not True:
+        if user.is_resident is False:
             raise Exception('User is not resident')
         email = user.email
         resident = Resident.objects.get(email=email)
