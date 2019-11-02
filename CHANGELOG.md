@@ -32,10 +32,17 @@
 *  Nova query que permite listar o usuários não ativados.
 *  Remoção de alguns campos da model Visitor
 
+## [0.2.0] - 2019-10-30
+### Adicionado
+* Nova model de Admin.
+* Nova query que permite a listagem de Admins.
+* Nova query que informa acerca de um dado Admin.
+* Nova mutation que cria novos Admins.
+* Nova mutation que exclui Admins.
+
 ## [0.2.0] - 2019-10-31
 ### Alterado
 *  Argumento "python -m" adicionado antes do "pip install" no Dockerfile
-
 
 
  ---
