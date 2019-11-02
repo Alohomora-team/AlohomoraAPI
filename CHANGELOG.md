@@ -40,6 +40,10 @@
 * Nova mutation que cria novos Admins.
 * Nova mutation que exclui Admins.
 
+## [0.2.0] - 2019-10-31
+### Alterado
+*  Argumento "python -m" adicionado antes do "pip install" no Dockerfile
+
 
  ---
  Modelo padrão do changelog disponível [aqui](https://keepachangelog.com/en/0.3.0/).
