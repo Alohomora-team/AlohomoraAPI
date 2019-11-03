@@ -1,6 +1,19 @@
+# AlohomoraAPI
 [![Build Status](https://travis-ci.org/fga-eps-mds/2019.2-Alohomora.svg?branch=devel)](https://travis-ci.org/fga-eps-mds/2019.2-Alohomora)
 [![Coverage Status](https://coveralls.io/repos/github/fga-eps-mds/2019.2-Alohomora/badge.svg?branch=devel)](https://coveralls.io/github/fga-eps-mds/2019.2-Alohomora?branch=devel)
 [![Maintainability](https://api.codeclimate.com/v1/badges/2c164a8849badef20a10/maintainability)](https://codeclimate.com/github/Alohomora-team/AlohomoraAPI/maintainability)
+![Logo](logo_alohomora.png)
+
+## Descrição
+
+AlohomoraAPI é um sistema idealizado para a **gerência de portarias** de condomínios ou prédios. O sistema conta com uma ferramenta de **autênticação por voz** para os moradores. Também são disponibilizados *endpoints* que facilitam a sua **integração** com diversos outros **dispositivos** e sistemas terceiros, como **[Telegram](https://telegram.org)**, que funciona como uma ponte entre o **sistema e o usuário real**.
+
+### Integração com IoT
+**Alohomora** conta com uma interface de comunicação que permite a sua **integração** com dispositivos de **IoT**.
+
+> Alohomora é aditivo e fácil de se integrar na composição de novos grandes sistemas
+
+[Confira as funcionalidades!](https://github.com/Alohomora-team/2019.2-AlohomoraPage/blob/10-criar-documentacao-uso-api/docs/uso/guia_de_uso.md)
 
 ### Como subir a aplicação
 
