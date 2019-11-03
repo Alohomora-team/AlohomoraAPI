@@ -301,6 +301,17 @@ class DeleteVisitor(graphene.Mutation):
                 cpf=cpf
                 )
 
+class DeleteEntryVisitorPending(graphene.Mutation):
+
+    deleted = graphene.Boolean()
+
+    def mutate(self, info, **kwargs):
+
+        entry_visitor = EntryVisitor.objects.all().filter(pending=True)
+        entry_visitor.delete()
+
+        return DeleteEntryVisitorPending(deleted=True)
+
 class UpdateService(graphene.Mutation):
     user = graphene.Field(UserType)
     service = graphene.Field(ServiceType)
@@ -381,17 +392,28 @@ class UpdateVisitor(graphene.Mutation):
 
         return UpdateVisitor(visitor=visitor)
 
-class DeleteEntryVisitor(graphene.Mutation):
+# allow visitor entry
+class UpdateEntryVisitorPending(graphene.Mutation):
 
-    deleted = graphene.Boolean()
+    entry_id = graphene.String()
+    entry_visitor_pending = graphene.Boolean()
+
+    class Arguments:
+        entry_id = graphene.String()
 
     def mutate(self, info, **kwargs):
+        entry_id = kwargs.get('entry_id')
 
-        entry_visitor = EntryVisitor.objects.all()
-        entry_visitor.delete()
+        entry = EntryVisitor.objects.get(id=entry_id)
 
-        return DeleteEntryVisitor(deleted=True)
+        entry.pending = False
 
+        entry.save()
+        
+        return UpdateEntryVisitorPending(
+            entry_id=entry.id, 
+            entry_visitor_pending=entry.pending
+            )
 
 class ActivateUser(graphene.Mutation):
     """Mutation from graphene for activating user"""
@@ -420,22 +442,27 @@ class DeactivateUser(graphene.Mutation):
 class Mutation(graphene.ObjectType):
     """Used to write or post values"""
 
+    #create
     create_user = CreateUser.Field()
-    create_visitor = CreateVisitor.Field()
-    create_entry = CreateEntry.Field()
-    create_service = CreateService.Field()
     create_resident = CreateResident.Field()
+    create_entry = CreateEntry.Field()
+    create_visitor = CreateVisitor.Field()
     create_entry_visitor = CreateEntryVisitor.Field()
+    create_service = CreateService.Field()
 
-    delete_resident = DeleteResident.Field()
-    delete_service = DeleteService.Field()
-    delete_visitor = DeleteVisitor.Field()
-    delete_entry_visitor = DeleteEntryVisitor.Field()
-    update_service = UpdateService.Field()
+    #update
     update_resident = UpdateResident.Field()
     update_visitor = UpdateVisitor.Field()
+    update_entry_visitor_pending = UpdateEntryVisitorPending.Field()
+    update_service = UpdateService.Field()
     activate_user = ActivateUser.Field()
     deactivate_user = DeactivateUser.Field()
+
+    #delete
+    delete_resident = DeleteResident.Field()
+    delete_visitor = DeleteVisitor.Field()
+    delete_entry_visitor_pending = DeleteEntryVisitorPending.Field()
+    delete_service = DeleteService.Field()
 
 class Query(graphene.AbstractType):
     """Used to read or fetch values"""
