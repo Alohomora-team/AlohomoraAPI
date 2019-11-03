@@ -339,6 +339,7 @@ class DeleteResident(graphene.Mutation):
         """Mutation arguments for delete a resident"""
         resident_email = graphene.String(required=True)
 
+    # @superuser_required
     def mutate(self, info, resident_email):
         """Method to execute the mutation"""
         resident = Resident.objects.get(email=resident_email)
