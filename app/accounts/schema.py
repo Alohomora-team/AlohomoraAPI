@@ -219,9 +219,7 @@ class CreateVisitor(graphene.Mutation):
 class CreateEntryVisitor(graphene.Mutation):
     """Mutation from graphene for creating entries from visitors"""
 
-    visitor = graphene.Field(VisitorType)
-    apartment = graphene.Field(ApartmentType)
-    pending = graphene.Boolean()
+    entry_visitor = graphene.Field(EntryVisitorType)
 
     class Arguments:
         visitor_cpf = graphene.String()
@@ -261,11 +259,7 @@ class CreateEntryVisitor(graphene.Mutation):
 
         entry.save()
 
-        return CreateEntryVisitor(
-            visitor=visitor,
-            apartment=apartment,
-            pending=pending
-            )
+        return CreateEntryVisitor(entry_visitor=entry)
 
 class DeleteResident(graphene.Mutation):
     resident_email = graphene.String()
@@ -391,13 +385,9 @@ class DeleteEntryVisitor(graphene.Mutation):
 
     deleted = graphene.Boolean()
 
-    class Arguments:
-        entry_id = graphene.String()
-
     def mutate(self, info, **kwargs):
-        entry_id = kwargs.get('entry_id')
 
-        entry_visitor = EntryVisitor.objects.get(id=entry_id)
+        entry_visitor = EntryVisitor.objects.all()
         entry_visitor.delete()
 
         return DeleteEntryVisitor(deleted=True)
