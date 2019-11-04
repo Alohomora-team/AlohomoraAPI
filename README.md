@@ -8,11 +8,13 @@
 
 ## Descrição
 
-[*AlohomoraAPI*](https://docs.google.com/presentation/d/1Stq0aMrGHJtB4bNKjKWnblM6ARlbEPcDAjC2B-zUUU0/edit?usp=sharing) é um sistema idealizado para a **gerência de portarias** de condomínios e prédios. Escrito em [*python*](https://www.python.org) com o auxílio do [*framework Django*](https://www.djangoproject.com), o sistema visa resolver problemas de custo com portária e fornecer autonomia aos moradores.
+[*AlohomoraAPI*](https://docs.google.com/presentation/d/1Stq0aMrGHJtB4bNKjKWnblM6ARlbEPcDAjC2B-zUUU0/edit?usp=sharing) é um sistema idealizado para a **gerência de portarias** de condomínios e prédios. Escrito em [*Python*](https://www.python.org) com o auxílio do [*framework Django*](https://www.djangoproject.com), o sistema visa resolver problemas de custo com portaria e fornecer autonomia aos moradores.
 
- O sistema conta com uma ferramenta de **autênticação por voz**, fazendo com que a **voz do morador** se torne a sua própria **chave**. Tal funcionalidade faz com que o uso de **senhas se torne algo secundário**.
+ O sistema conta com uma ferramenta de **biometria de voz**, fazendo com que a **voz do morador** se torne a sua própria **chave**. Tal funcionalidade faz com que o uso de **senhas se torne algo secundário**.
  
   *Alohomora* disponibiliza *endpoints* que facilitam a **integração** com diversos outros **dispositivos** e sistemas, como **[Telegram](https://telegram.org)**, por exemplo, que pode funcionar como uma ponte entre o **sistema e o usuário**.
+  
+  > Conheça também o [*AlohomoraBot*](https://github.com/Alohomora-team/2019.2-AlohomoraBot)!
 
 ### Funcionalidades
 *Alohomora* possui um conjunto de funcionalidades que possibilitam a implatação de uma portaria automatizada, dinâmica e descritiva em relação a entrada de pessoas. As funcionalidades do *Alohomora* podem proporcionar
@@ -37,7 +39,7 @@
 
 ### Clonando o repositório
 
-A instalação do *Alohomora* pode ser feita usando um terminal com a extensão do **git**. Também é **necessário** que você tenha o ***Docker*** **instalado no computador**. Caso você ainda não tenha, conheça o *docker* [aqui](https://docs.docker.com).
+A instalação do *Alohomora* pode ser feita usando um terminal com a extensão do **git**. Também é **necessário** que você tenha o ***Docker*** **instalado no computador**. Caso você ainda não tenha, conheça o [*Docker*](https://docs.docker.com).
 
 1. Abra o terminal e mude para um diretório de sua escolha para receber os arquivos do repositório. Depois, execute o seguinte comando
 ```bash
