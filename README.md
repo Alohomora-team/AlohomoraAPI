@@ -34,16 +34,18 @@
 
 ## Instalação
 
-A instalação do *Alohomora* pode ser feita usando um terminal com a extensão do **git**.
 
-Abra o terminal e se mova para um diretório de sua escolha e depois execute o seguinte comando
+### Clonando o repositório
+
+A instalação do *Alohomora* pode ser feita usando um terminal com a extensão do **git**. Também é **necessário** que você tenha o ***Docker*** **instalado no computador**. Caso você ainda não tenha, conheça o *docker* [aqui](https://docs.docker.com).
+
+1. Abra o terminal e mude para um diretório de sua escolha para receber os arquivos do repositório. Depois, execute o seguinte comando
 ```bash
 $ git clone https://github.com/Alohomora-team/AlohomoraAPI.git
 ```
 
-> Para prosseguir é **necessário** que você tenha o ***Docker*** **instalado no computador**. Caso você ainda não tenha, conheça o *docker* [aqui](https://docs.docker.com).
 
-Entre dentro da pasta AlohomoraAPI e execute o comando
+2. Entre dentro da pasta AlohomoraAPI e execute o comando
 ```bash
 $ docker-compose build api
 ```
