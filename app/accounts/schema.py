@@ -382,12 +382,24 @@ class DeleteVisitor(graphene.Mutation):
                 )
 
 class DeleteEntryVisitorPending(graphene.Mutation):
+    """Mutation from graphene for deleting visitor"""
 
     deleted = graphene.Boolean()
 
-    def mutate(self, info, **kwargs):
+    class Arguments:
+        """Mutation arguments for delete a visitor"""
+        apartment_number = graphene.String(required=True)
+        block_number = graphene.String(required=True)
 
-        entry_visitor = EntryVisitor.objects.all().filter(pending=True)
+    def mutate(self, info, **kwargs):
+        """Method to execute the mutation"""
+        apartment_number = kwargs.get('apartment_number')
+        block_number = kwargs.get('block_number')
+
+        block = Block.objects.get(number=block_number)
+        apartment = Apartment.objects.get(number=apartment_number, block=block)
+
+        entry_visitor = EntryVisitor.objects.all().filter(pending=True, apartment=apartment)
         entry_visitor.delete()
 
         return DeleteEntryVisitorPending(deleted=True)
