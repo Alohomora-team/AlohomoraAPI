@@ -107,10 +107,15 @@ Para contribuir com o projeto confira o [guia de contribuição](/CONTRIBUTING.m
 
 > #### Desenvolvedores
 > Aline Lermen - [@AlineLermen](https://github.com/AlineLermen)
+>
 > João Baraky - [@baraky](https://github.com/baraky)
+>
 > Luis Furtado - [@luis-furtado](https://github.com/luis-furtado)
+>
 > Paulo Batista - [@higton](https://github.com/higton)
+>
 > Rodrigo Lima - [@RodrigoTCLima](https://github.com/RodrigoTCLima)
+>
 > Victor Silva - [@VictorJorgeFGA](https://github.com/VictorJorgeFGA)
 
 ---
