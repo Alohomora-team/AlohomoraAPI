@@ -77,6 +77,13 @@ class VisitorInput(graphene.InputObjectType):
     cpf = graphene.String(required=True)
     new_cpf = graphene.String()
 
+class ApartmentInput(graphene.InputObjectType):
+    number = graphene.String(required=True)
+    
+    class BlockInput(graphene.InputObjectType):
+        number = graphene.String(required=True)
+
+
 
 class CreateUser(graphene.Mutation):
     """Mutation from graphene for creating user"""
@@ -388,6 +395,24 @@ class DeleteEntryVisitorPending(graphene.Mutation):
 
     class Arguments:
         """Mutation arguments for delete a visitor"""
+        entry_id = graphene.String(required=True)
+
+    def mutate(self, info, **kwargs):
+        """Method to execute the mutation"""
+        entry_id = kwargs.get('entry_id')
+
+        entry_visitor = EntryVisitor.objects.get(id=entry_id)
+        entry_visitor.delete()
+
+        return DeleteEntryVisitorPending(deleted=True)
+
+class DeleteEntriesVisitorsPending(graphene.Mutation):
+    """Mutation from graphene for deleting visitor"""
+
+    deleted = graphene.Boolean()
+
+    class Arguments:
+        """Mutation arguments for delete a visitor"""
         apartment_number = graphene.String(required=True)
         block_number = graphene.String(required=True)
 
@@ -397,12 +422,16 @@ class DeleteEntryVisitorPending(graphene.Mutation):
         block_number = kwargs.get('block_number')
 
         block = Block.objects.get(number=block_number)
-        apartment = Apartment.objects.get(number=apartment_number, block=block)
+        
+        apartment = Apartment.objects.get(
+            number=apartment_number,
+            block=block,
+            )
 
-        entry_visitor = EntryVisitor.objects.all().filter(pending=True, apartment=apartment)
-        entry_visitor.delete()
+        entry_visitors = EntryVisitor.objects.all().filter(apartment=apartment)
+        entry_visitors.delete()
 
-        return DeleteEntryVisitorPending(deleted=True)
+        return DeleteEntriesVisitorsPending(deleted=True)
 
 class DeleteAdmin(graphene.Mutation):
     """Mutation from graphene for deleting admin"""
@@ -596,6 +625,7 @@ class Mutation(graphene.ObjectType):
     delete_resident = DeleteResident.Field()
     delete_visitor = DeleteVisitor.Field()
     delete_entry_visitor_pending = DeleteEntryVisitorPending.Field()
+    delete_entries_visitors_pending = DeleteEntriesVisitorsPending.Field()
     delete_service = DeleteService.Field()
     delete_admin = DeleteAdmin.Field()
 
