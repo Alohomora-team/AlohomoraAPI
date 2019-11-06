@@ -77,13 +77,6 @@ class VisitorInput(graphene.InputObjectType):
     cpf = graphene.String(required=True)
     new_cpf = graphene.String()
 
-class ApartmentInput(graphene.InputObjectType):
-    number = graphene.String(required=True)
-    
-    class BlockInput(graphene.InputObjectType):
-        number = graphene.String(required=True)
-
-
 
 class CreateUser(graphene.Mutation):
     """Mutation from graphene for creating user"""
@@ -413,22 +406,13 @@ class DeleteEntriesVisitorsPending(graphene.Mutation):
 
     class Arguments:
         """Mutation arguments for delete a visitor"""
-        apartment_number = graphene.String(required=True)
-        block_number = graphene.String(required=True)
+        apartment_id = graphene.String(required=True)
 
     def mutate(self, info, **kwargs):
         """Method to execute the mutation"""
-        apartment_number = kwargs.get('apartment_number')
-        block_number = kwargs.get('block_number')
+        apartment_id = kwargs.get('apartment_id')
 
-        block = Block.objects.get(number=block_number)
-        
-        apartment = Apartment.objects.get(
-            number=apartment_number,
-            block=block,
-            )
-
-        entry_visitors = EntryVisitor.objects.all().filter(apartment=apartment)
+        entry_visitors = EntryVisitor.objects.all().filter(apartment_id=apartment_id)
         entry_visitors.delete()
 
         return DeleteEntriesVisitorsPending(deleted=True)
