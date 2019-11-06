@@ -1,16 +1,8 @@
 import graphene
 from condos.models import Apartment, Block
-from django.contrib.auth import get_user_model
-from graphql_jwt.decorators import superuser_required, login_required
-from accounts.models import Visitor, Resident, Service, EntryVisitor, Entry, Admin
-import accounts.utility as Utility
-from accounts.types import (ResidentType,
-                             ServiceType,
-                             VisitorType,
-                             UserType,
-                             EntryType,
-                             AdminType,
-                             EntryVisitorType,)
+from accounts.models import Visitor, EntryVisitor, Entry
+from accounts.types import (EntryType,
+                            EntryVisitorType,)
 
 class EntriesQuery(graphene.AbstractType):
     """Used to read or fetch values"""

@@ -1,16 +1,7 @@
 import graphene
-from condos.models import Apartment, Block
 from django.contrib.auth import get_user_model
 from graphql_jwt.decorators import superuser_required, login_required
-from accounts.models import Visitor, Resident, Service, EntryVisitor, Entry, Admin
-import accounts.utility as Utility
-from accounts.types import (ResidentType,
-                             ServiceType,
-                             VisitorType,
-                             UserType,
-                             EntryType,
-                             AdminType,
-                             EntryVisitorType,)
+from accounts.types import UserType
 
 class UsersQuery(graphene.AbstractType):
     """Used to read or fetch values"""
@@ -23,6 +14,7 @@ class UsersQuery(graphene.AbstractType):
         """Query all unactives users"""
         return get_user_model().objects.filter(is_active=False)
 
+    @login_required
     def resolve_me(self, info):
         """Search for user features"""
         user = info.context.user
