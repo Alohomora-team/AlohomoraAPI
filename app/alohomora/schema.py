@@ -1,16 +1,25 @@
 import graphene
 import graphql_jwt
 import accounts.schema
-import accounts.queries
+import accounts.queries.residents
+import accounts.queries.users
+import accounts.queries.admins
+import accounts.queries.visitors
+import accounts.queries.entries
+import accounts.queries.services
 import condos.schema
 import condos.queries
 import bot.schema
 
-
 class Query(
         bot.schema.Query,
         condos.queries.Query,
-        accounts.queries.Query,
+        accounts.queries.admins.AdminsQuery,
+        accounts.queries.entries.EntriesQuery,
+        accounts.queries.residents.ResidentsQuery,
+        accounts.queries.services.ServicesQuery,
+        accounts.queries.users.UsersQuery,
+        accounts.queries.visitors.VisitorsQuery,
         graphene.ObjectType,
         ):
     pass

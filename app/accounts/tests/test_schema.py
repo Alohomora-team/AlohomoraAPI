@@ -182,6 +182,27 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
             ]
         }, result.data)
 
+    def test_query_users(self):
+        query = '''
+                query{
+                  users{
+                   email
+                  }
+                }
+        '''
+        result = self.client.execute(query)
+        self.assertIsNone(result.errors)
+        self.assertDictEqual({"users": [
+                              {"email": "creator@example.com"},
+                              {"email": "admin2@example.com"},
+                              {"email": "service@example.com"},
+                              {"email": "resident@example.com"},
+                              {"email": "desativado@example.com"},
+                              {"email": "user@example"},
+                              {"email": "admin@example"},
+                            ]
+                  }, result.data)
+
     def test_mutation_resident(self):
 
 
