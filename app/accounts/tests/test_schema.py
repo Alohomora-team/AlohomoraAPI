@@ -2,12 +2,12 @@ import json
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from graphene.test import Client
+from django.utils import timezone
 from alohomora.schema import schema
 from condos.models import Apartment, Block
 from accounts.models import Visitor, Resident, Service, Entry, Admin
 import accounts.utility as Utility
 from graphql_jwt.testcases import JSONWebTokenTestCase
-from django.utils import timezone
 class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
     """Test that information can be retrieved and created using graphql"""
     maxDiff = None
@@ -22,10 +22,10 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
 
         self.super_user = get_user_model().objects.create_superuser(email='admin@example',
                                                                     password='123')
-        
+
         self.admin = Admin.objects.create(
-                admin = self.user,
-                creator = self.super_user
+                admin=self.user,
+                creator=self.super_user
             )
 
         self.client.authenticate(self.super_user)
@@ -107,7 +107,7 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
                       createAdmin(
                         email: "admin3@example.com",
                         password: "admin3-password"
-                      ){ 
+                      ){
                         email
                       }
                     }
@@ -124,7 +124,7 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
     def test_mutation_deleteAdmin(self):
         mutation = '''
                     mutation{
-                      deleteAdmin(email: "user@example"){ 
+                      deleteAdmin(email: "user@example"){
                         email
                       }
                     }
@@ -145,7 +145,7 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
                     admin{
                       email
                     }
-                  }                  
+                  }
                 }
         '''
         result = self.client.execute(query)
@@ -181,6 +181,27 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
                }
             ]
         }, result.data)
+
+    def test_query_users(self):
+        query = '''
+                query{
+                  users{
+                   email
+                  }
+                }
+        '''
+        result = self.client.execute(query)
+        self.assertIsNone(result.errors)
+        self.assertDictEqual({"users": [
+                              {"email": "creator@example.com"},
+                              {"email": "admin2@example.com"},
+                              {"email": "service@example.com"},
+                              {"email": "resident@example.com"},
+                              {"email": "desativado@example.com"},
+                              {"email": "user@example"},
+                              {"email": "admin@example"},
+                            ]
+                  }, result.data)
 
     def test_mutation_resident(self):
 
@@ -657,7 +678,6 @@ mutation {
         result = self.client.execute(mutation)
         self.assertIsNone(result.errors)
         entry = Entry.objects.get(apartment=apartment)
-        self.assertEqual(entry.date.minute, self.current_date_time.minute)
         self.assertEqual(entry.date.hour, self.current_date_time.hour)
         self.assertEqual(entry.date.day, self.current_date_time.day)
         self.assertDictEqual({"createEntry":
@@ -667,137 +687,3 @@ mutation {
                                   }
                                 }
                               }, result.data)
-
-class VoiceBelongsUserTests(TestCase):
-    """Test using mfcc and fastwd for voice recognition and authentication"""
-
-    def setUp(self):
-        self.client = Client(schema)
-        self.query = '''
-        query voiceBelongsResident($cpf: String!, $voice_data: String!)
-            {
-                voiceBelongsResident(cpf: $cpf, voiceData: $voice_data )
-            }
-        '''
-
-    @classmethod
-    def setUpTestData(cls):
-        get_user_model().objects.create(
-            email='resident1@example.com',
-            password='resident1-password',
-        )
-        get_user_model().objects.create(
-            email='resident2@example.com',
-            password='resident2-password',
-        )
-        get_user_model().objects.create(
-            email='resident3@example.com',
-            password='resident3-password',
-        )
-        get_user_model().objects.create(
-            email='resident4@example.com',
-            password='resident4-password',
-        )
-        get_user_model().objects.create(
-            email='resident5@example.com',
-            password='resident5-password',
-        )
-
-        Resident.objects.create(
-            complete_name="Barry Allen",
-            email="love_you_iris@starslab.com",
-            phone="6133941598",
-            user=get_user_model().objects.get(email='resident1@example.com'),
-            cpf="0123456789",
-            voice_data=Utility.json_voice_data_to_json_mfcc(
-                json.dumps([2 * x for x in range(32000)])
-            ),
-        )
-
-        Resident.objects.create(
-            complete_name="Naruto Uzumaku",
-            email="sereihokage@konoha.com",
-            phone="6133941597",
-            cpf="0123456781",
-            user=get_user_model().objects.get(email='resident2@example.com'),
-            voice_data=Utility.json_voice_data_to_json_mfcc(
-                json.dumps([3 * x for x in range(32000)])
-            ),
-        )
-
-        Resident.objects.create(
-            complete_name="Max Steel",
-            email="modoturbo@yahoo.com",
-            phone="6133941596",
-            cpf="0123456782",
-            user=get_user_model().objects.get(email='resident3@example.com'),
-            voice_data=Utility.json_voice_data_to_json_mfcc(
-                json.dumps([x**2  - 50 * x + 20 for x in range(32000)])
-            ),
-        )
-
-        Resident.objects.create(
-            complete_name="Benjamin Tennyson",
-            email="ben10@omnitrix.com",
-            phone="33941595",
-            cpf="0123456783",
-            user=get_user_model().objects.get(email='resident4@example.com'),
-            voice_data=Utility.json_voice_data_to_json_mfcc(
-                json.dumps([x - 200 for x in range(32000)])
-            ),
-        )
-
-        Resident.objects.create(
-            complete_name="Eren Jaeger",
-            email="i_hate_marleyans@eldia.com",
-            phone="99999999",
-            cpf="0000000000",
-            user=get_user_model().objects.get(email='resident5@example.com'),
-            voice_data=Utility.json_voice_data_to_json_mfcc(
-                json.dumps([x * 0.5 for x in range(32000)])
-            ),
-        )
-
-    def test_query_accuracy_true(self):
-        response = self.client.execute(
-            self.query,
-            variables={
-                'cpf': '0123456789',
-                'voice_data': json.dumps([2.3 * x for x in range(32000)])
-                }
-        )
-
-        self.assertEqual(response, {"data": {"voiceBelongsResident": True}})
-
-    def test_query_accuracy_false(self):
-        response = self.client.execute(
-            self.query,
-            variables={
-                'cpf': '0123456789',
-                'voice_data': json.dumps([2.7 * x for x in range(32000)])
-                }
-        )
-
-        self.assertEqual(response, {"data": {"voiceBelongsResident": False}})
-
-    def test_nonexistent_cpf_except(self):
-        response = self.client.execute(
-            self.query,
-            variables={
-                'cpf': '1111111111',
-                'voice_data': json.dumps([2.3 * x for x in range(32000)])
-            }
-        )
-
-        self.assertIsNotNone(response['errors'])
-
-    def test_invalid_voice_data(self):
-        response = self.client.execute(
-            self.query,
-            variables={
-                'cpf': '0123456789',
-                'voice_data': json.dumps([2.3 * x for x in range(32000)] + ['a'])
-            }
-        )
-
-        self.assertIsNotNone(response['errors'])

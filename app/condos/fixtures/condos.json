@@ -10,7 +10,7 @@
         "model": "condos.block",
         "pk": 2,
         "fields": {
-            "number": "10"
+            "number": "2"
         }
     },
     {

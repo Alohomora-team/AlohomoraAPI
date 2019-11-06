@@ -44,6 +44,8 @@
 ### Alterado
 *  Argumento "python -m" adicionado antes do "pip install" no Dockerfile
 
-
+## [0.2.0] - 2019-11-02
+### Alterado
+* Mudança na organização dos arquivos do schema e do teste de accounts.
  ---
  Modelo padrão do changelog disponível [aqui](https://keepachangelog.com/en/0.3.0/).
