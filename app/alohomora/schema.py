@@ -6,6 +6,7 @@ import accounts.queries.users
 import accounts.queries.admins
 import accounts.queries.visitors
 import accounts.queries.entries
+import accounts.queries.entries_visitors
 import accounts.queries.services
 import condos.schema
 import condos.queries
@@ -16,6 +17,7 @@ class Query(
         condos.queries.Query,
         accounts.queries.admins.AdminsQuery,
         accounts.queries.entries.EntriesQuery,
+        accounts.queries.entries_visitors.EntriesVisitorsQuery,
         accounts.queries.residents.ResidentsQuery,
         accounts.queries.services.ServicesQuery,
         accounts.queries.users.UsersQuery,
