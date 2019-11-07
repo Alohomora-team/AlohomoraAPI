@@ -1,6 +1,6 @@
+import graphene
 from django.contrib.auth import get_user_model
 from graphql_jwt.decorators import superuser_required, login_required
-import graphene
 from accounts.types import UserType
 
 class CreateUser(graphene.Mutation):

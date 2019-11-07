@@ -1,7 +1,7 @@
 import graphene
+from django.contrib.auth import get_user_model
 from condos.models import Apartment, Block
 from condos.types import ApartmentType, BlockType
-from django.contrib.auth import get_user_model
 from graphql_jwt.decorators import superuser_required, login_required
 from accounts.models import Resident, Entry
 from accounts.types import ResidentType
@@ -29,4 +29,3 @@ class CreateEntry(graphene.Mutation):
         entry.save()
 
         return CreateEntry(resident=entry.resident, apartment=entry.apartment)
-

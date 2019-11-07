@@ -1,7 +1,7 @@
 import graphene
+from django.contrib.auth import get_user_model
 from condos.models import Apartment, Block
 from condos.types import ApartmentType, BlockType
-from django.contrib.auth import get_user_model
 from graphql_jwt.decorators import superuser_required, login_required
 from accounts.models import Visitor, EntryVisitor
 from accounts.types import EntryVisitorType
@@ -70,9 +70,9 @@ class UpdateEntryVisitorPending(graphene.Mutation):
         entry.pending = False
 
         entry.save()
-        
+
         return UpdateEntryVisitorPending(
-            entry_id=entry.id, 
+            entry_id=entry.id,
             entry_visitor_pending=entry.pending
             )
 

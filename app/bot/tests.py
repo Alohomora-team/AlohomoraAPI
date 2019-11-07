@@ -1,6 +1,6 @@
+from graphene.test import Client
 from django.test import TestCase
 from bot.models import Feedback
-from graphene.test import Client
 from alohomora.schema import schema
 
 # Create your tests here.

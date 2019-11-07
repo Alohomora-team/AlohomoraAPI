@@ -1,5 +1,5 @@
-from graphql_jwt.decorators import superuser_required, login_required
 import graphene
+from graphql_jwt.decorators import superuser_required, login_required
 from accounts.models import Visitor
 from accounts.types import VisitorType
 
