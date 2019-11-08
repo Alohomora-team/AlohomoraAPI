@@ -11,14 +11,17 @@ env:
 
 jobs:
   include:
+    # Code Style 
     - stage: code_quality_test
       script:
         - docker-compose run lint
 
+    # Tests
     - stage: code_quality_test
       script:
         - docker-compose run api test
 
+    # Code Coverage
     - stage: code_quality_test
       install:
         - pip install coveralls
@@ -30,7 +33,8 @@ jobs:
         - coverage report
         - coveralls
 
-    - stage: deploy-hmg
+    # Deploy HMG
+    - stage: deploy
       if: branch = devel
       before_install:
         - docker build -f docker/Dockerfile -t alohomorateam/api:devel .
@@ -40,7 +44,8 @@ jobs:
         - docker login -u="$DOCKER_USER" -p="$DOCKER_PASS";
         - docker push alohomorateam/api:devel
 
-    - stage: deploy-prod
+    # Deploy PROD
+    - stage: deploy
       if: branch = master
       before_install:
         - docker build -f docker/Dockerfile -t alohomorateam/api:master .
