@@ -9,14 +9,15 @@ class CreateUser(graphene.Mutation):
     class Arguments:
         """Mutation arguments for create a user"""
         username = graphene.String(required=True)
-        password = graphene.String(required=False)
+        password = graphene.String(required=True)
+        email = graphene.String(required=True)
 
     @login_required
-    def mutate(self, info, password, username):
+    def mutate(self, info, password, username, email):
         """Method to execute the mutation"""
         user = get_user_model()(
             username=username,
-            password=password,
+            email=email,
         )
         user.set_password(password)
         user.save()
