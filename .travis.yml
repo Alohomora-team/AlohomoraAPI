@@ -3,7 +3,7 @@ python:
   - "3.7"
 
 stages:
-  - code_quality_test
+  - code_quality_tests
   - deploy
 
 env:
@@ -12,17 +12,17 @@ env:
 jobs:
   include:
     # Code Style 
-    - stage: code_quality_test
+    - stage: code_quality_tests
       script:
         - docker-compose run lint
 
     # Tests
-    - stage: code_quality_test
+    - stage: code_quality_tests
       script:
         - docker-compose run api test
 
     # Code Coverage
-    - stage: code_quality_test
+    - stage: code_quality_tests
       install:
         - pip install coveralls
       script:
