@@ -37,7 +37,6 @@ class CreateService(graphene.Mutation):
 
 class UpdateService(graphene.Mutation):
     """Mutation from graphene for updating service"""
-    user = graphene.Field(UserType)
     service = graphene.Field(ServiceType)
 
     class Arguments:
@@ -45,25 +44,15 @@ class UpdateService(graphene.Mutation):
         service_data = ServiceInput()
 
     @login_required
-    def mutate(self, info, service_data=None):
+    def mutate(self, info, service_data):
         """Method to execute the mutation"""
-        user = info.context.user
-        if user.is_service is False:
-            raise Exception('User is not service')
-        email = user.email
-        service = Service.objects.get(email=email)
+        service = Service.objects.get(email=service_data.service_email)
+
         for key, value in service_data.items():
-            if (key == 'password') and (value is not None):
-                user.set_password(service_data.password)
-            if (key == 'email') and (value is not None):
-                setattr(user, key, value)
-            if (key == 'email') and (value is not None):
                 setattr(service, key, value)
-            else:
-                setattr(service, key, value)
+
         service.save()
-        user.save()
-        return UpdateService(user=user, service=service)
+        return UpdateService(service=service)
 
 class DeleteService(graphene.Mutation):
     """Mutation from graphene for deleting service"""

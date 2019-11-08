@@ -78,7 +78,6 @@ class CreateResident(graphene.Mutation):
 
 class UpdateResident(graphene.Mutation):
     """Mutation from graphene for updating resident"""
-    user = graphene.Field(UserType)
     resident = graphene.Field(ResidentType)
 
     class Arguments:
@@ -88,23 +87,11 @@ class UpdateResident(graphene.Mutation):
     @login_required
     def mutate(self, info, resident_data=None):
         """Method to execute the mutation"""
-        user = info.context.user
-        if user.is_resident is False:
-            raise Exception('User is not resident')
-        email = user.email
-        resident = Resident.objects.get(email=email)
+        resident = Resident.objects.get(cpf=resident_data.resident_cpf)
         for key, value in resident_data.items():
-            if (key == 'password') and (value is not None):
-                user.set_password(resident_data.password)
-            if (key == 'email') and (value is not None):
-                setattr(user, key, value)
-            if (key == 'email') and (value is not None):
-                setattr(resident, key, value)
-            else:
                 setattr(resident, key, value)
         resident.save()
-        user.save()
-        return UpdateResident(user=user, resident=resident)
+        return UpdateResident(resident=resident)
 
 class DeleteResident(graphene.Mutation):
     """Mutation from graphene for deleting resident"""

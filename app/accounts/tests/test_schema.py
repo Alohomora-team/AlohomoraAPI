@@ -544,84 +544,33 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
 
         mutation = '''
                     mutation {
-                      updateService(serviceData: {email: "service2@example.com", password: "k"}){
+                      updateService(serviceData: {serviceEmail: "service@example.com", email: "service2@exemplo.com", completeName: "k"}){
                         service {
                           email
-                          completeName
+                    	  	completeName
                         }
-                        user {
-                          	email
-                          }
                       }
                     }
             '''
         result = self.client.execute(mutation)
         self.assertIsNone(result.errors)
         self.assertEqual(Resident.objects.count(), 1)
-        self.assertDictEqual({"updateService":
-                              {
+        self.assertDictEqual({"updateService": {
                                   "service": {
-                                      "email": "service2@example.com",
-                                      "completeName": "bob esponja"},
-                                  "user": {
-                                      "email": "service2@example.com"}
+                                    "email": "service2@exemplo.com",
+                                    "completeName": "k"
                                   }
-                              }, result.data)
-
-    def test_update_resident(self):
-
-        self.user = get_user_model().objects.get(email='resident@example.com')
-        self.client.authenticate(self.user)
-        mutation = '''
-mutation {
-  updateResident(residentData: {email: "service42@example.com", password: "k"}){
-    resident {
-      email
-      completeName
-      phone
-    }
-    user {
-      	email
-      }
-  }
-}
-            '''
-        result = self.client.execute(mutation)
-        self.assertIsNone(result.errors)
-        self.assertEqual(Resident.objects.count(), 1)
-
-        self.assertDictEqual({"updateResident":
-                              {
-                                  "resident": {
-                                      "email": "service42@example.com",
-                                      "completeName": "resident-evil",
-                                      "phone": "42"},
-                                  "user": {
-                                      "email": "service42@example.com",}
-                                  }
+                                }
                               }, result.data)
 
     def test_update_visitor(self):
 
         mutation = '''
                     mutation {
-                      createVisitor(completeName: "visitor2", cpf: "40982705018") {
-                       visitor{
-                        id
-                        completeName
-                        cpf
-                      }
-                    }
-                    }
-              '''
-        result = self.client.execute(mutation)
-
-        mutation = '''
-                    mutation {
-                      updateVisitor(cpf: "40982705018", newCpf:"80272869058"){
-                        visitor{
+                      updateVisitor(visitorData: {visitorCpf: "29950509041", cpf: "80272869058", completeName: "goku"}){
+                        visitor {
                           cpf
-                          completeName
+                    	  completeName
                         }
                       }
                     }
@@ -632,10 +581,33 @@ mutation {
                               {
                                   "visitor": {
                                     "cpf": "80272869058",
-                                    "completeName": "visitor2"
+                                    "completeName": "goku"
                                   }
                                 }
                               }, result.data)
+
+    def test_update_resident(self):
+
+        mutation = '''
+                    mutation {
+                      updateResident(residentData: {residentCpf: "12345678910", cpf: "00012312300", completeName: "k"}){
+                        resident {
+                          cpf
+                    	  	completeName
+                        }
+                      }
+                    }
+              '''
+        result = self.client.execute(mutation)
+        self.assertIsNone(result.errors)
+        self.assertDictEqual({"updateResident": {
+                                  "resident": {
+                                    "cpf": "00012312300",
+                                    "completeName": "k"
+                                  }
+                                }
+                              }, result.data)
+
     def test_query_entry(self):
         query = '''
             query{
