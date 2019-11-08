@@ -3,25 +3,26 @@ python:
   - "3.7"
 
 stages:
-  - lint
-  - code_style
-  - tests
-  - deploy
+  - code_quality_tests
+  - push_image
 
 env:
   - DOCKER_COMPOSE_VERSON=1.4.2
 
 jobs:
   include:
-    - stage: code_style
+    # Code Style
+    - stage: code_quality_tests
       script:
         - docker-compose run lint
 
-    - stage: tests
+    # Tests
+    - stage: code_quality_tests
       script:
         - docker-compose run api test
 
-    - stage: coveralls
+    # Code Coverage
+    - stage: code_quality_tests
       install:
         - pip install coveralls
       script:
@@ -32,23 +33,25 @@ jobs:
         - coverage report
         - coveralls
 
-    - stage: deploy-hmg
-      if: branch = devel
+    # Push Image HMG
+    - stage: push_image
+      if: (branch = devel) AND (NOT (type IN (push, pull_request)))
       before_install:
         - docker build -f docker/Dockerfile -t alohomorateam/api:devel .
-      script: 
+      script:
         - docker images alohomorateam/api
       after_success:
         - docker login -u="$DOCKER_USER" -p="$DOCKER_PASS";
         - docker push alohomorateam/api:devel
 
-    - stage: deploy-prod
-      if: branch = master
+    # Push Image PROD
+    - stage: push_image
+      if: (branch = master) AND (NOT (type IN (push, pull_request)))
       before_install:
         - docker build -f docker/Dockerfile -t alohomorateam/api:master .
-      script: 
+      script:
         - docker images alohomorateam/api
       after_success:
         - docker login -u="$DOCKER_USER" -p="$DOCKER_PASS";
         - docker push alohomorateam/api:master
-          
+
