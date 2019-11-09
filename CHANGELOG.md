@@ -51,8 +51,8 @@
 ## [0.2.0] - 2019-11-03
 ### Adicionado
 *  Nova mutation update e delete da model EntryVisitor.
-
-
+*  Novas mutations para mudar de senha e email
+*  Mudança nas mutations de updates
  ---
- 
+
  Modelo padrão do changelog disponível [aqui](https://keepachangelog.com/en/0.3.0/).
