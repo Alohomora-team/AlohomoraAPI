@@ -1,3 +1,4 @@
+"""File for grouping Mutations about entries from a visitor"""
 import graphene
 from django.contrib.auth import get_user_model
 from condos.models import Apartment, Block
@@ -55,14 +56,17 @@ class CreateEntryVisitor(graphene.Mutation):
 
 # allow visitor entry
 class UpdateEntryVisitorPending(graphene.Mutation):
+    """Mutation from graphene to update the 'pending' status of an entry"""
 
     entry_id = graphene.String()
     entry_visitor_pending = graphene.Boolean()
 
     class Arguments:
+        """Mutation arguments"""
         entry_id = graphene.String()
 
     def mutate(self, info, **kwargs):
+        """Method to execute the mutation"""
         entry_id = kwargs.get('entry_id')
 
         entry = EntryVisitor.objects.get(id=entry_id)
