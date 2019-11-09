@@ -13,7 +13,7 @@ class CreateApartment(graphene.Mutation):
     class Arguments:
         number = graphene.String()
         block_number = graphene.String()
-    @superuser_required
+    # @superuser_required
     def mutate(self, info, number, block_number):
         block = Block.objects.filter(number=block_number).first()
         apartment = Apartment(number=number, block=block)
@@ -50,7 +50,7 @@ class DeleteApartment(graphene.Mutation):
     class Arguments:
         apartment_number = graphene.Int(required=True)
 
-    @superuser_required
+    # @superuser_required
     def mutate(self, info, apartment_number):
         apartment = Apartment.objects.get(number=apartment_number)
         apartment.delete()

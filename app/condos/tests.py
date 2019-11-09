@@ -1,7 +1,7 @@
+from graphene.test import Client
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 from condos.models import Apartment, Block
-from graphene.test import Client
 from alohomora.schema import schema
 from graphql_jwt.testcases import JSONWebTokenTestCase
 

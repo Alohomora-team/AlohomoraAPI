@@ -1,6 +1,6 @@
+import graphene
 from django.contrib.auth import get_user_model
 from graphql_jwt.decorators import superuser_required, login_required
-import graphene
 from accounts.types import UserType
 
 class CreateUser(graphene.Mutation):
@@ -12,8 +12,9 @@ class CreateUser(graphene.Mutation):
         password = graphene.String(required=True)
         email = graphene.String(required=True)
 
-    @superuser_required
-    def mutate(self, info, password, username, email):
+
+    # @login_required
+    def mutate(self, info, password, username):
         """Method to execute the mutation"""
         user = get_user_model()(
             username=username,

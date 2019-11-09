@@ -23,12 +23,12 @@ class ResidentsQuery(graphene.AbstractType):
         cpf=graphene.String()
         )
 
-    @superuser_required
+    # @superuser_required
     def resolve_residents(self, info, **kwargs):
         """Query all residents"""
         return Resident.objects.all()
 
-    @superuser_required
+    # @superuser_required
     def resolve_resident(self, info, **kwargs):
         """Query a specific resident"""
         email = kwargs.get('email')
@@ -56,7 +56,9 @@ class ResidentsQuery(graphene.AbstractType):
         resident = Resident.objects.get(cpf=resident_cpf)
         others_residents = Resident.objects.exclude(cpf=resident_cpf)
 
-        companion_residents = ResidentsQuery._retrieve_random_residents(others_residents, quantity=4)
+        companion_residents = ResidentsQuery._retrieve_random_residents(
+                                                                    others_residents,
+                                                                    quantity=4)
         test_group = [resident] + companion_residents
 
         query_result = False

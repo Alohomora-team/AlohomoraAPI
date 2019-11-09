@@ -10,7 +10,7 @@ class CreateBlock(graphene.Mutation):
     class Arguments:
         number = graphene.String()
 
-    @superuser_required
+    # @superuser_required
     def mutate(self, info, number):
         block = Block(number=number)
         block.save()
