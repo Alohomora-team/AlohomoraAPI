@@ -1,7 +1,7 @@
-from condos.models import Apartment, Block
-from django.contrib.auth import get_user_model
-from graphql_jwt.decorators import superuser_required, login_required
 import graphene
+from django.contrib.auth import get_user_model
+from condos.models import Apartment, Block
+from graphql_jwt.decorators import superuser_required, login_required
 from accounts.models import Resident
 from accounts.types import ResidentType, UserType, ResidentInput
 

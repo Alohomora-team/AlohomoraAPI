@@ -56,7 +56,9 @@ class ResidentsQuery(graphene.AbstractType):
         resident = Resident.objects.get(cpf=resident_cpf)
         others_residents = Resident.objects.exclude(cpf=resident_cpf)
 
-        companion_residents = ResidentsQuery._retrieve_random_residents(others_residents, quantity=4)
+        companion_residents = ResidentsQuery._retrieve_random_residents(
+                                                                    others_residents,
+                                                                    quantity=4)
         test_group = [resident] + companion_residents
 
         query_result = False

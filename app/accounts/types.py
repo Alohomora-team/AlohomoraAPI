@@ -1,7 +1,7 @@
-from accounts.models import Visitor, Resident, Service, EntryVisitor, Entry, Admin
+import graphene
 from django.contrib.auth import get_user_model
 from graphene_django import DjangoObjectType
-import graphene
+from accounts.models import Visitor, Resident, Service, EntryVisitor, Entry, Admin
 
 class ResidentType(DjangoObjectType):
     """Resident as a object type"""
