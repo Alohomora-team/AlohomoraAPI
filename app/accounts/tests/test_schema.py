@@ -443,27 +443,41 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
         }, result.data)
         self.assertNotEqual(get_user_model().objects.get(email="ibis@ni").password, '123')
 
-    def test_authentication(self):
+    def test_authentication_error(self):
 
-        self.client.authenticate(self.user)
-
+        mutation = '''
+                    mutation{
+                      createUser(
+                        username: "goten",
+                        email: "goten@example.com",
+                        password: "123"
+                      ){ user{
+                         username
+                         email
+                      }
+                      }
+                    }
+        '''
+        self.client.execute(mutation)
+        self.user.is_active = True
+        self.user=get_user_model().objects.get(email="goten@example.com")
+        result = self.client.authenticate(self.user)
         query = '''
                     query {
                       me {
                         username
                         email
-                        password
                       }
                     }
             '''
         result = self.client.execute(query)
+        self.assertIsNotNone(result.errors)
+        self.user.is_active = True
+        self.user.save()
+        self.client.authenticate(self.user)
+        result = self.client.execute(query)
         self.assertIsNone(result.errors)
-        self.assertDictEqual({"me":
-                              {
-                                  "username": "user",
-                                  "email": "user@example",
-                                  "password": "123"}
-                             }, result.data)
+
     def test_deactivated_user(self):
         mutation = '''
                     mutation{
