@@ -18,6 +18,8 @@ from .mutations.users import(
     CreateUser,
     ActivateUser,
     DeactivateUser,
+    ChangePassword,
+    ChangeEmail,
 )
 from .mutations.visitors import(
     CreateVisitor,
@@ -50,3 +52,6 @@ class Mutation(graphene.ObjectType):
 
     activate_user = ActivateUser.Field()
     deactivate_user = DeactivateUser.Field()
+
+    change_password = ChangePassword.Field()
+    change_email    = ChangeEmail.Field()

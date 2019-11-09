@@ -182,6 +182,31 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
             ]
         }, result.data)
 
+    def test_mutation_user(self):
+                mutation = '''
+                            mutation{
+                              createUser(
+                                username: "service",
+                                email: "service@exemplo.com",
+                                password: "123"
+                              ){ user{
+                                 username
+                                 email
+                              }
+                              }
+                            }
+                '''
+
+                result = self.client.execute(mutation)
+                self.assertIsNone(result.errors)
+                self.assertDictEqual({"createUser": {
+                                          "user": {
+                                            "username": "service",
+                                            "email": "service@exemplo.com"
+                                          }
+                                        }
+                                      }, result.data)
+
     def test_query_users(self):
         query = '''
                 query{
@@ -659,3 +684,37 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
                                   }
                                 }
                               }, result.data)
+
+    def test_changing_email(self):
+                mutation = '''
+                            mutation{
+                              changeEmail(userEmail: "service@example.com", email: "gohan@example.com"){
+                                user{
+                                   email
+                              	}
+                              }
+                            }
+                '''
+
+                result = self.client.execute(mutation)
+                self.assertIsNone(result.errors)
+                self.assertDictEqual({"changeEmail": {
+                                          "user": {
+                                            "email": "gohan@example.com"
+                                          }
+                                        }
+                                      }, result.data)
+
+    def test_changing_password(self):
+                mutation = '''
+                            mutation{
+                              changePassword(userEmail: "service@example.com", password: "123"){
+                                user{
+                                   password
+                              	}
+                              }
+                            }
+                '''
+
+                result = self.client.execute(mutation)
+                self.assertIsNone(result.errors)
