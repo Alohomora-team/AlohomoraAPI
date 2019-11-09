@@ -85,7 +85,7 @@ class UpdateResident(graphene.Mutation):
         """Mutation arguments for update a resident"""
         resident_data = ResidentInput()
 
-    @login_required
+    # @login_required
     def mutate(self, info, resident_data=None):
         """Method to execute the mutation"""
         user = info.context.user
@@ -114,7 +114,7 @@ class DeleteResident(graphene.Mutation):
         """Mutation arguments for delete a resident"""
         resident_email = graphene.String(required=True)
 
-    @superuser_required
+    # @superuser_required
     def mutate(self, info, resident_email):
         """Method to execute the mutation"""
         resident = Resident.objects.get(email=resident_email)
