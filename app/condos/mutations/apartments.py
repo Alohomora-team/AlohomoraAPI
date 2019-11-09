@@ -1,4 +1,4 @@
-"""File for grouping Mutations about Apartments"""
+"""Module for grouping Mutations about Apartments"""
 import graphene
 from graphql_jwt.decorators import superuser_required
 from ..models import Block, Apartment

@@ -1,4 +1,4 @@
-"""File for grouping Mutations about entries from a visitor"""
+"""Module for grouping Mutations about entries from a visitor"""
 import graphene
 from django.contrib.auth import get_user_model
 from condos.models import Apartment, Block
