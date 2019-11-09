@@ -33,7 +33,7 @@ class CreateApartment(graphene.Mutation):
             block=apartment.block)
 
 class UpdateApartment(graphene.Mutation):
-     """Mutation from graphene for updating apartment"""
+    """Mutation from graphene for updating apartment"""
     apartment = graphene.Field(ApartmentType)
     number = graphene.String()
     apartment_number = graphene.String()
@@ -51,7 +51,7 @@ class UpdateApartment(graphene.Mutation):
         return UpdateApartment(apartment=apartment)
 
 class DeleteApartment(graphene.Mutation):
-     """Mutation from graphene for deleting apartment"""
+    """Mutation from graphene for deleting apartment"""
     apartment_number = graphene.Int()
 
     class Arguments:
