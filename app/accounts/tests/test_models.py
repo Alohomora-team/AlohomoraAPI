@@ -59,26 +59,6 @@ class ResidentModelTest(TestCase):
 
 class VisitorModelTest(TestCase):
 
-    @classmethod
-    def setUpTestData(cls):
-
-        get_user_model().objects.create(
-            email='exemplo@.com',
-            password='12345',
-            username='ok',
-        )
-        Resident.objects.create(
-            complete_name='Big',
-            email='Bob',
-            phone='12345',
-            user=get_user_model().objects.get(email='exemplo@.com'),
-        )
-
-        Visitor.objects.create(
-            complete_name='visitor',
-            cpf='29950509041',
-        )
-
     def test_cpf_max_length(self):
 
         with self.assertRaises(Exception):
@@ -88,26 +68,6 @@ class VisitorModelTest(TestCase):
             )
 
 class ServiceModelTest(TestCase):
-
-    @classmethod
-    def setUpTestData(cls):
-
-        get_user_model().objects.create(
-            email='exemplo@.com',
-            password='12345',
-            username='ok',
-        )
-
-        Service.objects.create(
-            email='squirtle@exemplo.com',
-            complete_name='Eeeve',
-            password='123',
-            user=get_user_model().objects.get(email='exemplo@.com'),
-        )
-
-    def test_email_label(self):
-        service = Service.objects.get(user_id=2)
-        self.assertEquals(service.email, 'squirtle@exemplo.com')
 
     def test_email_max_length(self):
 
