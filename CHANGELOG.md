@@ -51,8 +51,8 @@
 ## [0.2.0] - 2019-11-03
 ### Adicionado
 *  Nova mutation update e delete da model EntryVisitor.
-
+*  Adoção do pytest no projeto
 
  ---
- 
+
  Modelo padrão do changelog disponível [aqui](https://keepachangelog.com/en/0.3.0/).
