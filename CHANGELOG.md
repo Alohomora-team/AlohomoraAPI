@@ -8,6 +8,7 @@
  * Adicionado docker-compose para rodar o site locamente
 
 ## [Unreleased]
+* Correção do bug na query de admins
 
 ## [0.2.0] - 2019-10-15
 ### Adicionado
