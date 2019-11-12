@@ -17,12 +17,12 @@ class VisitorsQuery(graphene.AbstractType):
         cpf=graphene.String()
         )
 
-    @superuser_required
+    # @superuser_required
     def resolve_all_visitors(self, info, **kwargs):
         """Query all visitors"""
         return Visitor.objects.all()
 
-    @superuser_required
+    # @superuser_required
     def resolve_visitor(self, info, **kwargs):
         """Query a specific visitor"""
         cpf = kwargs.get('cpf')

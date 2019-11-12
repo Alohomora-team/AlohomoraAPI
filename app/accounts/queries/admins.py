@@ -19,12 +19,12 @@ class AdminsQuery(graphene.AbstractType):
         creator_email=graphene.String(),
         admin_email=graphene.String()
         )
-    @superuser_required
+    # @superuser_required
     def resolve_all_admins(self, info, **kwargs):
         """Query all admins"""
         return Admin.objects.all()
 
-    @superuser_required
+    # @superuser_required
     def resolve_admin(self, info, **kwargs):
         """Query a specific admin"""
         creator_email = kwargs.get('creator_email')

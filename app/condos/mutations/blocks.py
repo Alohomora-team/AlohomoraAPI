@@ -12,7 +12,7 @@ class CreateBlock(graphene.Mutation):
         """Mutation arguments for creating blocks"""
         number = graphene.String()
 
-    @superuser_required
+    # @superuser_required
     def mutate(self, info, number):
         """Method to execute the mutation"""
         block = Block(number=number)

@@ -26,12 +26,12 @@ class ResidentsQuery(graphene.AbstractType):
         cpf=graphene.String()
         )
 
-    @superuser_required
+    # @superuser_required
     def resolve_residents(self, info, **kwargs):
         """Query all residents"""
         return Resident.objects.all()
 
-    @superuser_required
+    # @superuser_required
     def resolve_resident(self, info, **kwargs):
         """Query a specific resident"""
         email = kwargs.get('email')
