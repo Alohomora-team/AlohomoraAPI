@@ -1,3 +1,6 @@
+"""
+Queries that resolve residents ann list them
+"""
 import graphene
 from graphql_jwt.decorators import superuser_required
 from accounts.models import Resident
