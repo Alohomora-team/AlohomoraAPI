@@ -79,8 +79,8 @@ class Resident(models.Model):
     admin = models.BooleanField(default=False)
     password = models.CharField(max_length=80)
 
-    mfcc_audio_speaking_phrase = ArrayField(models.FloatField())
-    mfcc_audio_speaking_name = ArrayField(models.FloatField())
+    mfcc_audio_speaking_phrase = ArrayField(models.FloatField(), default=list)
+    mfcc_audio_speaking_name = ArrayField(models.FloatField(), default=list)
 
     #objects = UserManager()
 
