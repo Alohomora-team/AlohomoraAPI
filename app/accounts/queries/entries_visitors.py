@@ -1,10 +1,13 @@
+"""
+Resolve data about visitos entries
+"""
 import graphene
 from condos.models import Apartment, Block
 from accounts.models import Visitor, EntryVisitor
 from accounts.types import EntryVisitorType
 
 class EntriesVisitorsQuery(graphene.AbstractType):
-    """Used to read or fetch values"""
+    """Fetch data about entries of visitos in a apartment"""
     all_entries_visitors = graphene.List(EntryVisitorType)
 
     entries_visitor = graphene.Field(

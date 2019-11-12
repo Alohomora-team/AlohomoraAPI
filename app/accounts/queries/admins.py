@@ -1,3 +1,7 @@
+"""
+Queries that list admin and resolve them individually
+"""
+
 import graphene
 from django.contrib.auth import get_user_model
 from graphql_jwt.decorators import superuser_required

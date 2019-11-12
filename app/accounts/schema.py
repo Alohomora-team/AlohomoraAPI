@@ -1,3 +1,7 @@
+"""
+Accounts mutations
+"""
+
 import graphene
 from .mutations.entries import(
     CreateEntry,

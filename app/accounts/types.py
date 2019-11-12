@@ -1,3 +1,4 @@
+"""Module for grouping Object Type setter functions"""
 import graphene
 from django.contrib.auth import get_user_model
 from graphene_django import DjangoObjectType
