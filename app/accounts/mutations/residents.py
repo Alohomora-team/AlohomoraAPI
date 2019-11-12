@@ -25,8 +25,8 @@ class CreateResident(graphene.Mutation):
         block = graphene.String(required=True)
         password = graphene.String(required=False)
 
-        audio_speaking_phrase = graphene.List(graphene.NonNull(graphene.Float), required=True)
-        audio_speaking_name = graphene.List(graphene.NonNull(graphene.Float), required=True)
+        audio_speaking_phrase = graphene.List(graphene.Float, required=True)
+        audio_speaking_name = graphene.List(graphene.Float, required=True)
 
     def mutate(self, info, **kwargs):
         """Method to execute the mutation"""
