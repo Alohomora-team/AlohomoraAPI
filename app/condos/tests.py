@@ -1,4 +1,4 @@
-"""Module for grouping Graphene Mutation and Query tests"""
+
 from graphene.test import Client
 from django.test import TestCase
 from django.contrib.auth import get_user_model
@@ -18,12 +18,10 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
         self.client.authenticate(self.super_user)
 
     def query(self, query: str):
-        """tests query execution"""
         resp = self._client.execute(query)
         return resp
 
     def test_block_mutation(self):
-        """tests create block mutation execution"""
 
         mutation = '''
                         mutation{
@@ -41,7 +39,6 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
                               }, result.data)
 
     def test_block_query(self):
-        """tests block query execution"""
 
         query = """
         {
@@ -59,7 +56,6 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
                              }, result.data)
 
     def test_apartment_mutation(self):
-        """tests create apartment mutation execution"""
 
         mutation = '''
                         mutation{
@@ -84,7 +80,6 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
                              }, result.data)
 
     def test_apartment_query(self):
-        """tests a specific apartment query execution"""
 
         query = """
         {
@@ -108,7 +103,6 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
                               }, result.data)
 
     def test_apartments_query(self):
-        """tests query execution for all apartments matching the given number"""
 
         query = """
         {
@@ -132,7 +126,7 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
                               }, result.data)
 
     def test_delete_apartment(self):
-        """tests deleting apartment mutation execution"""
+
         mutation = '''
                         mutation{
                           deleteApartment(apartmentNumber: 101)
@@ -146,7 +140,7 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
         self.assertEqual(Apartment.objects.count(), 0)
 
     def test_delete_block(self):
-        """tests delete block mutation execution"""
+
         mutation = '''
                         mutation{
                           deleteBlock(blockNumber: "1")
@@ -160,7 +154,7 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
         self.assertEqual(Block.objects.count(), 0)
 
     def test_update_block(self):
-        """tests update block mutation execution"""
+
         mutation = '''
                     mutation {
                       updateBlock(number: "2", blockNumber: "1"){
@@ -180,7 +174,7 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
                               }, result.data)
 
     def test_update_apartment(self):
-        """tests update apartment mutation execution"""
+
         mutation = '''
                         mutation {
                           updateApartment(number: "202", apartmentNumber: "101"){
