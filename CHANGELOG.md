@@ -9,7 +9,7 @@
 
 ## [Unreleased]
 
-* Ajustes do código a um novo padrão de lint
+* Ajustes do código a um novo padrão de lint e remoção de algumas regras
 
 ## [0.2.0] - 2019-10-15
 ### Adicionado
