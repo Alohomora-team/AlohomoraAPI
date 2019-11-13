@@ -1,3 +1,7 @@
+"""
+Binding all queries and mutations
+"""
+
 import graphene
 import graphql_jwt
 import accounts.schema
@@ -24,6 +28,9 @@ class Query(
         accounts.queries.visitors.VisitorsQuery,
         graphene.ObjectType,
         ):
+	"""
+	Just inherit from queries classes and binds in main schema
+	"""
     pass
 
 
@@ -33,6 +40,9 @@ class Mutation(
         accounts.schema.Mutation,
         graphene.ObjectType
         ):
+	"""
+	Inherit from mutations and binds them in main schema
+	"""
 
     token_auth = graphql_jwt.ObtainJSONWebToken.Field()
     verify_token = graphql_jwt.Verify.Field()

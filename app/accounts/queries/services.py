@@ -1,3 +1,7 @@
+"""
+Services queries
+"""
+
 import graphene
 from graphql_jwt.decorators import superuser_required
 from accounts.models import Service

@@ -1,3 +1,7 @@
+"""
+Entries queries
+"""
+
 import graphene
 from condos.models import Apartment, Block
 from accounts.models import Entry

@@ -1,3 +1,7 @@
+"""
+Creates a CRUD to visitors
+"""
+
 import graphene
 from graphql_jwt.decorators import superuser_required, login_required
 from accounts.models import Visitor
