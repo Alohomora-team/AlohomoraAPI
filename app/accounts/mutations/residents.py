@@ -59,14 +59,14 @@ class CreateResident(graphene.Mutation):
             samplerate=16000,
             winfunc=numpy.hamming
         )
-        mfcc_audio_speaking_phrase = mfcc_audio_speaking_phrase.tolist()
+        mfcc_audio_speaking_phrase = mfcc_matrix_to_array(mfcc_audio_speaking_phrase)
 
         mfcc_audio_speaking_name = mfcc(
             numpy.array(audio_speaking_name),
             samplerate=16000,
             winfunc=numpy.hamming
         )
-        mfcc_audio_speaking_name = mfcc_audio_speaking_name.tolist()
+        mfcc_audio_speaking_name = mfcc_matrix_to_array(mfcc_audio_speaking_name)
 
         user.save()
         resident = Resident.objects.create(user=user)
