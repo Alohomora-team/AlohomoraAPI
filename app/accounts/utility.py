@@ -71,4 +71,19 @@ def mfcc_array_to_matrix(mfcc_array):
     mfcc_matrix = [mfcc_array[x:x + column_length] for x in range(0, array_len, column_length)]
 
     return mfcc_matrix
-        
+
+def create_model_mfcc(audio_signal, samplerate):
+    """
+    Create a linearized matrix of base_signal's MFCC
+    :param base_signal: Audio signal array
+    :param samplerate: audio_signal's samplerate
+    :returns: audio_signal's MFCC linearized matrix
+    """
+
+    mfcc_audio_signal = mfcc(
+        numpy.array(audio_signal),
+        samplerate=samplerate,
+        winfunc=numpy.hamming
+    )
+
+    return mfcc_matrix_to_array(mfcc_audio_signal)
