@@ -9,6 +9,7 @@ from condos.models import Apartment, Block
 from graphql_jwt.decorators import superuser_required, login_required
 from accounts.models import Resident
 from accounts.types import ResidentType, UserType, ResidentInput
+import accounts.utility as Utility
 
 class CreateResident(graphene.Mutation):
     """Mutation from graphene for creating resident"""
@@ -27,6 +28,7 @@ class CreateResident(graphene.Mutation):
 
         audio_speaking_phrase = graphene.List(graphene.Float, required=True)
         audio_speaking_name = graphene.List(graphene.Float, required=True)
+        audio_samplerate = graphene.Int(required=False)
 
     def mutate(self, info, **kwargs):
         """Method to execute the mutation"""
@@ -41,6 +43,7 @@ class CreateResident(graphene.Mutation):
 
         audio_speaking_phrase = kwargs.get('audio_speaking_phrase')
         audio_speaking_name = kwargs.get('audio_speaking_name')
+        audio_samplerate = kwargs.get('audio_samplerate')
 
         user = get_user_model()(email=email)
         user.set_password(password)
@@ -54,19 +57,17 @@ class CreateResident(graphene.Mutation):
         if Apartment.objects.filter(number=apartment, block=block_obj).first() is None:
             raise Exception('Apartment not found')
 
-        mfcc_audio_speaking_phrase = mfcc(
-            numpy.array(audio_speaking_phrase),
-            samplerate=16000,
-            winfunc=numpy.hamming
-        )
-        mfcc_audio_speaking_phrase = mfcc_matrix_to_array(mfcc_audio_speaking_phrase)
+        if audio_samplerate is None:
+            audio_samplerate = 16000
 
-        mfcc_audio_speaking_name = mfcc(
-            numpy.array(audio_speaking_name),
-            samplerate=16000,
-            winfunc=numpy.hamming
+        mfcc_audio_speaking_phrase = Utility.create_model_mfcc(
+            audio_speaking_phrase,
+            audio_samplerate
         )
-        mfcc_audio_speaking_name = mfcc_matrix_to_array(mfcc_audio_speaking_name)
+        mfcc_audio_speaking_name = Utility.create_model_mfcc(
+            audio_speaking_name,
+            audio_samplerate
+        )
 
         user.save()
         resident = Resident.objects.create(user=user)
