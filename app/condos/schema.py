@@ -13,9 +13,9 @@ from .mutations.blocks import(
     UpdateBlock,)
 
 class Mutation(graphene.ObjectType):
-	"""
-	Create and delete blocks and apartments
-	"""
+    """
+    Create and delete blocks and apartments
+    """
     create_apartment = CreateApartment.Field()
     create_block = CreateBlock.Field()
     delete_block = DeleteBlock.Field()

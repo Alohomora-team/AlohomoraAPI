@@ -28,10 +28,10 @@ class Query(
         accounts.queries.visitors.VisitorsQuery,
         graphene.ObjectType,
         ):
-	"""
-	Just inherit from queries classes and binds in main schema
-	"""
-    pass
+    """
+    Just inherit from queries classes and binds in main schema
+    """
+    pass # pylint: disable=W0107
 
 
 class Mutation(
@@ -40,9 +40,9 @@ class Mutation(
         accounts.schema.Mutation,
         graphene.ObjectType
         ):
-	"""
-	Inherit from mutations and binds them in main schema
-	"""
+    """
+    Inherit from mutations and binds them in main schema
+    """
 
     token_auth = graphql_jwt.ObtainJSONWebToken.Field()
     verify_token = graphql_jwt.Verify.Field()
