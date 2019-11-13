@@ -11,6 +11,7 @@
 
 ### Adicionado
 * Na *mutation* **createResident** e na *query* **voiceBelongsUser**, agora são pedidos os atributos *audioSpeakingName* e *audioSamplerate*
+* A *query* **voiceBelongsUser** agora possui um novo estágio de filtragem baseado no atributo *audioSpeakingName*
 
 ### Alterado
 * Ajustes do código a um novo padrão de lint e remoção de algumas regras
