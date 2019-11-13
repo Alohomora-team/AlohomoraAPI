@@ -2,12 +2,12 @@
 Queries that resolve residents ann list them
 """
 import graphene
+from python_speech_features import mfcc
+import numpy
 from graphql_jwt.decorators import superuser_required
 from accounts.models import Resident
 import accounts.utility as Utility
 from accounts.types import ResidentType
-from python_speech_features import mfcc
-import numpy
 
 class ResidentsQuery(graphene.AbstractType):
     """Used to read or fetch values"""
@@ -15,8 +15,8 @@ class ResidentsQuery(graphene.AbstractType):
 
     voice_belongs_resident = graphene.Boolean(
         cpf=graphene.String(required=True),
-        audio_speaking_phrase=graphene.List(graphene.Float, required=True)
-        audio_speaking_name=graphene.List(graphene.Float, required=False)
+        audio_speaking_phrase=graphene.List(graphene.Float, required=True),
+        audio_speaking_name=graphene.List(graphene.Float, required=False),
         audio_samplerate=graphene.Int(required=False)
     )
 
@@ -71,9 +71,11 @@ class ResidentsQuery(graphene.AbstractType):
 
         test_group = [resident] + companion_residents
 
-        audio_phrase_belongs_resident = False
-        if resident == ResidentsQuery._find_nearest_resident_by_voice(test_group, mfcc_audio_speaking_phrase):
-            audio_phrase_belongs_resident = True
+        result_resident = ResidentsQuery._find_nearest_resident_by_voice(
+            test_group,
+            mfcc_audio_speaking_phrase
+        )
+        audio_phrase_belongs_resident = (resident == result_resident)
 
         audio_name_belongs_resident = True
         if audio_speaking_name is not None:
@@ -83,8 +85,11 @@ class ResidentsQuery(graphene.AbstractType):
                 winfunc=numpy.hamming
             )
 
-            if resident == ResidentsQuery._find_nearest_resident_by_name(test_group, mfcc_audio_speaking_name):
-                audio_name_belongs_resident = True
+            result_resident = ResidentsQuery._find_nearest_resident_by_name(
+                test_group,
+                mfcc_audio_speaking_name
+            )
+            audio_name_belongs_resident = (resident == result_resident)
 
         return audio_phrase_belongs_resident and audio_name_belongs_resident
 
@@ -110,10 +115,10 @@ class ResidentsQuery(graphene.AbstractType):
             resident_voice_data = Utility.mfcc_array_to_matrix(resident.mfcc_audio_speaking_phrase)
             resident_voice_data = numpy.array(resident_voice_data)
 
-            current_mease = Utility.compute_dtw_distance(voice_sample, resident_voice_data)
+            current_measure = Utility.compute_dtw_distance(voice_sample, resident_voice_data)
             if current_measure < lowest_dtw_score:
                 lowest_dtw_score = current_measure
-                nearest_resident = current_resident
+                nearest_resident = resident
 
         return nearest_resident
 
