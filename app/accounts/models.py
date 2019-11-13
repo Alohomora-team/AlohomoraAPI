@@ -4,8 +4,8 @@ Models of users and managers
 
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
-from condos.models import Apartment, Block
 from django.contrib.postgres.fields import ArrayField
+from condos.models import Apartment, Block
 
 class UserManager(BaseUserManager):
     """A model to manage users"""
