@@ -4,6 +4,7 @@ Models of users and managers
 
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.contrib.postgres.fields import ArrayField
 from condos.models import Apartment, Block
 
 class UserManager(BaseUserManager):
@@ -78,11 +79,8 @@ class Resident(models.Model):
     admin = models.BooleanField(default=False)
     password = models.CharField(max_length=80)
 
-    # TODO() - Colocar null como false nestes 2 campos
-    # A mudança deve ser cuidadosa pois existem
-    # dependencias, principalmente nos testes
-    voice_data = models.TextField(null=True)
-    mfcc_audio_speaking_name = models.TextField(null=True)
+    mfcc_audio_speaking_phrase = ArrayField(models.FloatField(), default=list)
+    mfcc_audio_speaking_name = ArrayField(models.FloatField(), default=list)
 
     #objects = UserManager()
 
