@@ -7,11 +7,11 @@ extension-pkg-whitelist=
 
 # Add files or directories to the blacklist. They should be base names, not
 # paths.
-ignore=CVS, migrations
+ignore=CVS, migrations, tests
 
 # Add files or directories matching the regex patterns to the blacklist. The
 # regex matches against base names, not paths.
-ignore-patterns=
+ignore-patterns=.*test.*
 
 # Python code to execute, usually for sys.path manipulation such as
 # pygtk.require().
@@ -74,7 +74,6 @@ enable=duplicate-argument-name,
        duplicate-key,
        unnecessary-pass,
        unreachable,
-       invalid-name ,
        blacklisted-name,
        empty-docstring,
        missing-class-docstring,

@@ -45,7 +45,7 @@ def initialize():
             email='resident@example.com',
             cpf='12345678910',
             phone='42',
-            voice_data=json.dumps([x*10 for x in range(32000)]),
+            mfcc_audio_speaking_phrase=[1.0, 2.0, 3.0, 4.0, 5.0],
             admin=False,
             user=get_user_model().objects.get(email='resident@example.com'),
             apartment=apartment,

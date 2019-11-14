@@ -1,3 +1,7 @@
+"""
+Mutation that implements a CRUD to services users
+"""
+
 import graphene
 from django.contrib.auth import get_user_model
 from graphql_jwt.decorators import superuser_required, login_required

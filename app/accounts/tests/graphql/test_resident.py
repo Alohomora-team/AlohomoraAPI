@@ -1,3 +1,7 @@
+"""
+Tests of resident
+"""
+
 import pytest
 from graphql_jwt.testcases import JSONWebTokenTestCase
 from django.test import TestCase
@@ -29,13 +33,11 @@ class ResidentTest(JSONWebTokenTestCase, TestCase):
                         apartment: "101",
                         block: "1",
                         password: "resident",
-                        mfccData: "[1,2,3]",
-                        mfccAudioSpeakingName: "[1,2,3]"
+                        audioSpeakingPhrase: [1.0, 2.0, 3.0, 4.0, 5.0],
+                        audioSpeakingName: [1.0, 2.0, 3.0, 4.0, 5.0]
                       ){ resident{
                          completeName
                          email
-                         mfccAudioSpeakingName
-                         voiceData
                       }
                       }
                     }
@@ -47,9 +49,7 @@ class ResidentTest(JSONWebTokenTestCase, TestCase):
             "createResident": {
                 "resident": {
                     "completeName": "bob o construtor",
-                    "email": "resident2@example.com",
-                    "voiceData": "[1,2,3]",
-                    "mfccAudioSpeakingName": "[1,2,3]"
+                    "email": "resident2@example.com"
                 }
             }
         }, result.data)

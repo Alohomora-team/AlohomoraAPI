@@ -1,3 +1,7 @@
+"""
+Tests of condos
+"""
+
 import pytest
 from graphql_jwt.testcases import JSONWebTokenTestCase
 from django.test import TestCase

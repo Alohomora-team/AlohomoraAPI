@@ -1,3 +1,4 @@
+"""Module for grouping graphQL queries"""
 import graphene
 from graphql_jwt.decorators import superuser_required
 from .models import Block, Apartment
@@ -26,12 +27,15 @@ class Query():
         )
 
     def resolve_all_blocks(self, info, **kwargs):
+        """Returns all Block type objects"""
         return Block.objects.all()
 
     def resolve_all_apartments(self, info, **kwargs):
+        """Returns all Apartment type objects"""
         return Apartment.objects.all()
 
     def resolve_apartment(self, info, **kwargs):
+        """Returns a specific Apartment type object"""
         number = kwargs.get('number')
         block = kwargs.get('block')
         block_obj = Block.objects.get(number=block)
@@ -42,6 +46,7 @@ class Query():
         return None
 
     def resolve_block(self, info, **kwargs):
+        """Returns a specific Block type object"""
         number = kwargs.get('number')
 
         if number is not None:
@@ -50,6 +55,7 @@ class Query():
         return None
 
     def resolve_apartments(self, info, **kwargs):
+        """Returns all Apartment type objects that match a number"""
         number = kwargs.get('number')
 
         if number is not None:

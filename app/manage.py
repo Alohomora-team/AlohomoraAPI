@@ -5,6 +5,7 @@ import sys
 
 
 def main():
+    """Execute the utility"""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'alohomora.settings')
     try:
         from django.core.management import execute_from_command_line

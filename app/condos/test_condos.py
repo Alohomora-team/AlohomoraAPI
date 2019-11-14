@@ -1,3 +1,7 @@
+"""
+Tests of condos
+"""
+    
 from graphene.test import Client
 from django.test import TestCase
 from django.contrib.auth import get_user_model
@@ -125,6 +129,7 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
                               }, result.data)
 
     def test_delete_apartment(self):
+
         mutation = '''
                         mutation{
                           deleteApartment(apartmentNumber: 101)
@@ -138,6 +143,7 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
         self.assertEqual(Apartment.objects.count(), 0)
 
     def test_delete_block(self):
+
         mutation = '''
                         mutation{
                           deleteBlock(blockNumber: "1")
@@ -151,6 +157,7 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
         self.assertEqual(Block.objects.count(), 0)
 
     def test_update_block(self):
+
         mutation = '''
                     mutation {
                       updateBlock(number: "2", blockNumber: "1"){
@@ -170,6 +177,7 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
                               }, result.data)
 
     def test_update_apartment(self):
+
         mutation = '''
                         mutation {
                           updateApartment(number: "202", apartmentNumber: "101"){

@@ -1,3 +1,6 @@
+"""
+Queires that resolves Visitos data
+"""
 import graphene
 from graphql_jwt.decorators import superuser_required
 from accounts.models import Visitor
