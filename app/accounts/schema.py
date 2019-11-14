@@ -42,7 +42,6 @@ from .mutations.admins import(
 class Mutation(graphene.ObjectType):
     """Used to write or post values"""
 
-    #create
     create_user = CreateUser.Field()
     create_resident = CreateResident.Field()
     create_entry = CreateEntry.Field()
@@ -51,21 +50,19 @@ class Mutation(graphene.ObjectType):
     create_admin = CreateAdmin.Field()
     create_service = CreateService.Field()
 
-    #update
     update_resident = UpdateResident.Field()
     update_visitor = UpdateVisitor.Field()
     update_entry_visitor_pending = UpdateEntryVisitorPending.Field()
     update_service = UpdateService.Field()
     activate_user = ActivateUser.Field()
     deactivate_user = DeactivateUser.Field()
-    
-    #delete
+
     delete_resident = DeleteResident.Field()
     delete_visitor = DeleteVisitor.Field()
     delete_entry_visitor_pending = DeleteEntryVisitorPending.Field()
     delete_entries_visitors_pending = DeleteEntriesVisitorsPending.Field()
     delete_service = DeleteService.Field()
     delete_admin = DeleteAdmin.Field()
-    
+
     change_password = ChangePassword.Field()
-    change_email    = ChangeEmail.Field()
+    change_email = ChangeEmail.Field()

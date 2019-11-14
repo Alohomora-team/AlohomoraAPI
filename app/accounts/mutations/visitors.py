@@ -39,14 +39,14 @@ class UpdateVisitor(graphene.Mutation):
     class Arguments:
         """Mutation arguments for update a visitor"""
         visitor_data = VisitorInput()
-        
-    #@superuser_required
+
+    # @superuser_required
     def mutate(self, info, visitor_data):
 
         """Method to execute the mutation"""
         visitor = Visitor.objects.get(cpf=visitor_data.visitor_cpf)
         for key, value in visitor_data.items():
-                setattr(visitor, key, value)
+            setattr(visitor, key, value)
         visitor.save()
         return UpdateVisitor(visitor=visitor)
 

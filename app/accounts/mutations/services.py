@@ -54,7 +54,7 @@ class UpdateService(graphene.Mutation):
         service = Service.objects.get(email=service_data.service_email)
 
         for key, value in service_data.items():
-                setattr(service, key, value)
+            setattr(service, key, value)
 
         service.save()
         return UpdateService(service=service)
