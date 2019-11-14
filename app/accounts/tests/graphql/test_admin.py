@@ -1,5 +1,5 @@
 """
-Tests of admins
+Tests of admin
 """
 import pytest
 from graphql_jwt.testcases import JSONWebTokenTestCase
@@ -10,11 +10,12 @@ from django.contrib.auth import get_user_model
 from accounts.models import Admin
 
 @pytest.mark.usefixtures('test_data')
-class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
+class AdminTest(JSONWebTokenTestCase, TestCase):
     """Test that information can be retrieved and created using graphql"""
 
 
     def setUp(self):
+        """Setup tests for admin"""
         self._client = Client(schema)
         self.user = get_user_model().objects.create(email='user@example',
                                                     password='123',
@@ -33,6 +34,8 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
 
 
     def test_mutation_createAdmin(self):
+        """Test mutation createAdmin"""
+
         mutation = '''
                     mutation{
                       createAdmin(
@@ -53,6 +56,8 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
         }, result.data)
 
     def test_mutation_deleteAdmin(self):
+        """Test mutation deleteAdmin"""
+
         mutation = '''
                     mutation{
                       deleteAdmin(email: "user@example"){
@@ -70,6 +75,8 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
         }, result.data)
 
     def test_query_all_admins(self):
+        """Test query allAdmins"""
+
         query = '''
                 query{
                   allAdmins{
@@ -92,6 +99,8 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
         }, result.data)
 
     def test_query_admin(self):
+        """Test query admin"""
+
         query = '''
                 query{
                   admin(adminEmail:"user@example"){

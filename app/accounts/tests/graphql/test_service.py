@@ -11,16 +11,19 @@ from django.contrib.auth import get_user_model
 from accounts.models import Service, Resident
 
 @pytest.mark.usefixtures('test_data')
-class ResidentTest(JSONWebTokenTestCase, TestCase):
+class ServiceTest(JSONWebTokenTestCase, TestCase):
     """Test that information can be retrieved and created using graphql"""
 
     def setUp(self):
+        """Setup data for testing service"""
+
         self._client = Client(schema)
         self.super_user = get_user_model().objects.create_superuser(email='admin@example',
                                                                     password='123')
         self.client.authenticate(self.super_user)
 
     def test_create_service(self):
+        """Test mutation createService"""
 
         mutation = '''
                 mutation{
@@ -48,6 +51,7 @@ class ResidentTest(JSONWebTokenTestCase, TestCase):
         self.assertNotEqual(get_user_model().objects.get(email="ibis@ni").password, '123')
 
     def test_query_services(self):
+        """Test query services"""
 
         query = '''
                     query {
@@ -69,6 +73,7 @@ class ResidentTest(JSONWebTokenTestCase, TestCase):
         }, result.data)
 
     def test_update_service(self):
+        """Test mutation updateService"""
 
         self.user = get_user_model().objects.get(email='service@example.com')
         self.client.authenticate(self.user)
@@ -100,6 +105,7 @@ class ResidentTest(JSONWebTokenTestCase, TestCase):
                               }, result.data)
 
     def test_delete_service(self):
+        """Test mutation deleteService"""
 
         mutation = '''
                     mutation{

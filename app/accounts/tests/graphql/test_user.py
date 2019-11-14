@@ -1,5 +1,5 @@
 """
-Tests of condos
+Tests of user
 """
 
 import pytest
@@ -11,10 +11,12 @@ from django.contrib.auth import get_user_model
 from accounts.models import Resident
 
 @pytest.mark.usefixtures('test_data')
-class ResidentTest(JSONWebTokenTestCase, TestCase):
+class UserTest(JSONWebTokenTestCase, TestCase):
     """Test that information can be retrieved and created using graphql"""
 
     def setUp(self):
+        """Setup data for testing user"""
+
         self._client = Client(schema)
         self.user = get_user_model().objects.create(email='user@example',
                                                     password='123',
@@ -25,6 +27,8 @@ class ResidentTest(JSONWebTokenTestCase, TestCase):
         self.client.authenticate(self.super_user)
 
     def test_query_users(self):
+        """Test query users"""
+
         query = '''
                 query{
                   users{
@@ -46,6 +50,7 @@ class ResidentTest(JSONWebTokenTestCase, TestCase):
                   }, result.data)
 
     def test_query_unactive_users(self):
+        """Test query unactivesUsers"""
 
         query = '''
                     query {
@@ -65,6 +70,7 @@ class ResidentTest(JSONWebTokenTestCase, TestCase):
         }, result.data)
 
     def test_authentication(self):
+        """Test query me"""
 
         self.client.authenticate(self.user)
 
@@ -87,6 +93,8 @@ class ResidentTest(JSONWebTokenTestCase, TestCase):
                              }, result.data)
 
     def test_deactivated_user(self):
+        """Test mutation deactivateUser"""
+
         mutation = '''
                     mutation{
                       deactivateUser(
@@ -116,6 +124,8 @@ class ResidentTest(JSONWebTokenTestCase, TestCase):
             result = self.client.execute(mutation)
             self.assertIsNone(result.errors)
     def test_activated_user(self):
+        """Test mutation activateUser"""
+
         mutation = '''
                     mutation{
                       activateUser(

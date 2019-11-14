@@ -15,12 +15,15 @@ class ResidentTest(JSONWebTokenTestCase, TestCase):
     """Test that information can be retrieved and created using graphql"""
 
     def setUp(self):
+        """Setup for testing resident"""
+
         self._client = Client(schema)
         self.super_user = get_user_model().objects.create_superuser(email='admin@example',
                                                                     password='123')
         self.client.authenticate(self.super_user)
 
     def test_mutation_resident(self):
+        """Test mutation createResident"""
 
 
         mutation = '''
@@ -55,6 +58,7 @@ class ResidentTest(JSONWebTokenTestCase, TestCase):
         }, result.data)
 
     def test_query_residents(self):
+        """Test query residents"""
 
         query = '''
                 query{
@@ -82,6 +86,7 @@ class ResidentTest(JSONWebTokenTestCase, TestCase):
 
 
     def test_query_resident_email(self):
+        """Test query resident email"""
 
         query = """
         {
@@ -99,6 +104,7 @@ class ResidentTest(JSONWebTokenTestCase, TestCase):
                              }, result.data)
 
     def test_query_resident_cpf(self):
+        """Test query resident cpf"""
 
         query = """
         {
@@ -116,6 +122,7 @@ class ResidentTest(JSONWebTokenTestCase, TestCase):
                               }, result.data)
 
     def test_update_resident(self):
+        """Test mutation updateResident"""
 
         self.user = get_user_model().objects.get(email='resident@example.com')
         self.client.authenticate(self.user)
@@ -149,6 +156,7 @@ mutation {
                               }, result.data)
 
     def test_delete_resident(self):
+        """Test mutation deleteResident"""
 
         mutation = '''
                     mutation{

@@ -11,16 +11,19 @@ from django.contrib.auth import get_user_model
 from accounts.models import Visitor
 
 @pytest.mark.usefixtures('test_data')
-class ResidentTest(JSONWebTokenTestCase, TestCase):
+class VisitorTest(JSONWebTokenTestCase, TestCase):
     """Test that information can be retrieved and created using graphql"""
 
     def setUp(self):
+        """Setup data for testing visitor"""
+
         self._client = Client(schema)
         self.super_user = get_user_model().objects.create_superuser(email='admin@example',
                                                                     password='123')
         self.client.authenticate(self.super_user)
 
     def test_query_visitors(self):
+        """Test query visitors"""
 
         query = '''
                     query{
@@ -42,6 +45,7 @@ class ResidentTest(JSONWebTokenTestCase, TestCase):
                               }, result.data)
 
     def test_create_visitor(self):
+        """Test mutation createVisitor"""
 
         mutation = '''
                     mutation {
@@ -65,6 +69,7 @@ class ResidentTest(JSONWebTokenTestCase, TestCase):
   }, result.data)
 
     def test_update_visitor(self):
+        """Test mutation createVisitor"""
 
         mutation = '''
                     mutation {
@@ -101,6 +106,8 @@ class ResidentTest(JSONWebTokenTestCase, TestCase):
                               }, result.data)
 
     def test_delete_visitor(self):
+       """Test mutation deleteVisitor"""
+
        mutation = '''
                   mutation{
                     deleteVisitor(cpf: "29950509041")
@@ -108,7 +115,7 @@ class ResidentTest(JSONWebTokenTestCase, TestCase):
                     	cpf
                     }
                   }
-                          '''
+                  '''
        result = self.client.execute(mutation)
        self.assertIsNone(result.errors)
        self.assertEqual(Visitor.objects.count(), 0)

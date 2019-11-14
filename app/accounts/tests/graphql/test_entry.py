@@ -12,17 +12,22 @@ from accounts.models import Entry, Block, Apartment
 from django.utils import timezone
 
 @pytest.mark.usefixtures('test_data')
-class ResidentTest(JSONWebTokenTestCase, TestCase):
+class EntryTest(JSONWebTokenTestCase, TestCase):
     """Test that information can be retrieved and created using graphql"""
+
     maxDiff = None
     current_date_time = timezone.now()
     def setUp(self):
+        """SetUp for testing entry"""
+
         self._client = Client(schema)
         self.super_user = get_user_model().objects.create_superuser(email='admin@example',
                                                                     password='123')
         self.client.authenticate(self.super_user)
 
     def test_query_entry(self):
+        """Test query entries"""
+
         query = '''
             query{
               entries{
@@ -50,6 +55,8 @@ class ResidentTest(JSONWebTokenTestCase, TestCase):
                           }, result.data)
 
     def test_mutation_entry(self):
+        """Test mutation entry"""
+
         block = Block.objects.get(number='1')
         apartment = Apartment.objects.create(number="202", block=block)
         mutation = '''
