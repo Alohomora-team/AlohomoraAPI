@@ -8,6 +8,7 @@
  * Adicionado docker-compose para rodar o site locamente
 
 ## [Unreleased]
+* Correção do bug na query de admins
 
 ### Adicionado
 * Na *mutation* **createResident** e na *query* **voiceBelongsUser**, agora são pedidos os atributos *audioSpeakingName* e *audioSamplerate*
