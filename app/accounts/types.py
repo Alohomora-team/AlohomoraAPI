@@ -1,3 +1,4 @@
+"""Module for grouping Object Type setter functions"""
 import graphene
 from django.contrib.auth import get_user_model
 from graphene_django import DjangoObjectType
@@ -60,8 +61,8 @@ class ResidentInput(graphene.InputObjectType):
     apartment = graphene.String()
     block = graphene.String()
     password = graphene.String()
-    voice_data = graphene.String()
-    mfcc_data = graphene.String()
+    audio_speaking_phrase = graphene.List(graphene.Float)
+    audio_speaking_name = graphene.List(graphene.Float)
 
 class VisitorInput(graphene.InputObjectType):
     """Visitor input data types"""

@@ -1,5 +1,8 @@
-from django.contrib import admin
+"""
+Adding models in django site
+"""
 
+from django.contrib import admin
 from .models import Feedback
 
 admin.site.register(Feedback)

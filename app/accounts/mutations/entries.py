@@ -1,3 +1,7 @@
+"""
+Mutation for register a entrie
+"""
+
 import graphene
 from django.contrib.auth import get_user_model
 from condos.models import Apartment, Block
