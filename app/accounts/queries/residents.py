@@ -61,21 +61,18 @@ class ResidentsQuery(graphene.AbstractType):
             winfunc=numpy.hamming
         )
 
-        resident = Resident.objects.get(cpf=resident_cpf)
-        others_residents = Resident.objects.exclude(cpf=resident_cpf)
-
-        companion_residents = ResidentsQuery._retrieve_random_residents(
-            others_residents,
-            quantity=4
+        main_resident, resident_test_group = ResidentsQuery._create_test_group(
+            resident_cpf,
+            group_size=10
         )
 
-        test_group = [resident] + companion_residents
-
-        result_resident = ResidentsQuery._find_nearest_resident_by_voice(
-            test_group,
-            mfcc_audio_speaking_phrase
+        nearest_resident = ResidentsQuery._find_nearest_resident_by_mfcc_attribute(
+            residents=resident_test_group,
+            mfcc_attribute=mfcc_audio_speaking_phrase,
+            which_attribute='mfcc_audio_speaking_phrase'
         )
-        audio_phrase_belongs_resident = (resident == result_resident)
+
+        audio_phrase_belongs_resident = (main_resident == nearest_resident)
 
         audio_name_belongs_resident = True
         if audio_speaking_name is not None:
@@ -85,18 +82,33 @@ class ResidentsQuery(graphene.AbstractType):
                 winfunc=numpy.hamming
             )
 
-            result_resident = ResidentsQuery._find_nearest_resident_by_name(
-                test_group,
-                mfcc_audio_speaking_name
+            nearest_resident = ResidentsQuery._find_nearest_resident_by_mfcc_attribute(
+                residents=resident_test_group,
+                mfcc_attribute=mfcc_audio_speaking_name,
+                which_attribute='mfcc_audio_speaking_name'
             )
-            audio_name_belongs_resident = (resident == result_resident)
+            audio_name_belongs_resident = (main_resident == nearest_resident)
 
         return audio_phrase_belongs_resident and audio_name_belongs_resident
 
     @staticmethod
+    def _create_test_group(main_resident_cpf, group_size):
+        """
+        Set up a resident group including the main resident
+        used to make comparisons against given audios data
+        """
+
+        main_resident = Resident.objects.get(cpf=main_resident_cpf)
+
+        resident_group = Resident.objects.exclude(cpf=main_resident_cpf)[::1]
+        resident_group = ResidentsQuery._retrieve_random_residents(resident_group, group_size - 1)
+
+        return main_resident, resident_group+[main_resident]
+
+    @staticmethod
     def _retrieve_random_residents(residents, quantity):
         """Pick up random residents"""
-        residents = residents[::1]
+
         if len(residents) <= quantity:
             return residents
 
@@ -106,32 +118,26 @@ class ResidentsQuery(graphene.AbstractType):
         return random_residents
 
     @staticmethod
-    def _find_nearest_resident_by_voice(residents, voice_sample):
-        """Find the nearest resident by the voice"""
+    def _find_nearest_resident_by_mfcc_attribute(residents, mfcc_attribute, which_attribute):
+        """
+        Find out the nearest resident based on given a mfcc audio attribute
+        """
         nearest_resident = None
         lowest_dtw_score = (1 << 64) - 1
 
         for resident in residents:
-            resident_voice_data = Utility.mfcc_array_to_matrix(resident.mfcc_audio_speaking_phrase)
-            resident_voice_data = numpy.array(resident_voice_data)
+            resident_mfcc_attribute = None
 
-            current_measure = Utility.compute_dtw_distance(voice_sample, resident_voice_data)
-            if current_measure < lowest_dtw_score:
-                lowest_dtw_score = current_measure
-                nearest_resident = resident
+            if which_attribute == 'mfcc_audio_speaking_name':
+                resident_mfcc_attribute = resident.mfcc_audio_speaking_name
 
-        return nearest_resident
+            elif which_attribute == 'mfcc_audio_speaking_phrase':
+                resident_mfcc_attribute = resident.mfcc_audio_speaking_phrase
 
-    @staticmethod
-    def _find_nearest_resident_by_name(residents, audio_sample):
-        nearest_resident = None
-        lowest_dtw_score = (1 << 64) - 1
+            resident_mfcc_attribute = Utility.mfcc_array_to_matrix(resident_mfcc_attribute)
+            resident_mfcc_attribute = numpy.array(resident_mfcc_attribute)
 
-        for resident in residents:
-            resident_audio_sample = Utility.mfcc_array_to_matrix(resident.mfcc_audio_speaking_name)
-            resident_audio_sample = numpy.array(resident_audio_sample)
-
-            current_measure = Utility.compute_dtw_distance(audio_sample, resident_audio_sample)
+            current_measure = Utility.compute_dtw_distance(mfcc_attribute, resident_mfcc_attribute)
             if current_measure < lowest_dtw_score:
                 lowest_dtw_score = current_measure
                 nearest_resident = resident
