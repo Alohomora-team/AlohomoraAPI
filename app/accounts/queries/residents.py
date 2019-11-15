@@ -1,6 +1,7 @@
 """
 Queries that resolve residents ann list them
 """
+import secrets
 import graphene
 from python_speech_features import mfcc
 import numpy
@@ -8,7 +9,6 @@ from graphql_jwt.decorators import superuser_required
 from accounts.models import Resident
 import accounts.utility as Utility
 from accounts.types import ResidentType
-import secrets
 
 class ResidentsQuery(graphene.AbstractType):
     """Used to read or fetch values"""
