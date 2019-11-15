@@ -35,7 +35,7 @@ jobs:
 
     # Push Image HMG
     - stage: push_image
-      if: (branch = devel) AND (NOT (type IN (push, pull_request)))
+      if: (branch = devel) AND (type != pull_request)
       before_install:
         - docker build -f docker/Dockerfile -t alohomorateam/api:devel .
       script:
@@ -46,7 +46,7 @@ jobs:
 
     # Push Image PROD
     - stage: push_image
-      if: (branch = master) AND (NOT (type IN (push, pull_request)))
+      if: (branch = master) AND (type != pull_request)
       before_install:
         - docker build -f docker/Dockerfile -t alohomorateam/api:master .
       script:
