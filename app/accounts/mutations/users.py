@@ -60,30 +60,31 @@ class ChangeEmail(graphene.Mutation):
         user.save()
         return ChangePassword(user=user)
 
-class ActivateUser(graphene.Mutation):
+class UserActivationManager(graphene.Mutation):
+    """Generic classe used to activate/deactivate users"""
+    user = graphene.Field(UserType)
+
+    class Arguments:
+        """Mutation arguments for activate/deactive a user"""
+        user_email = graphene.String()
+
+    def mutate(self, info, user_email):
+        """Method to execute the mutation"""
+        user = get_user_model().objects.get(email=user_email)
+
+        # Decidindo o comportamento da mutation baseada no nome dela ("Polimorfismo")
+        if info.field_name == 'activateUser':
+            user.is_active = True
+        else:
+            user.is_active = False
+
+        user.save()
+
+        return UserActivationManager(user=user)
+
+
+class ActivateUser(UserActivationManager):
     """Mutation from graphene for activating user"""
-    user = graphene.Field(UserType)
 
-    class Arguments:
-        """Mutation arguments for activate a user"""
-        user_email = graphene.String()
-    def mutate(self, info, user_email):
-        """Method to execute the mutation"""
-        user = get_user_model().objects.get(email=user_email)
-        user.is_active = True
-        user.save()
-        return ActivateUser(user=user)
-
-class DeactivateUser(graphene.Mutation):
+class DeactivateUser(UserActivationManager):
     """Mutation from graphene for deactivating user"""
-    user = graphene.Field(UserType)
-
-    class Arguments:
-        """Mutation arguments for deactivate a user"""
-        user_email = graphene.String()
-    def mutate(self, info, user_email):
-        """Method to execute the mutation"""
-        user = get_user_model().objects.get(email=user_email)
-        user.is_active = False
-        user.save()
-        return ActivateUser(user=user)
