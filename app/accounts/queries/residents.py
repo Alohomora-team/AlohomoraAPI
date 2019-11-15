@@ -8,6 +8,7 @@ from graphql_jwt.decorators import superuser_required
 from accounts.models import Resident
 import accounts.utility as Utility
 from accounts.types import ResidentType
+import secrets
 
 class ResidentsQuery(graphene.AbstractType):
     """Used to read or fetch values"""
@@ -101,21 +102,10 @@ class ResidentsQuery(graphene.AbstractType):
         main_resident = Resident.objects.get(cpf=main_resident_cpf)
 
         resident_group = Resident.objects.exclude(cpf=main_resident_cpf)[::1]
-        resident_group = ResidentsQuery._retrieve_random_residents(resident_group, group_size - 1)
+        group_size = min(len(resident_group), group_size - 1)
+        resident_group = secrets.SystemRandom().sample(resident_group, group_size)
 
         return main_resident, resident_group+[main_resident]
-
-    @staticmethod
-    def _retrieve_random_residents(residents, quantity):
-        """Pick up random residents"""
-
-        if len(residents) <= quantity:
-            return residents
-
-        secure_random = secrets.SystemRandom()
-        random_residents = secure_random.sample(residents, quantity)
-
-        return random_residents
 
     @staticmethod
     def _find_nearest_resident_by_mfcc_attribute(residents, mfcc_attribute, which_attribute):
