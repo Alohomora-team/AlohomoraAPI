@@ -24,12 +24,15 @@ Todas as mudanças notáveis no sistema você encontra aqui.
 
 - Mecanismo de [ativar/desativar usuário](https://github.com/Alohomora-team/2019.2-AlohomoraPage/blob/master/docs/projeto/guia_de_uso.md#52-gerênciando-conta-de-usuários), bem como a consulta de usuários ativados ou desativados.
 
+- Disponibilizado uma forma de mudar a senha e email.
+
 
 ### Modificado
 - Refatoração na estrutura de arquivos de *schema* e nos testes de *accounts*
 - Regras do [*Pylint*]() modificadas 
 - Código refatorado a fim de cobrir as mudanças no [*Pylint*]()
 - Campos de áudio agora obedecem o formato de *lista de floats*.
+- Novo padrão para realizar mutations de update.
 
 ### Removido
 *  Remoção dos atributos *email, phone, voiceData e owner* da entidade [*Visitor*](https://github.com/Alohomora-team/2019.2-AlohomoraPage/blob/master/docs/projeto/guia_de_uso.md#22-visitante) 
@@ -44,7 +47,6 @@ Todas as mudanças notáveis no sistema você encontra aqui.
 * Guia de contribuição do projeto
 * Estrutura padrão do condominio
 * Adicionado docker-compose para rodar o site locamente
-
 ---
  
 As convenções seguidas para escrever esse texto estão disponíveis [aqui](https://keepachangelog.com/en/0.3.0/).

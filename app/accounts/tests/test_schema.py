@@ -203,6 +203,31 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
             ]
         }, result.data)
 
+    def test_mutation_user(self):
+                mutation = '''
+                            mutation{
+                              createUser(
+                                username: "service",
+                                email: "service@exemplo.com",
+                                password: "123"
+                              ){ user{
+                                 username
+                                 email
+                              }
+                              }
+                            }
+                '''
+
+                result = self.client.execute(mutation)
+                self.assertIsNone(result.errors)
+                self.assertDictEqual({"createUser": {
+                                          "user": {
+                                            "username": "service",
+                                            "email": "service@exemplo.com"
+                                          }
+                                        }
+                                      }, result.data)
+
     def test_query_users(self):
         query = '''
                 query{
@@ -435,27 +460,41 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
         }, result.data)
         self.assertNotEqual(get_user_model().objects.get(email="ibis@ni").password, '123')
 
-    def test_authentication(self):
+    def test_authentication_error(self):
 
-        self.client.authenticate(self.user)
-
+        mutation = '''
+                    mutation{
+                      createUser(
+                        username: "goten",
+                        email: "goten@example.com",
+                        password: "123"
+                      ){ user{
+                         username
+                         email
+                      }
+                      }
+                    }
+        '''
+        self.client.execute(mutation)
+        self.user.is_active = True
+        self.user=get_user_model().objects.get(email="goten@example.com")
+        result = self.client.authenticate(self.user)
         query = '''
                     query {
                       me {
                         username
                         email
-                        password
                       }
                     }
             '''
         result = self.client.execute(query)
+        self.assertIsNotNone(result.errors)
+        self.user.is_active = True
+        self.user.save()
+        self.client.authenticate(self.user)
+        result = self.client.execute(query)
         self.assertIsNone(result.errors)
-        self.assertDictEqual({"me":
-                              {
-                                  "username": "user",
-                                  "email": "user@example",
-                                  "password": "123"}
-                             }, result.data)
+
     def test_deactivated_user(self):
         mutation = '''
                     mutation{
@@ -561,84 +600,33 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
 
         mutation = '''
                     mutation {
-                      updateService(serviceData: {email: "service2@example.com", password: "k"}){
+                      updateService(serviceData: {serviceEmail: "service@example.com", email: "service2@exemplo.com", completeName: "k"}){
                         service {
                           email
-                          completeName
+                    	  	completeName
                         }
-                        user {
-                          	email
-                          }
                       }
                     }
             '''
         result = self.client.execute(mutation)
         self.assertIsNone(result.errors)
         self.assertEqual(Resident.objects.count(), 1)
-        self.assertDictEqual({"updateService":
-                              {
+        self.assertDictEqual({"updateService": {
                                   "service": {
-                                      "email": "service2@example.com",
-                                      "completeName": "bob esponja"},
-                                  "user": {
-                                      "email": "service2@example.com"}
+                                    "email": "service2@exemplo.com",
+                                    "completeName": "k"
                                   }
-                              }, result.data)
-
-    def test_update_resident(self):
-
-        self.user = get_user_model().objects.get(email='resident@example.com')
-        self.client.authenticate(self.user)
-        mutation = '''
-mutation {
-  updateResident(residentData: {email: "service42@example.com", password: "k"}){
-    resident {
-      email
-      completeName
-      phone
-    }
-    user {
-      	email
-      }
-  }
-}
-            '''
-        result = self.client.execute(mutation)
-        self.assertIsNone(result.errors)
-        self.assertEqual(Resident.objects.count(), 1)
-
-        self.assertDictEqual({"updateResident":
-                              {
-                                  "resident": {
-                                      "email": "service42@example.com",
-                                      "completeName": "resident-evil",
-                                      "phone": "42"},
-                                  "user": {
-                                      "email": "service42@example.com",}
-                                  }
+                                }
                               }, result.data)
 
     def test_update_visitor(self):
 
         mutation = '''
                     mutation {
-                      createVisitor(completeName: "visitor2", cpf: "40982705018") {
-                       visitor{
-                        id
-                        completeName
-                        cpf
-                      }
-                    }
-                    }
-              '''
-        result = self.client.execute(mutation)
-
-        mutation = '''
-                    mutation {
-                      updateVisitor(cpf: "40982705018", newCpf:"80272869058"){
-                        visitor{
+                      updateVisitor(visitorData: {visitorCpf: "29950509041", cpf: "80272869058", completeName: "goku"}){
+                        visitor {
                           cpf
-                          completeName
+                    	  completeName
                         }
                       }
                     }
@@ -649,10 +637,33 @@ mutation {
                               {
                                   "visitor": {
                                     "cpf": "80272869058",
-                                    "completeName": "visitor2"
+                                    "completeName": "goku"
                                   }
                                 }
                               }, result.data)
+
+    def test_update_resident(self):
+
+        mutation = '''
+                    mutation {
+                      updateResident(residentData: {residentCpf: "12345678910", cpf: "00012312300", completeName: "k"}){
+                        resident {
+                          cpf
+                    	  	completeName
+                        }
+                      }
+                    }
+              '''
+        result = self.client.execute(mutation)
+        self.assertIsNone(result.errors)
+        self.assertDictEqual({"updateResident": {
+                                  "resident": {
+                                    "cpf": "00012312300",
+                                    "completeName": "k"
+                                  }
+                                }
+                              }, result.data)
+
     def test_query_entry(self):
         query = '''
             query{
@@ -704,3 +715,37 @@ mutation {
                                   }
                                 }
                               }, result.data)
+
+    def test_changing_email(self):
+                mutation = '''
+                            mutation{
+                              changeEmail(userEmail: "service@example.com", email: "gohan@example.com"){
+                                user{
+                                   email
+                              	}
+                              }
+                            }
+                '''
+
+                result = self.client.execute(mutation)
+                self.assertIsNone(result.errors)
+                self.assertDictEqual({"changeEmail": {
+                                          "user": {
+                                            "email": "gohan@example.com"
+                                          }
+                                        }
+                                      }, result.data)
+
+    def test_changing_password(self):
+                mutation = '''
+                            mutation{
+                              changePassword(userEmail: "service@example.com", password: "123"){
+                                user{
+                                   password
+                              	}
+                              }
+                            }
+                '''
+
+                result = self.client.execute(mutation)
+                self.assertIsNone(result.errors)
