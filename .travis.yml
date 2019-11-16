@@ -44,6 +44,21 @@ jobs:
         - docker login -u="$DOCKER_USER" -p="$DOCKER_PASS";
         - docker push alohomorateam/api:devel
 
+    # deploy HMG
+    - stage: deploy
+      if: (branch = devel) AND (type != pull_request)
+      install: skip
+      script: skip
+      deploy:
+        provider: heroku
+        skip_cleanup: true
+        api_key:
+          secure: ${HEROKU_KEY}
+        app: alohomora-hmg
+        on:
+          repo: Alohomora-team/AlohomoraAPI
+          branch: devel
+
     # Push Image PROD
     - stage: deploy
       if: (branch = master) AND (type != pull_request)
@@ -55,3 +70,16 @@ jobs:
         - docker login -u="$DOCKER_USER" -p="$DOCKER_PASS";
         - docker push alohomorateam/api:master
 
+    # deploy PROD
+    - stage: deploy
+      if: (branch = 45-deploy-continuo) AND (type != pull_request)
+      install: skip
+      script: skip
+      deploy:
+        provider: heroku
+        skip_cleanup: true
+        api_key:
+          secure: ${HEROKU_KEY}
+        app: teste-alohomora
+          repo: Alohomora-team/AlohomoraAPI
+          branch: 45-deploy-continuo
