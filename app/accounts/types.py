@@ -51,21 +51,23 @@ class ServiceInput(graphene.InputObjectType):
     password = graphene.String()
     email = graphene.String()
     complete_name = graphene.String()
+    service_email = graphene.String(required=True)
 
 class ResidentInput(graphene.InputObjectType):
     """Resident input data types"""
     complete_name = graphene.String()
     email = graphene.String()
     phone = graphene.String()
+    resident_cpf = graphene.String(required=True)
     cpf = graphene.String()
     apartment = graphene.String()
     block = graphene.String()
     password = graphene.String()
-    voice_data = graphene.String()
-    mfcc_data = graphene.String()
+    audio_speaking_phrase = graphene.List(graphene.Float)
+    audio_speaking_name = graphene.List(graphene.Float)
 
 class VisitorInput(graphene.InputObjectType):
     """Visitor input data types"""
     complete_name = graphene.String()
-    cpf = graphene.String(required=True)
-    new_cpf = graphene.String()
+    cpf = graphene.String()
+    visitor_cpf = graphene.String(required=True)
