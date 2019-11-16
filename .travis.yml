@@ -4,7 +4,7 @@ python:
 
 stages:
   - code_quality_tests
-  - push_image
+  - deploy
 
 env:
   - DOCKER_COMPOSE_VERSON=1.4.2
@@ -34,7 +34,7 @@ jobs:
         - coveralls
 
     # Push Image HMG
-    - stage: push_image
+    - stage: deploy
       if: (branch = devel) AND (type != pull_request)
       before_install:
         - docker build -f docker/Dockerfile -t alohomorateam/api:devel .
@@ -45,7 +45,7 @@ jobs:
         - docker push alohomorateam/api:devel
 
     # Push Image PROD
-    - stage: push_image
+    - stage: deploy
       if: (branch = master) AND (type != pull_request)
       before_install:
         - docker build -f docker/Dockerfile -t alohomorateam/api:master .
@@ -55,3 +55,32 @@ jobs:
         - docker login -u="$DOCKER_USER" -p="$DOCKER_PASS";
         - docker push alohomorateam/api:master
 
+    # Deploy HMG
+    - stage: deploy
+      if: (branch = devel) AND (type != pull_request)
+      install: skip
+      script: skip
+      deploy:
+        provider: heroku
+        skip_cleanup: true
+        api_key:
+          secure: ${HEROKU_KEY}
+        app: alohomora-hmg
+        on:
+          repo: Alohomora-team/AlohomoraAPI
+          branch: devel
+
+    # Deploy HMG
+    - stage: deploy
+      if: (branch = master) AND (type != pull_request)
+      install: skip
+      script: skip
+      deploy:
+        provider: heroku
+        skip_cleanup: true
+        api_key:
+          secure: ${HEROKU_KEY}
+        app: alohomora-prod
+        on:
+          repo: Alohomora-team/AlohomoraAPI
+          branch: master

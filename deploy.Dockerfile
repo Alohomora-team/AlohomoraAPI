@@ -10,7 +10,8 @@ RUN apk add --update --no-cache \
     gcc \
     musl-dev \
     py3-numpy \
-    py3-scipy
+    py3-scipy \
+    curl
 
 COPY docker/requirements.txt requirements.txt
 
