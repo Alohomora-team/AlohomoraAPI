@@ -5,7 +5,7 @@ Creates a CRUD to visitors
 import graphene
 from graphql_jwt.decorators import superuser_required, login_required
 from accounts.models import Visitor
-from accounts.types import VisitorType
+from accounts.types import VisitorType, VisitorInput
 
 class CreateVisitor(graphene.Mutation):
     """Mutation from graphene for creating visitor"""
@@ -38,27 +38,16 @@ class UpdateVisitor(graphene.Mutation):
 
     class Arguments:
         """Mutation arguments for update a visitor"""
-        complete_name = graphene.String()
-        cpf = graphene.String(required=True)
-        new_cpf = graphene.String()
+        visitor_data = VisitorInput()
 
     # @superuser_required
-    def mutate(self, info, **kwargs):
+    def mutate(self, info, visitor_data):
+
         """Method to execute the mutation"""
-        complete_name = kwargs.get('complete_name')
-        cpf = kwargs.get('cpf')
-        new_cpf = kwargs.get('new_cpf')
-
-        visitor = Visitor.objects.get(cpf=cpf)
-
-        if new_cpf:
-            visitor.cpf = new_cpf
-
-        if complete_name:
-            visitor.complete_name = complete_name
-
+        visitor = Visitor.objects.get(cpf=visitor_data.visitor_cpf)
+        for key, value in visitor_data.items():
+            setattr(visitor, key, value)
         visitor.save()
-
         return UpdateVisitor(visitor=visitor)
 
 class DeleteVisitor(graphene.Mutation):

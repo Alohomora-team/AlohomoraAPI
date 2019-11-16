@@ -5,6 +5,7 @@ coverage==4.5.4
 coveralls==1.8.2
 Django==2.2.5
 djangorestframework==3.10.3
+dj-database-url==0.5.0
 docopt==0.6.2
 graphene==2.1.8
 graphene-django==2.5.0
@@ -25,5 +26,3 @@ python_speech_features==0.6
 fastdtw==0.3.2
 pytest-django==3.7.0
 pytest==5.2.2
-pytest-cov==2.8.1
-snapshottest==0.5.1

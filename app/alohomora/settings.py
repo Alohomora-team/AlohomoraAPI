@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
+import dj_database_url
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -97,17 +98,21 @@ WSGI_APPLICATION = 'alohomora.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ['POSTGRES_DB'] or 'postgres',
-        'USER': os.environ['POSTGRES_USER'] or 'postgres',
-        'PASSWORD': os.environ['POSTGRES_PASSWORD'] or 'bypass',
-        'HOST': os.environ['POSTGRES_HOST'] or 'db',
-        'PORT': '5432',
+if os.environ['DEPLOY'] == 'False':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ['POSTGRES_DB'] or 'postgres',
+            'USER': os.environ['POSTGRES_USER'] or 'postgres',
+            'PASSWORD': os.environ['POSTGRES_PASSWORD'] or 'bypass',
+            'HOST': os.environ['POSTGRES_HOST'] or 'db',
+            'PORT': '5432',
+        }
     }
-}
+
+elif os.environ['DEPLOY'] == 'True':
+    DATABASES = {'default': dj_database_url.config(conn_max_age=600, ssl_require=True)}
+
 
 
 # Password validation

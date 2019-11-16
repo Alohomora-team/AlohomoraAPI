@@ -13,12 +13,16 @@ class AdminsQuery(graphene.AbstractType):
 
     all_admins = graphene.List(AdminType)
 
-
     admin = graphene.Field(
-        graphene.List(AdminType),
-        creator_email=graphene.String(),
+        AdminType,
         admin_email=graphene.String()
         )
+
+    admins = graphene.Field(
+        graphene.List(AdminType),
+        creator_email=graphene.String()
+        )
+
     # @superuser_required
     def resolve_all_admins(self, info, **kwargs):
         """Query all admins"""
@@ -27,24 +31,21 @@ class AdminsQuery(graphene.AbstractType):
     # @superuser_required
     def resolve_admin(self, info, **kwargs):
         """Query a specific admin"""
-        creator_email = kwargs.get('creator_email')
         admin_email = kwargs.get('admin_email')
 
-        admin = get_user_model().objects.filter(email=admin_email).first()
-        creator = get_user_model().objects.filter(email=creator_email).first()
+        admin = get_user_model().objects.get(email=admin_email)
 
-        if creator_email and admin_email:
-            return Admin.objects.filter(
-                    creator=creator,
-                    admin=admin
-                    )
+        return Admin.objects.get(
+                admin=admin
+                )
 
-        if creator_email:
-            return Admin.objects.filter(
-                    creator=creator
-                    )
+    # @superuser_required
+    def resolve_admins(self, info, **kwargs):
+        """Query all admins from a creator admin"""
+        creator_email = kwargs.get('creator_email')
 
-        if admin_email:
-            return Admin.objects.filter(
-                    admin=admin
-                    )
+        creator = get_user_model().objects.get(email=creator_email)
+
+        return Admin.objects.filter(
+                creator=creator
+                )

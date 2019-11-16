@@ -124,35 +124,24 @@ class ResidentTest(JSONWebTokenTestCase, TestCase):
     def test_update_resident(self):
         """Test mutation updateResident"""
 
-        self.user = get_user_model().objects.get(email='resident@example.com')
-        self.client.authenticate(self.user)
         mutation = '''
-mutation {
-  updateResident(residentData: {email: "service42@example.com", password: "k"}){
-    resident {
-      email
-      completeName
-      phone
-    }
-    user {
-      	email
-      }
-  }
-}
-            '''
+                    mutation {
+                      updateResident(residentData: {residentCpf: "12345678910", cpf: "00012312300", completeName: "k"}){
+                        resident {
+                          cpf
+                    	  	completeName
+                        }
+                      }
+                    }
+              '''
         result = self.client.execute(mutation)
         self.assertIsNone(result.errors)
-        self.assertEqual(Resident.objects.count(), 1)
-
-        self.assertDictEqual({"updateResident":
-                              {
+        self.assertDictEqual({"updateResident": {
                                   "resident": {
-                                      "email": "service42@example.com",
-                                      "completeName": "resident-evil",
-                                      "phone": "42"},
-                                  "user": {
-                                      "email": "service42@example.com",}
+                                    "cpf": "00012312300",
+                                    "completeName": "k"
                                   }
+                                }
                               }, result.data)
 
     def test_delete_resident(self):

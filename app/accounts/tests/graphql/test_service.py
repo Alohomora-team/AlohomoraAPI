@@ -80,28 +80,23 @@ class ServiceTest(JSONWebTokenTestCase, TestCase):
 
         mutation = '''
                     mutation {
-                      updateService(serviceData: {email: "service2@example.com", password: "k"}){
+                      updateService(serviceData: {serviceEmail: "service@example.com", email: "service2@exemplo.com", completeName: "k"}){
                         service {
                           email
-                          completeName
+                    	  	completeName
                         }
-                        user {
-                          	email
-                          }
                       }
                     }
             '''
         result = self.client.execute(mutation)
         self.assertIsNone(result.errors)
         self.assertEqual(Resident.objects.count(), 1)
-        self.assertDictEqual({"updateService":
-                              {
+        self.assertDictEqual({"updateService": {
                                   "service": {
-                                      "email": "service2@example.com",
-                                      "completeName": "bob esponja"},
-                                  "user": {
-                                      "email": "service2@example.com"}
+                                    "email": "service2@exemplo.com",
+                                    "completeName": "k"
                                   }
+                                }
                               }, result.data)
 
     def test_delete_service(self):

@@ -69,27 +69,14 @@ class VisitorTest(JSONWebTokenTestCase, TestCase):
   }, result.data)
 
     def test_update_visitor(self):
-        """Test mutation createVisitor"""
+        """Test mutation updateVisitor"""
 
         mutation = '''
                     mutation {
-                      createVisitor(completeName: "visitor2", cpf: "40982705018") {
-                       visitor{
-                        id
-                        completeName
-                        cpf
-                      }
-                    }
-                    }
-              '''
-        result = self.client.execute(mutation)
-
-        mutation = '''
-                    mutation {
-                      updateVisitor(cpf: "40982705018", newCpf:"80272869058"){
-                        visitor{
+                      updateVisitor(visitorData: {visitorCpf: "29950509041", cpf: "80272869058", completeName: "goku"}){
+                        visitor {
                           cpf
-                          completeName
+                    	  completeName
                         }
                       }
                     }
@@ -100,11 +87,10 @@ class VisitorTest(JSONWebTokenTestCase, TestCase):
                               {
                                   "visitor": {
                                     "cpf": "80272869058",
-                                    "completeName": "visitor2"
+                                    "completeName": "goku"
                                   }
                                 }
                               }, result.data)
-
     def test_delete_visitor(self):
        """Test mutation deleteVisitor"""
 

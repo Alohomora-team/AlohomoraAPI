@@ -113,7 +113,30 @@ class AdminTest(JSONWebTokenTestCase, TestCase):
         result = self.client.execute(query)
         self.assertIsNone(result.errors)
         self.assertDictEqual({
-            "admin": [
+            "admin":
+                {
+                  "admin": {
+                    "email": "user@example"
+                  }
+               }
+        }, result.data)
+
+    def test_query_admins(self):
+        """Test query admins"""
+
+        query = '''
+                query{
+                  admins(creatorEmail:"admin@example"){
+                    admin{
+                      email
+                    }
+                  }
+                }
+        '''
+        result = self.client.execute(query)
+        self.assertIsNone(result.errors)
+        self.assertDictEqual({
+            "admins": [
                 {
                   "admin": {
                     "email": "user@example"

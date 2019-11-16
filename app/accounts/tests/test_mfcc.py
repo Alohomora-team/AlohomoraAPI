@@ -3,7 +3,7 @@ from python_speech_features import mfcc
 import numpy
 import pytest
 
-def test():
+def test_mfcc():
     a = [x*x + x + 300 for x in range(32073)]
     mfcc_matrix = mfcc(numpy.array(a), 16000, winfunc=numpy.hamming)
 
