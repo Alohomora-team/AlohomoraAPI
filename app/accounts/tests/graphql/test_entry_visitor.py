@@ -28,12 +28,11 @@ class EntryVisitorTest(JSONWebTokenTestCase, TestCase):
 
         mutation = '''
             mutation{
-              createEntryVisitor(pending:true, blockNumber: "1", apartmentNumber: "101", visitorCpf: "29950509041"){
+              createEntryVisitor(blockNumber: "1", apartmentNumber: "101", visitorCpf: "29950509041"){
             		entryVisitor{
                   visitor{
                   	cpf
                   }
-                  pending
                 }
               }
             }
@@ -45,68 +44,17 @@ class EntryVisitorTest(JSONWebTokenTestCase, TestCase):
                                     "visitor": {
                                       "cpf": "29950509041"
                                     },
-                                    "pending": True
                                   }
                                 }
                               }, result.data)
 
-    def test_mutation_update_entry_visitor(self):
-        """Test mutation updateEntryVisitorPending"""
-
-        mutation = '''
-                    mutation{
-                      updateEntryVisitorPending(entryId: "5"){
-                    		entryId
-                        entryVisitorPending
-                    	}
-                    }
-        '''
-        result = self.client.execute(mutation)
-        self.assertIsNone(result.errors)
-        self.assertDictEqual({"updateEntryVisitorPending": {
-                                  "entryId": "5",
-                                  "entryVisitorPending": False
-                                }
-                              }, result.data)
-
-    def test_mutation_delete_entry_visitor_pending(self):
-        """Test mutation deleteEntryVisitorPending"""
-
-        mutation = '''
-                    mutation{
-                      deleteEntryVisitorPending(entryId: "5"){
-                    		deleted
-                    	}
-                    }
-        '''
-        result = self.client.execute(mutation)
-        self.assertIsNone(result.errors)
-        self.assertEqual(EntryVisitor.objects.count(), 0)
-
-
-    def test_mutation_delete_entries_visitors_pending(self):
-        """Test mutation deleteEntriesVisitorsPending"""
-
-        mutation = '''
-                    mutation{
-                      deleteEntriesVisitorsPending(apartmentId: "5"){
-                    		deleted
-                      }
-                    }
-        '''
-        result = self.client.execute(mutation)
-        self.assertIsNone(result.errors)
-        self.assertEqual(EntryVisitor.objects.count(), 0)
-
-
     def test_query_all_entries_visitors(self):
-        """Test mutation allEntriesVisitors"""
+        """Test query allEntriesVisitors"""
 
         mutation = '''
                     query {
                       allEntriesVisitors {
                         id
-                        pending
                         visitor{
                           completeName
                           cpf
@@ -122,7 +70,6 @@ class EntryVisitorTest(JSONWebTokenTestCase, TestCase):
         self.assertDictEqual({"allEntriesVisitors": [
                               {
                                 "id": "5",
-                                "pending": True,
                                 "visitor": {
                                   "completeName": "visitor",
                                   "cpf": "29950509041"
@@ -134,40 +81,12 @@ class EntryVisitorTest(JSONWebTokenTestCase, TestCase):
                             ]
                           }, result.data)
 
-    def test_query_entries_visitors_pending(self):
-        """Test mutation entriesVisitorsPending"""
-
-        mutation = '''
-                    query {
-                      entriesVisitorsPending(apartmentId: "5"){
-                    		pending
-                        visitor{
-                          completeName
-                          cpf
-                        }
-                    	}
-                    }
-        '''
-        result = self.client.execute(mutation)
-        self.assertIsNone(result.errors)
-        self.assertDictEqual({"entriesVisitorsPending": [
-                              {
-                                "pending": True,
-                                "visitor": {
-                                  "completeName": "visitor",
-                                  "cpf": "29950509041"
-                                }
-                              }
-                            ]
-                          }, result.data)
-
     def test_query_entries_visitor(self):
         """Test mutation entriesVisitor"""
 
         mutation = '''
                     query {
                       entriesVisitor(cpf: "29950509041", blockNumber: "1", apartmentNumber: "101"){
-                    		pending
                         visitor{
                           completeName
                           cpf
@@ -179,7 +98,6 @@ class EntryVisitorTest(JSONWebTokenTestCase, TestCase):
         self.assertIsNone(result.errors)
         self.assertDictEqual({"entriesVisitor": [
                               {
-                                "pending": True,
                                 "visitor": {
                                   "completeName": "visitor",
                                   "cpf": "29950509041"
@@ -194,7 +112,6 @@ class EntryVisitorTest(JSONWebTokenTestCase, TestCase):
         mutation = '''
                     query {
                       entriesVisitor(blockNumber: "1", apartmentNumber: "101"){
-                    		pending
                         visitor{
                           completeName
                           cpf
@@ -206,7 +123,6 @@ class EntryVisitorTest(JSONWebTokenTestCase, TestCase):
         self.assertIsNone(result.errors)
         self.assertDictEqual({"entriesVisitor": [
                               {
-                                "pending": True,
                                 "visitor": {
                                   "completeName": "visitor",
                                   "cpf": "29950509041"

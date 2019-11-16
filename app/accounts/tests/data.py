@@ -71,7 +71,6 @@ def initialize_data():
             visitor=Visitor.objects.get(cpf='29950509041'),
             apartment=apartment,
             date='2019-01-10',
-            pending=True,
         )
 
 def initialize_voice_data():
