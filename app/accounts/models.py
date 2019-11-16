@@ -103,7 +103,6 @@ class EntryVisitor(models.Model):
     visitor = models.ForeignKey(Visitor, on_delete=models.CASCADE)
     apartment = models.ForeignKey(Apartment, on_delete=models.CASCADE)
     date = models.DateTimeField(auto_now=True)
-    pending = models.BooleanField('entry status', default=True)
 
 class Entry(models.Model):
     """A model to store some residents entry data"""
