@@ -16,12 +16,6 @@ class EntriesVisitorsQuery(graphene.AbstractType):
         block_number=graphene.String(),
         apartment_number=graphene.String(),
         )
-
-    entries_visitors_pending = graphene.Field(
-        graphene.List(EntryVisitorType),
-        apartment_id=graphene.String(),
-        )
-
     def resolve_all_entries_visitors(self, info, **kwargs):
         """Query all entries from visitors"""
         return EntryVisitor.objects.all()
@@ -57,20 +51,5 @@ class EntriesVisitorsQuery(graphene.AbstractType):
         if cpf:
             visitor = Visitor.objects.get(cpf=cpf)
             return EntryVisitor.objects.filter(visitor=visitor)
-
-
-        return None
-
-    def resolve_entries_visitors_pending(self, info, **kwargs):
-        """Query all pending entries to a specific apartment"""
-        apartment_id = kwargs.get('apartment_id')
-
-        #Lista entradas pendentes de um apartamento de determinado bloco
-        if apartment_id:
-
-            return EntryVisitor.objects.filter(
-                pending=True,
-                apartment_id=apartment_id
-                )
 
         return None

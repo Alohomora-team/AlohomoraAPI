@@ -6,6 +6,7 @@ Todas as mudanças notáveis no sistema você encontra aqui.
 
 ## [Unreleased]
 * Correção do bug na query de admins
+* Altera sistema de entradas de visitantes. Retira atributo 'pending' e mutations/queries desnecessárias.
 
 ### Adicionado
 - Campos ***audioSpeakingName*** e ***audioSamplerate*** adicionados na *mutation* de [criação de morador](https://github.com/Alohomora-team/2019.2-AlohomoraPage/blob/master/docs/projeto/guia_de_uso.md#211-criando-um-morador) e na *query* de [autênticação do morador](https://github.com/Alohomora-team/2019.2-AlohomoraPage/blob/master/docs/projeto/guia_de_uso.md#31-autenticação-de-morador)
@@ -29,13 +30,13 @@ Todas as mudanças notáveis no sistema você encontra aqui.
 
 ### Modificado
 - Refatoração na estrutura de arquivos de *schema* e nos testes de *accounts*
-- Regras do [*Pylint*]() modificadas 
+- Regras do [*Pylint*]() modificadas
 - Código refatorado a fim de cobrir as mudanças no [*Pylint*]()
 - Campos de áudio agora obedecem o formato de *lista de floats*.
 - Novo padrão para realizar mutations de update.
 
 ### Removido
-*  Remoção dos atributos *email, phone, voiceData e owner* da entidade [*Visitor*](https://github.com/Alohomora-team/2019.2-AlohomoraPage/blob/master/docs/projeto/guia_de_uso.md#22-visitante) 
+*  Remoção dos atributos *email, phone, voiceData e owner* da entidade [*Visitor*](https://github.com/Alohomora-team/2019.2-AlohomoraPage/blob/master/docs/projeto/guia_de_uso.md#22-visitante)
 
 ### Corrigido
 -  Argumento "python -m" adicionado antes do "pip install" no [*Dockerfile*](docker/Dockerfile)
@@ -48,5 +49,5 @@ Todas as mudanças notáveis no sistema você encontra aqui.
 * Estrutura padrão do condominio
 * Adicionado docker-compose para rodar o site locamente
 ---
- 
+
 As convenções seguidas para escrever esse texto estão disponíveis [aqui](https://keepachangelog.com/en/0.3.0/).

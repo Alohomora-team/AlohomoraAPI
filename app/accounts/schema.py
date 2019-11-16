@@ -8,9 +8,6 @@ from .mutations.entries import(
 )
 from .mutations.entries_visitors import(
     CreateEntryVisitor,
-    UpdateEntryVisitorPending,
-    DeleteEntryVisitorPending,
-    DeleteEntriesVisitorsPending,
 )
 from .mutations.residents import(
     CreateResident,
@@ -52,15 +49,12 @@ class Mutation(graphene.ObjectType):
 
     update_resident = UpdateResident.Field()
     update_visitor = UpdateVisitor.Field()
-    update_entry_visitor_pending = UpdateEntryVisitorPending.Field()
     update_service = UpdateService.Field()
     activate_user = ActivateUser.Field()
     deactivate_user = DeactivateUser.Field()
 
     delete_resident = DeleteResident.Field()
     delete_visitor = DeleteVisitor.Field()
-    delete_entry_visitor_pending = DeleteEntryVisitorPending.Field()
-    delete_entries_visitors_pending = DeleteEntriesVisitorsPending.Field()
     delete_service = DeleteService.Field()
     delete_admin = DeleteAdmin.Field()
 
