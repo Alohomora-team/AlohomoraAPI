@@ -1,7 +1,7 @@
 # AlohomoraAPI
 
 [![Build Status](https://travis-ci.org/Alohomora-team/AlohomoraAPI.svg?branch=devel)](https://travis-ci.org/Alohomora-team/AlohomoraAPI)
-[![Coverage Status](https://coveralls.io/repos/github/Alohomora-team/AlohomoraAPI/badge.svg?branch=devel)](https://coveralls.io/github/Alohomora-team/AlohomoraAPI?branch=devel))
+[![Coverage Status](https://coveralls.io/repos/github/Alohomora-team/AlohomoraAPI/badge.svg?branch=devel)](https://coveralls.io/github/Alohomora-team/AlohomoraAPI?branch=devel)
 [![Maintainability](https://api.codeclimate.com/v1/badges/2c164a8849badef20a10/maintainability)](https://codeclimate.com/github/Alohomora-team/AlohomoraAPI/maintainability)
 
 ![Logo](logo_alohomora.png)
@@ -22,7 +22,7 @@
 - Autonomia ao morador para gerenciar visitas mesmo não estando presente fisicamente
 - Controle sobre o fluxo de entradas, rastreando *quem*, *quando* e *para onde*
 
-[Confira as funcionalidades](https://github.com/Alohomora-team/2019.2-AlohomoraPage/blob/10-criar-documentacao-uso-api/docs/uso/guia_de_uso.md)
+[Confira as funcionalidades](https://github.com/Alohomora-team/2019.2-AlohomoraPage/blob/master/docs/projeto/guia_de_uso.md)
 
 ### Alohomora + IoT
 
@@ -86,7 +86,7 @@ $ docker-compose up api
 
 Após esses comandos a aplicação estará disponível em http://localhost:8000. Os *endpoints* estarão acessíveis em http://localhost:8000/graphql.
 
-Confira as funcionalidades e como as utilizar [aqui](https://github.com/Alohomora-team/2019.2-AlohomoraPage/blob/10-criar-documentacao-uso-api/docs/uso/guia_de_uso.md).
+Confira as funcionalidades e como as utilizar [aqui](https://github.com/Alohomora-team/2019.2-AlohomoraPage/blob/master/docs/projeto/guia_de_uso.md).
 
 ---
 
