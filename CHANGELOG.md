@@ -26,7 +26,7 @@ Todas as mudanças notáveis no sistema você encontra aqui.
 - Mecanismo de [ativar/desativar usuário](https://github.com/Alohomora-team/2019.2-AlohomoraPage/blob/master/docs/projeto/guia_de_uso.md#52-gerênciando-conta-de-usuários), bem como a consulta de usuários ativados ou desativados.
 
 - Disponibilizado uma forma de mudar a senha e email.
-
+- Disponibilizado uma forma de revogar e renovar o token.
 
 ### Modificado
 - Refatoração na estrutura de arquivos de *schema* e nos testes de *accounts*
