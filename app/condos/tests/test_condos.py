@@ -1,9 +1,9 @@
 """
 Tests of condos
 """
-
+import pytest
 from graphene.test import Client
-from django.test import TestCase
+from django.test import TestCase, Client
 from django.contrib.auth import get_user_model
 from condos.models import Apartment, Block
 from alohomora.schema import schema
@@ -38,6 +38,26 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
         self.assertDictEqual({"createBlock":
                               {
                                   "number": "2"}
+                              }, result.data)
+
+    def test_all_blocks_query(self):
+        """Test query allBlocks"""
+
+        query = """
+                query {
+                  allBlocks {
+                 	number
+                  }
+                }
+        """
+
+        result = self.client.execute(query)
+        self.assertIsNone(result.errors)
+        self.assertDictEqual({"allBlocks": [
+                                  {
+                                    "number": "1"
+                                  }
+                                ]
                               }, result.data)
 
     def test_block_query(self):
@@ -82,6 +102,26 @@ class GraphQLTestCase(JSONWebTokenTestCase, TestCase):
                                       "number": "1"}
                               }
                              }, result.data)
+
+    def test_all_apartments_query(self):
+        """Test query allApartments"""
+
+        query = """
+        query {
+          allApartments {
+         	number
+          }
+        }
+        """
+
+        result = self.client.execute(query)
+        self.assertIsNone(result.errors)
+        self.assertDictEqual({"allApartments": [
+                              {
+                                "number": "101"
+                              }
+                            ]
+                          }, result.data)
 
     def test_apartment_query(self):
         """Test query apartment"""
