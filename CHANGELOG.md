@@ -34,6 +34,7 @@ Todas as mudanças notáveis no sistema você encontra aqui.
 - Código refatorado a fim de cobrir as mudanças no [*Pylint*]()
 - Campos de áudio agora obedecem o formato de *lista de floats*.
 - Novo padrão para realizar mutations de update.
+- Adoção do pytest no projeto
 
 ### Removido
 *  Remoção dos atributos *email, phone, voiceData e owner* da entidade [*Visitor*](https://github.com/Alohomora-team/2019.2-AlohomoraPage/blob/master/docs/projeto/guia_de_uso.md#22-visitante)
