@@ -3,12 +3,14 @@ import graphene
 from graphql_jwt.decorators import superuser_required
 from .models import Block, Apartment
 from .types import BlockType, ApartmentType
+from condos import door
 
 class Query():
     """Used to read or fetch values"""
 
     all_blocks = graphene.List(BlockType)
     all_apartments = graphene.List(ApartmentType)
+    door = graphene.Boolean()
 
     apartments = graphene.Field(
         graphene.List(ApartmentType),
@@ -25,6 +27,10 @@ class Query():
         number=graphene.String(),
         block=graphene.String()
         )
+
+    def resolve_door(self, info):
+        """Say if the door can be open"""
+        return door.door_instance.value
 
     def resolve_all_blocks(self, info, **kwargs):
         """Returns all Block type objects"""

@@ -11,6 +11,7 @@ from .mutations.blocks import(
     CreateBlock,
     DeleteBlock,
     UpdateBlock,)
+from .mutations.doors import UpdateDoor
 
 class Mutation(graphene.ObjectType):
     """
@@ -22,3 +23,4 @@ class Mutation(graphene.ObjectType):
     delete_apartment = DeleteApartment.Field()
     update_block = UpdateBlock.Field()
     update_apartment = UpdateApartment.Field()
+    update_door = UpdateDoor.Field()

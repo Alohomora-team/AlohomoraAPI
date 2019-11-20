@@ -11,42 +11,31 @@ tts:
   - platform: google_translate
 
 switch:
+  - platform: rest
+    name: 'abrir porta'
+    scan_interval: 5
+    resource: http://localhost:8000/graphql/?query=query%7Bdoor%7D
+    body_on: '{"data": {"door": true}}'
+    body_off: '{"data": {"door": false}}'
+    is_on_template: '{{ value_json.data.door }}'
+
   - platform: command_line
     switches:
-      light:
-        command_on: "/usr/bin/curl -X GET http://localhost:8000/graphql/#"
+      fechar_porta:
+        command_on: "/usr/bin/curl -d '{\"query\":\"mutation {updateDoor(enter: false){enter}}\"}'  -H 'Content-Type: application/json'  -X POST 'http://localhost:8000/graphql/'"
         command_off: "/usr/bin/curl -X GET http://localhost:8000/graphql/#"
-        friendly_name: Bedroom Lights
-  - platform: rest
-    name: 'porta'
-    timeout: 1
-    resource: http://localhost:8000/graphql/?query=query%7Bme%7D
-    body_on: '{"data": {"me": true}}'
-    body_off: '{"data": {"me": false}}'
-    is_on_template: '{{ value_json.data.me }}'
+        friendly_name: Fechar porta
 
 group:
   default_view:
     view: true
     icon: mdi:home
     entities:
-      - group.kitchen
-  kitchen:
-    name: Kitchen
+      - group.portaria
+  portaria:
+    name: Portaria
     entities:
-      - switch.light
-      - switch.porta
-      - sensor.json_time
-  upstairs:
-    name: Kids
-    icon: mdi:account-multiple
-    view: true
-    entities:
-      - input_boolean.notify_home
-      - camera.demo_camera
-      - device_tracker.demo_paulus
-      - group.garden
-
-
+      - switch.abrir_porta
+      - switch.fechar_porta
 
 script: !include scripts.yaml
