@@ -1,6 +1,9 @@
+"Creates class Door so there's no need to save on db"
 class Door:
-    def __init__(self, name, value):
-        self.name = name
+    """Class responsible for saying if the door is open or not"""
+
+    def __init__(self, value):
+        """Inits Class Door with value"""
         self.value = value
 
-door_instance = Door("porta", False)
+door_instance = Door(False)

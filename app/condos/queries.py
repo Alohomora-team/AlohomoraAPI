@@ -1,9 +1,9 @@
 """Module for grouping graphQL queries"""
 import graphene
 from graphql_jwt.decorators import superuser_required
+from condos import door
 from .models import Block, Apartment
 from .types import BlockType, ApartmentType
-from condos import door
 
 class Query():
     """Used to read or fetch values"""
