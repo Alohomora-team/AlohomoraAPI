@@ -1,0 +1,52 @@
+
+# Configure a default setup of Home Assistant (frontend, api, etc)
+default_config:
+
+# Uncomment this if you are using SSL/TLS, running in Docker container, etc.
+# http:
+#   base_url: example.duckdns.org:8123
+
+# Text to speech
+tts:
+  - platform: google_translate
+
+switch:
+  - platform: command_line
+    switches:
+      light:
+        command_on: "/usr/bin/curl -X GET http://localhost:8000/graphql/#"
+        command_off: "/usr/bin/curl -X GET http://localhost:8000/graphql/#"
+        friendly_name: Bedroom Lights
+  - platform: rest
+    name: 'porta'
+    timeout: 1
+    resource: http://localhost:8000/graphql/?query=query%7Bme%7D
+    body_on: '{"data": {"me": true}}'
+    body_off: '{"data": {"me": false}}'
+    is_on_template: '{{ value_json.data.me }}'
+
+group:
+  default_view:
+    view: true
+    icon: mdi:home
+    entities:
+      - group.kitchen
+  kitchen:
+    name: Kitchen
+    entities:
+      - switch.light
+      - switch.porta
+      - sensor.json_time
+  upstairs:
+    name: Kids
+    icon: mdi:account-multiple
+    view: true
+    entities:
+      - input_boolean.notify_home
+      - camera.demo_camera
+      - device_tracker.demo_paulus
+      - group.garden
+
+
+
+script: !include scripts.yaml
