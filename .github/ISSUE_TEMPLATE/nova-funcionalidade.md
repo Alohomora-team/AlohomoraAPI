@@ -7,11 +7,14 @@ assignees: ''
 
 ---
 
-**Descreva a solução que gostaria **
-Uma descrição concisa e breve sobre o problema
+**Descrição da funcionalidade**
+Uma descrição breve da funcionalidade que deseja implementar
 
-**Funcionalidades requeridas**
-Liste aqui objetivamente os pontos que você imagina que seria importante para resolver o problema que levantou.
+**Tarefas necessárias**
+Lista de tarefas objetivas que você considera que seja importante para implementar esta funcionalidade.
+
+- [ ] Adicionar mudanças no CHANGELOG
+- [ ] Realizar testes da funcionalidade
 
 **Contexto Adicional**
-Adicionem outros contextos e fotos das telas
+Adicione conteúdo adicional que possa ajudar na implementação aqui.

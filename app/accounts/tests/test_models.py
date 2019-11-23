@@ -1,76 +1,81 @@
 from django.test import TestCase
-from accounts.models import User
-from accounts.models import Visitor
+from django.contrib.auth import get_user_model
+from accounts.models import Visitor, Service, Resident
 
-class UserModelTest(TestCase):
+class ResidentModelTest(TestCase):
 
     @classmethod
     def setUpTestData(cls):
 
-        User.objects.create(
+        get_user_model().objects.create(
+            email='exemplo@.com',
+            password='12345',
+            username='ok',
+        )
+        Resident.objects.create(
             complete_name='Big',
             email='Bob',
-            password='12345',
             phone='12345',
+            user=get_user_model().objects.get(email='exemplo@.com'),
+            mfcc_audio_speaking_phrase=[1.0, 2.0, 3.0, 4.0, 5.0],
+            mfcc_audio_speaking_name=[1.0, 2.0, 3.0, 4.0, 5.0]
         )
 
     def test_complete_name_label(self):
-        user = User.objects.get(id=1)
-        self.assertEquals(user.complete_name, 'Big')
+        resident = Resident.objects.get(user_id=1)
+        self.assertEquals(resident.complete_name, 'Big')
+
 
     def test_complete_name_max_length(self):
         with self.assertRaises(Exception):
-            User.objects.create(
+            Resident.objects.create(
                 complete_name='a'*81,
                 email='test@test.com',
-                password='1234',
                 phone='123412341234'
             )
 
     def test_email_label(self):
-        user = User.objects.get(id=1)
-        self.assertEquals(user.email, 'Bob')
+        resident = Resident.objects.get(user_id=1)
+        self.assertEquals(resident.email, 'Bob')
 
     def test_email_max_length(self):
 
         with self.assertRaises(Exception):
-            User.objects.create(
+            Resident.objects.create(
                 complete_name='teste',
-                email='1'*10,
-                password='1234',
-                phone='123412341234'
+                email='1'*100,
+                phone='123412341234',
+                user=get_user_model().objects.get(email='exemplo@.com'),
+
             )
 
     def test_phone_value(self):
-        user = User.objects.get(id=1)
-        self.assertEquals(user.phone, '12345')
+        resident = Resident.objects.get(user_id=1)
+        self.assertEquals(resident.phone, '12345')
 
+    def test_mfcc_audio_speaking_name_value(self):
+        resident = Resident.objects.get(user_id=1)
+        self.assertEquals(resident.mfcc_audio_speaking_name, [1.0, 2.0, 3.0, 4.0, 5.0])
+
+    def test_mfcc_audio_speaking_phrase_value(self):
+        resident = Resident.objects.get(user_id=1)
+        self.assertEquals(resident.mfcc_audio_speaking_phrase, [1.0, 2.0, 3.0, 4.0, 5.0])
 
 class VisitorModelTest(TestCase):
 
-    @classmethod
-    def setUpTestData(cls):
+    def test_cpf_max_length(self):
 
-        User.objects.create(
-            complete_name='Big',
-            email='Bob',
-            password='12345',
-            phone='12345',
-        )
+        with self.assertRaises(Exception):
+            Visitor.objects.create(
+                complete_name='BigBig',
+                email='4'*100,
+            )
 
-        Visitor.objects.create(
-            owner=User.objects.get(complete_name='Big'),
-            complete_name='Big',
-            email='Bob',
-            phone='12345'
-        )
+class ServiceModelTest(TestCase):
 
     def test_email_max_length(self):
 
         with self.assertRaises(Exception):
-            Visitor.objects.create(
-                owner=User.objects.get(complete_name='Big'),
-                complete_name='Big',
-                email='a'*100,
-                phone='12345'
+            Service.objects.create(
+                email='1'*100,
             )

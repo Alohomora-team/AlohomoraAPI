@@ -1,3 +1,6 @@
+"""
+Registering all condos models in admin site
+"""
 from django.contrib import admin
 
 from condos.models import Block, Apartment

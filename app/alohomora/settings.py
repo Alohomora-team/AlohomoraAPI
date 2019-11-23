@@ -11,19 +11,22 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
+from datetime import timedelta
+import dj_database_url
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+TEST_RUNNER = 'alohomora.runner.PytestTestRunner'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = ')i6rx%4b7(^czxbajqv0i4$!rsy8yqn1c(q)+#n%j7evh08ml^'
+SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ['DEBUG'] == 'True'
 
 ALLOWED_HOSTS = ['*']
 
@@ -44,15 +47,29 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'graphene_django',
+    'graphql_jwt.refresh_token.apps.RefreshTokenConfig',
 
     #Local apps (our project's apps)
     'accounts',
     'condos',
+    'bot',
+    'core',
 ]
 
 GRAPHENE = {
-    'SCHEMA': 'alohomora.schema.schema'
+    'SCHEMA': 'alohomora.schema.schema',
+    'MIDDLEWARE': [
+        'graphql_jwt.middleware.JSONWebTokenMiddleware',
+    ],
 }
+
+GRAPHQL_JWT = {
+    'JWT_VERIFY_EXPIRATION': True,
+    'JWT_LONG_RUNNING_REFRESH_TOKEN': True,
+    'JWT_REFRESH_EXPIRED_HANDLER': lambda orig_iat, context: False,
+    'JWT_EXPIRATION_DELTA': timedelta(days=100),
+}
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -61,6 +78,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+AUTHENTICATION_BACKENDS = [
+    'graphql_jwt.backends.JSONWebTokenBackend',
+    'django.contrib.auth.backends.ModelBackend',
 ]
 
 ROOT_URLCONF = 'alohomora.urls'
@@ -86,17 +108,21 @@ WSGI_APPLICATION = 'alohomora.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ['POSTGRES_DB'] or 'postgres',
-        'USER': os.environ['POSTGRES_USER'] or 'postgres',
-        'PASSWORD': os.environ['POSTGRES_PASSWORD'] or 'bypass',
-        'HOST': os.environ['POSTGRES_HOST'] or 'db',
-        'PORT': '5432',
+if os.environ['DEPLOY'] == 'False':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ['POSTGRES_DB'] or 'postgres',
+            'USER': os.environ['POSTGRES_USER'] or 'postgres',
+            'PASSWORD': os.environ['POSTGRES_PASSWORD'] or 'bypass',
+            'HOST': os.environ['POSTGRES_HOST'] or 'db',
+            'PORT': '5432',
+        }
     }
-}
+
+elif os.environ['DEPLOY'] == 'True':
+    DATABASES = {'default': dj_database_url.config(conn_max_age=600, ssl_require=True)}
+
 
 
 # Password validation
@@ -136,7 +162,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
-
+AUTH_USER_MODEL = 'accounts.User'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [

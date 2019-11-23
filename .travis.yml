@@ -1,5 +1,9 @@
+language: python
+python:
+  - "3.7"
+
 stages:
-  - statical
+  - code_quality_tests
   - deploy
 
 env:
@@ -7,7 +11,76 @@ env:
 
 jobs:
   include:
-    - stage: statical
+    # Code Style
+    - stage: code_quality_tests
       script:
         - docker-compose run lint
+
+    # Tests
+    - stage: code_quality_tests
+      script:
         - docker-compose run api test
+
+    # Code Coverage
+    - stage: code_quality_tests
+      install:
+        - pip install coveralls
+      script:
+        - docker-compose run --entrypoint "/bin/sh -c" api "coverage run --source=. manage.py test"
+        - docker-compose run --entrypoint "/bin/sh -c" api "coverage report"
+      after_success:
+        - coverage combine --append --rcfile=.coveragerc app/.coverage
+        - coverage report
+        - coveralls
+
+    # Push Image HMG
+    - stage: deploy
+      if: (branch = devel) AND (type != pull_request)
+      before_install:
+        - docker build -f docker/Dockerfile -t alohomorateam/api:devel .
+      script:
+        - docker images alohomorateam/api
+      after_success:
+        - docker login -u="$DOCKER_USER" -p="$DOCKER_PASS";
+        - docker push alohomorateam/api:devel
+
+    # Push Image PROD
+    - stage: deploy
+      if: (branch = master) AND (type != pull_request)
+      before_install:
+        - docker build -f docker/Dockerfile -t alohomorateam/api:master .
+      script:
+        - docker images alohomorateam/api
+      after_success:
+        - docker login -u="$DOCKER_USER" -p="$DOCKER_PASS";
+        - docker push alohomorateam/api:master
+
+    # Deploy HMG
+    - stage: deploy
+      if: (branch = devel) AND (type != pull_request)
+      install: skip
+      script: skip
+      deploy:
+        provider: heroku
+        skip_cleanup: true
+        api_key:
+          secure: ${HEROKU_KEY}
+        app: alohomora-hmg
+        on:
+          repo: Alohomora-team/AlohomoraAPI
+          branch: devel
+
+    # Deploy HMG
+    - stage: deploy
+      if: (branch = master) AND (type != pull_request)
+      install: skip
+      script: skip
+      deploy:
+        provider: heroku
+        skip_cleanup: true
+        api_key:
+          secure: ${HEROKU_KEY}
+        app: alohomora-prod
+        on:
+          repo: Alohomora-team/AlohomoraAPI
+          branch: master
