@@ -27,3 +27,13 @@ services:
     # The volume with pylintrc configuration
     volumes:
     - "./:/home"
+
+  homeassistant:
+    container_name: home-assistant
+    image: homeassistant/home-assistant:stable
+    ports:
+      - 8123:8123
+    #volumes:
+    #  - /PATH_TO_YOUR_CONFIG:/config
+    environment:
+      - TZ=America/Sao_Paulo
