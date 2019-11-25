@@ -1,16 +1,13 @@
-FROM python:3.7-alpine
+FROM python:3.7-slim
 
 ENV PYTHONUNBUFFERED 1
-ENV PYTHONPATH=/usr/lib/python3.7/site-packages
+ENV PYTHONPATH=/usr/lib/python3/dist-packages/
 
 WORKDIR /home
 
-RUN apk add --update --no-cache \
-    postgresql-dev \
-    gcc \
-    musl-dev \
-    py3-numpy \
-    py3-scipy
+RUN apt-get update && apt-get install -y \  
+    python3-numpy \
+    python3-scipy
 
 COPY docker/requirements.txt requirements.txt
 
