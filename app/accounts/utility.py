@@ -3,6 +3,7 @@ import json
 import numpy
 from python_speech_features import mfcc
 from fastdtw import fastdtw
+import os
 
 def json_to_numpy_array(voice_data):
     """Converts JSON object to numpy array"""
@@ -75,6 +76,7 @@ def mfcc_array_to_matrix(mfcc_array):
 def create_model_mfcc(audio_signal, samplerate):
     """
     Create a linearized matrix of audio_signal's MFCC
+
     :param auio_signal: Audio signal array
     :param samplerate: audio_signal's samplerate
     :returns: audio_signal's MFCC linearized matrix
@@ -91,8 +93,32 @@ def create_model_mfcc(audio_signal, samplerate):
 def create_model_mfcc_from_wav_file(file_path):
     '''
     Create a linearized matrix of MFCCs from a audio file
+
     :param file_path: a string containing the file path
     :returns: MFCCs linearized matrix
     '''
+    treat_audio(file_path)
     samplerate, data = read(file_path)
     return create_model_mfcc(data, samplerate)
+
+def treat_audio(file_path):
+    '''
+    Remove noise, silence and unnecessary frequencies from wav audio file
+
+    :param file_path: a string containing the file path
+    :returns: None
+    '''
+    file_name = file_path.split('/')[-1].split('.')[0]
+    os.system(f"sox {file_path} -n trim 0 0.4 noiseprof {file_name}.noise-profile")
+
+    os.system(
+    f"sox {file_path} {file_name}_tmp.wav noisered {file_name}.noise-profile 0.26 highpass 300"
+    )
+
+    os.system(
+    f"sox {file_name}_tmp.wav {file_path} lowpass 3400 silence 1 1 2 reverse silence 1 1 1 reverse"
+    )
+
+    os.system(f"rm {file_name}_tmp.wav {file_name}.noise-profile")
+
+    return None
