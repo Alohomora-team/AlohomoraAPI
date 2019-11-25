@@ -39,9 +39,11 @@ class VoiceBelongsUserTests(TestCase):
             'marcos',
             'mateus',
             'paulo',
+            'pedro',
             'rodrigo',
             'samuel',
             'sergio',
+            'silva',
             'victor',
             'vitor'
         ]
