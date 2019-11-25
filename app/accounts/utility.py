@@ -74,8 +74,8 @@ def mfcc_array_to_matrix(mfcc_array):
 
 def create_model_mfcc(audio_signal, samplerate):
     """
-    Create a linearized matrix of base_signal's MFCC
-    :param base_signal: Audio signal array
+    Create a linearized matrix of audio_signal's MFCC
+    :param auio_signal: Audio signal array
     :param samplerate: audio_signal's samplerate
     :returns: audio_signal's MFCC linearized matrix
     """
@@ -87,3 +87,12 @@ def create_model_mfcc(audio_signal, samplerate):
     )
 
     return mfcc_matrix_to_array(mfcc_audio_signal)
+
+def create_model_mfcc_from_wav_file(file_path):
+    '''
+    Create a linearized matrix of MFCCs from a audio file
+    :param file_path: a string containing the file path
+    :returns: MFCCs linearized matrix
+    '''
+    samplerate, data = read(file_path)
+    return create_model_mfcc(data, samplerate)
