@@ -107,5 +107,6 @@ def initialize_voice_data():
     create_resident_test_account('paulo')
     create_resident_test_account('rodrigo')
     create_resident_test_account('samuel')
+    create_resident_test_account('sergio')
     create_resident_test_account('victor')
     create_resident_test_account('vitor')
