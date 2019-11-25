@@ -135,7 +135,7 @@ def treat_audio_data(audio_data, samplerate):
     tmp_file_path = tmp_file_path + '.wav'
 
     write(tmp_file_path, samplerate, audio_data)
-    treat_audio_file(file_name)
+    treat_audio_file(tmp_file_path)
 
     samplerate, data = read(tmp_file_path)
     os.system(f"rm {tmp_file_path}")

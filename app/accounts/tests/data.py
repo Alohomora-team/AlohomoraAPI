@@ -1,9 +1,9 @@
-from condos.models import Apartment, Block
-from accounts.models import Visitor, Resident, Service, Entry, Admin, EntryVisitor
-from django.contrib.auth import get_user_model
-import accounts.utility as Utility
-from scipy.io.wavfile import read
 import json
+from scipy.io.wavfile import read
+from django.contrib.auth import get_user_model
+from accounts.models import Visitor, Resident, Service, Entry, Admin, EntryVisitor
+from condos.models import Apartment, Block
+import accounts.utility as Utility
 
 def initialize_data():
         get_user_model().objects.create(
@@ -78,7 +78,10 @@ def create_resident_test_account(resident_name):
     '''
     Create a resident accout for tests
     '''
-    mfcc_resident = Utility.create_model_mfcc_from_wav_file('audios/' + resident_name + '_base.wav')
+    mfcc_resident = Utility.create_model_mfcc_from_wav_file(
+        'accounts/tests/audios/' + resident_name + '_base.wav'
+    )
+
     get_user_model().objects.create(
             email=resident_name + '@example.com',
             password=resident_name + '-password',

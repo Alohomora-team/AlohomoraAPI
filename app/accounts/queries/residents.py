@@ -17,7 +17,6 @@ class ResidentsQuery(graphene.AbstractType):
     voice_belongs_resident = graphene.Boolean(
         cpf=graphene.String(required=True),
         audio_speaking_phrase=graphene.List(graphene.Float, required=True),
-        audio_speaking_name=graphene.List(graphene.Float, required=False),
         audio_samplerate=graphene.Int(required=False)
     )
 
@@ -50,47 +49,32 @@ class ResidentsQuery(graphene.AbstractType):
         """Find out if the voice belongs to the resident"""
         resident_cpf = kwargs.get('cpf')
         audio_speaking_phrase = kwargs.get('audio_speaking_phrase')
-        audio_speaking_name = kwargs.get('audio_speaking_name')
         audio_samplerate = kwargs.get('audio_samplerate')
 
         if audio_samplerate is None:
             audio_samplerate = 16000
 
+        audio_speaking_phrase = Utility.treat_audio_data(audio_speaking_phrase, audio_samplerate)
+
         mfcc_audio_speaking_phrase = mfcc(
-            numpy.array(audio_speaking_phrase),
-            samplerate=audio_samplerate,
+            audio_speaking_phrase,
+            samplerate=16000,
             winfunc=numpy.hamming
         )
 
         main_resident, resident_test_group = ResidentsQuery._create_test_group(
             resident_cpf,
-            group_size=10
+            group_size=5
         )
 
-        nearest_resident = ResidentsQuery._find_nearest_resident_by_mfcc_attribute(
+        nearest_resident = ResidentsQuery._find_nearest_resident_by_mfcc_phrase(
             residents=resident_test_group,
-            mfcc_attribute=mfcc_audio_speaking_phrase,
-            which_attribute='mfcc_audio_speaking_phrase'
+            mfcc_attribute=mfcc_audio_speaking_phrase
         )
 
         audio_phrase_belongs_resident = (main_resident == nearest_resident)
 
-        audio_name_belongs_resident = True
-        if audio_speaking_name is not None:
-            mfcc_audio_speaking_name = mfcc(
-                numpy.array(audio_speaking_name),
-                samplerate=audio_samplerate,
-                winfunc=numpy.hamming
-            )
-
-            nearest_resident = ResidentsQuery._find_nearest_resident_by_mfcc_attribute(
-                residents=resident_test_group,
-                mfcc_attribute=mfcc_audio_speaking_name,
-                which_attribute='mfcc_audio_speaking_name'
-            )
-            audio_name_belongs_resident = (main_resident == nearest_resident)
-
-        return audio_phrase_belongs_resident and audio_name_belongs_resident
+        return audio_phrase_belongs_resident
 
     @staticmethod
     def _create_test_group(main_resident_cpf, group_size):
@@ -108,22 +92,15 @@ class ResidentsQuery(graphene.AbstractType):
         return main_resident, resident_group+[main_resident]
 
     @staticmethod
-    def _find_nearest_resident_by_mfcc_attribute(residents, mfcc_attribute, which_attribute):
+    def _find_nearest_resident_by_mfcc_phrase(residents, mfcc_attribute):
         """
-        Find out the nearest resident based on given a mfcc audio attribute
+        Find out the nearest resident based on mfcc_audio_speaking_phrase
         """
         nearest_resident = None
         lowest_dtw_score = (1 << 64) - 1
 
         for resident in residents:
-            resident_mfcc_attribute = None
-
-            if which_attribute == 'mfcc_audio_speaking_name':
-                resident_mfcc_attribute = resident.mfcc_audio_speaking_name
-
-            elif which_attribute == 'mfcc_audio_speaking_phrase':
-                resident_mfcc_attribute = resident.mfcc_audio_speaking_phrase
-
+            resident_mfcc_attribute = resident.mfcc_audio_speaking_phrase
             resident_mfcc_attribute = Utility.mfcc_array_to_matrix(resident_mfcc_attribute)
             resident_mfcc_attribute = numpy.array(resident_mfcc_attribute)
 
