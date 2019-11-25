@@ -1,0 +1,13 @@
+- platform: rest
+  name: 'abrir porta'
+  scan_interval: 5
+  resource: http://localhost:8000/graphql/?query=query%7Bdoor%7D
+  body_on: '{"data": {"door": true}}'
+  body_off: '{"data": {"door": false}}'
+  is_on_template: '{{ value_json.data.door }}'
+
+- platform: command_line
+  switches:
+    fechar_porta:
+      command_on: "/usr/bin/curl -d '{\"query\":\"mutation {updateDoor(enter: false){enter}}\"}'  -H 'Content-Type: application/json'  -X POST 'http://localhost:8000/graphql/'"
+      command_off: ""

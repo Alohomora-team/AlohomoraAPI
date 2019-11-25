@@ -1,41 +1,29 @@
+homeassistant:
+  name: Portaria
+  latitude: -15.831420
+  longitude: -48.057800
+  elevation: 1
+  unit_system: metric
+  time_zone: America/Sao_Paulo
+  customize: !include customization.yaml
 
-# Configure a default setup of Home Assistant (frontend, api, etc)
-default_config:
 
-# Uncomment this if you are using SSL/TLS, running in Docker container, etc.
-# http:
-#   base_url: example.duckdns.org:8123
+config:
 
-# Text to speech
+map:
+
+system_health:
+
+updater:
+
+
 tts:
   - platform: google_translate
 
-switch:
-  - platform: rest
-    name: 'abrir porta'
-    scan_interval: 5
-    resource: http://localhost:8000/graphql/?query=query%7Bdoor%7D
-    body_on: '{"data": {"door": true}}'
-    body_off: '{"data": {"door": false}}'
-    is_on_template: '{{ value_json.data.door }}'
+switch: !include switches.yaml
 
-  - platform: command_line
-    switches:
-      fechar_porta:
-        command_on: "/usr/bin/curl -d '{\"query\":\"mutation {updateDoor(enter: false){enter}}\"}'  -H 'Content-Type: application/json'  -X POST 'http://localhost:8000/graphql/'"
-        command_off: ""
-        friendly_name: Fechar porta
 
-group:
-  default_view:
-    view: true
-    icon: mdi:home
-    entities:
-      - group.portaria
-  portaria:
-    name: Portaria
-    entities:
-      - switch.abrir_porta
-      - switch.fechar_porta
+group: !include groups.yaml
+
 
 script: !include scripts.yaml

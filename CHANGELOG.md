@@ -27,6 +27,7 @@ Todas as mudanças notáveis no sistema você encontra aqui.
 
 - Disponibilizado uma forma de mudar a senha e email.
 
+- Adição do home-assistant
 
 ### Modificado
 - Refatoração na estrutura de arquivos de *schema* e nos testes de *accounts*

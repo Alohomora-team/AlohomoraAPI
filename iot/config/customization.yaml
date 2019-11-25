@@ -1,0 +1,5 @@
+switch.abrir_porta:
+  friendly_name: Abrir porta
+  icon: mdi:door-open
+switch.fechar_porta:
+  icon: mdi:door-closed-lock
