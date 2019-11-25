@@ -1,9 +1,12 @@
 """Module for grouping utility functions used throughout the project"""
+import os
 import json
+import string
+import random
 import numpy
+from scipy.io.wavfile import read, write
 from python_speech_features import mfcc
 from fastdtw import fastdtw
-import os
 
 def json_to_numpy_array(voice_data):
     """Converts JSON object to numpy array"""
@@ -101,7 +104,7 @@ def create_model_mfcc_from_wav_file(file_path):
     samplerate, data = read(file_path)
     return create_model_mfcc(data, samplerate)
 
-def treat_audio(file_path):
+def treat_audio_file(file_path):
     '''
     Remove noise, silence and unnecessary frequencies from wav audio file
 
@@ -109,16 +112,32 @@ def treat_audio(file_path):
     :returns: None
     '''
     file_name = file_path.split('/')[-1].split('.')[0]
+
     os.system(f"sox {file_path} -n trim 0 0.4 noiseprof {file_name}.noise-profile")
-
-    os.system(
-    f"sox {file_path} {file_name}_tmp.wav noisered {file_name}.noise-profile 0.26 highpass 300"
-    )
-
-    os.system(
-    f"sox {file_name}_tmp.wav {file_path} lowpass 3400 silence 1 1 2 reverse silence 1 1 1 reverse"
-    )
+    os.system(f"sox {file_path} {file_name}_tmp.wav noisered {file_name}.noise-profile 0.26")
+    os.system(f"sox {file_name}_tmp.wav {file_path} highpass 300 lowpass 3400")
+    os.system(f"sox {file_path} {file_name}_tmp.wav silence 1 1 2 reverse silence 1 1 1 reverse")
+    os.system(f"sox {file_name}_tmp.wav {file_path} rate 16k")
 
     os.system(f"rm {file_name}_tmp.wav {file_name}.noise-profile")
 
     return None
+
+def treat_audio_data(audio_data, samplerate):
+    '''
+    Remove noise, silence and unnecessary frequencies from audio data array
+
+    :param audio_data: an array containing audio data
+    :returns: treated array containing audio data
+    '''
+    letters = string.ascii_lowercase
+    tmp_file_path = ''.join(random.choice(letters) for i in range(10))
+    tmp_file_path = tmp_file_path + '.wav'
+
+    write(tmp_file_path, samplerate, audio_data)
+    treat_audio_file(file_name)
+
+    samplerate, data = read(tmp_file_path)
+    os.system(f"rm {tmp_file_path}")
+
+    return data
