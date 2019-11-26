@@ -100,7 +100,7 @@ def create_model_mfcc_from_wav_file(file_path):
     :param file_path: a string containing the file path
     :returns: MFCCs linearized matrix
     '''
-    treat_audio(file_path)
+    treat_audio_file(file_path)
     samplerate, data = read(file_path)
     return create_model_mfcc(data, samplerate)
 
@@ -130,11 +130,12 @@ def treat_audio_data(audio_data, samplerate):
     :param audio_data: an array containing audio data
     :returns: treated array containing audio data
     '''
-    letters = string.ascii_lowercase
-    tmp_file_path = ''.join(random.choice(letters) for i in range(10))
-    tmp_file_path = tmp_file_path + '.wav'
+    # letters = string.ascii_lowercase
+    # tmp_file_path = ''.join(random.choice(letters) for i in range(10))
+    # tmp_file_path = tmp_file_path + '.wav'
+    tmp_file_path = 'tmp_audio.wav'
 
-    write(tmp_file_path, samplerate, audio_data)
+    write(tmp_file_path, samplerate, numpy.array(audio_data))
     treat_audio_file(tmp_file_path)
 
     samplerate, data = read(tmp_file_path)

@@ -20,27 +20,25 @@ class VoiceBelongsUserTests(TestCase):
             query voiceBelongsResident(
                 $cpf: String!,
                 $audioSpeakingPhrase: [Float]!,
-                $audioSpeakingName: [Float],
                 $audioSamplerate: Int
             ){
                 voiceBelongsResident(
                     cpf: $cpf,
                     audioSpeakingPhrase: $audioSpeakingPhrase,
-                    audioSpeakingName: $audioSpeakingName,
                     audioSamplerate: $audioSamplerate
                 )
             }
         '''
         self.residents = [
-            'aline',
-            'baraky',
-            'felipe',
-            'luis',
+            # 'aline',
+            # 'baraky',
+            # 'felipe',
+            # 'luis',
             'marcos',
-            'mateus',
-            'paulo',
-            'pedro',
-            'rodrigo',
+            # 'mateus',
+            # 'paulo',
+            # 'pedro',
+            # 'rodrigo',
             'samuel',
             'sergio',
             'silva',
@@ -54,7 +52,7 @@ class VoiceBelongsUserTests(TestCase):
         '''
         matches = 0.0
         for resident in  self.residents:
-            samplerate, data = read('audios/' + resident + file_suffix)
+            samplerate, data = read('accounts/tests/audios/' + resident + file_suffix)
             response = self.client.execute(
                 self.query,
                 variables={
@@ -88,7 +86,7 @@ class VoiceBelongsUserTests(TestCase):
         self.assertGreaterEqual(hit_ratio, 85.0)
 
     def test_impostors_rejection(self):
-        samplerate, data = read('audios/impostor.wav')
+        samplerate, data = read('accounts/tests/audios/impostor.wav')
         rejections = 0.0
         for resident in self.residents:
             response = self.client.execute(
@@ -99,7 +97,10 @@ class VoiceBelongsUserTests(TestCase):
                     'audioSamplerate': samplerate
                 }
             )
-            if response['data']['voiceBelongsResident'] == False:
+            print("\n\n\n")
+            print(response)
+            print("\n\n\n")
+            if response["data"]["voiceBelongsResident"] == False:
                 rejections = rejections + 1.0
 
         # accuracy must be greater equal 85% 

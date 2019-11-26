@@ -101,15 +101,15 @@ def initialize_voice_data():
     '''
     Create all resident accounts for tests
     '''
-    create_resident_test_account('aline')
-    create_resident_test_account('baraky')
-    create_resident_test_account('felipe')
-    create_resident_test_account('luis')
+    # create_resident_test_account('aline')
+    # create_resident_test_account('baraky')
+    # create_resident_test_account('felipe')
+    # create_resident_test_account('luis')
     create_resident_test_account('marcos')
-    create_resident_test_account('mateus')
-    create_resident_test_account('paulo')
-    create_resident_test_account('pedro')
-    create_resident_test_account('rodrigo')
+    # create_resident_test_account('mateus')
+    # create_resident_test_account('paulo')
+    # create_resident_test_account('pedro')
+    # create_resident_test_account('rodrigo')
     create_resident_test_account('samuel')
     create_resident_test_account('sergio')
     create_resident_test_account('silva')
