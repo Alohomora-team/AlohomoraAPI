@@ -95,7 +95,7 @@ def create_model_mfcc(audio_signal, samplerate):
 
 def create_model_mfcc_from_wav_file(file_path):
     '''
-    Create a linearized matrix of MFCCs from a audio file
+    Treat the audio file and create a linearized matrix of MFCCs from a audio file
 
     :param file_path: a string containing the file path
     :returns: MFCCs linearized matrix
@@ -107,19 +107,24 @@ def create_model_mfcc_from_wav_file(file_path):
 def treat_audio_file(file_path):
     '''
     Remove noise, silence and unnecessary frequencies from wav audio file
+    Treated audio will be stored in a new file named with source file name + _tmp
 
     :param file_path: a string containing the file path
     :returns: None
     '''
     file_name = file_path.split('/')[-1].split('.')[0]
 
-    os.system(f"sox {file_path} -n trim 0 0.4 noiseprof {file_name}.noise-profile")
-    os.system(f"sox {file_path} {file_name}_tmp.wav noisered {file_name}.noise-profile 0.26")
-    os.system(f"sox {file_name}_tmp.wav {file_path} highpass 300 lowpass 3400")
-    os.system(f"sox {file_path} {file_name}_tmp.wav silence 1 1 2 reverse silence 1 1 1 reverse")
-    os.system(f"sox {file_name}_tmp.wav {file_path} rate 16k")
+    os.system(f"sox {file_path} -n trim 0 0.4 noiseprof {file_name}.np")
 
-    os.system(f"rm {file_name}_tmp.wav {file_name}.noise-profile")
+    os.system(f"sox {file_path} {file_name}_tmp.wav noisered {file_name}.np 0.26")
+
+    os.system(f"sox {file_name}_tmp.wav {file_name}_tmp1.wav highpass 300 lowpass 3400")
+
+    os.system(
+f"sox {file_name}_tmp1.wav {file_name}_tmp.wav silence 1 1 2 reverse silence 1 1 1 reverse rate 16k"
+    )
+
+    os.system(f"rm {file_name}_tmp1.wav {file_name}.np")
 
     return None
 
@@ -130,15 +135,15 @@ def treat_audio_data(audio_data, samplerate):
     :param audio_data: an array containing audio data
     :returns: treated array containing audio data
     '''
-    # letters = string.ascii_lowercase
-    # tmp_file_path = ''.join(random.choice(letters) for i in range(10))
-    # tmp_file_path = tmp_file_path + '.wav'
-    tmp_file_path = 'tmp_audio.wav'
+    letters = string.ascii_lowercase
+    tmp_file_name = ''.join(random.choice(letters) for i in range(10))
+    tmp_file_path = tmp_file_name + ".wav"
 
     write(tmp_file_path, samplerate, numpy.array(audio_data))
     treat_audio_file(tmp_file_path)
+    samplerate, data = read(tmp_file_name + "_tmp.wav")
 
-    samplerate, data = read(tmp_file_path)
     os.system(f"rm {tmp_file_path}")
+    os.system(f"rm {tmp_file_name}_tmp.wav")
 
     return data
