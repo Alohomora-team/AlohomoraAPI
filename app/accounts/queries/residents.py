@@ -2,9 +2,9 @@
 Queries that resolve residents ann list them
 """
 import secrets
-import graphene
-from python_speech_features import mfcc
 import numpy
+from python_speech_features import mfcc
+import graphene
 from graphql_jwt.decorators import superuser_required
 from accounts.models import Resident
 import accounts.utility as Utility
