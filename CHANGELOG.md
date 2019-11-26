@@ -29,6 +29,8 @@ Todas as mudanças notáveis no sistema você encontra aqui.
 
 - Adição do home-assistant
 
+- Disponibilizado uma forma de revogar e renovar o token.
+
 ### Modificado
 - Refatoração na estrutura de arquivos de *schema* e nos testes de *accounts*
 - Regras do [*Pylint*]() modificadas
