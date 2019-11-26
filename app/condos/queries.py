@@ -1,6 +1,7 @@
 """Module for grouping graphQL queries"""
 import graphene
 from graphql_jwt.decorators import superuser_required
+from condos import door
 from .models import Block, Apartment
 from .types import BlockType, ApartmentType
 
@@ -9,6 +10,7 @@ class Query():
 
     all_blocks = graphene.List(BlockType)
     all_apartments = graphene.List(ApartmentType)
+    door = graphene.Boolean()
 
     apartments = graphene.Field(
         graphene.List(ApartmentType),
@@ -25,6 +27,10 @@ class Query():
         number=graphene.String(),
         block=graphene.String()
         )
+
+    def resolve_door(self, info):
+        """Say if the door can be open"""
+        return door.door_instance.value
 
     def resolve_all_blocks(self, info, **kwargs):
         """Returns all Block type objects"""

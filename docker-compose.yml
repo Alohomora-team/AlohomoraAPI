@@ -27,3 +27,13 @@ services:
     # The volume with pylintrc configuration
     volumes:
     - "./:/home"
+
+  homeassistant:
+    container_name: home-assistant
+    image: homeassistant/home-assistant:stable
+    volumes:
+      - ./iot/config:/config
+    environment:
+      - TZ=America/Sao_Paulo
+    restart: always
+    network_mode: host
