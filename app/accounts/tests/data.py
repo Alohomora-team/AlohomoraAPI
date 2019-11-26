@@ -101,7 +101,7 @@ def initialize_voice_data():
     '''
     Create all resident accounts for tests
     '''
-    # create_resident_test_account('aline')
+    create_resident_test_account('aline')
     # create_resident_test_account('baraky')
     # create_resident_test_account('felipe')
     # create_resident_test_account('luis')

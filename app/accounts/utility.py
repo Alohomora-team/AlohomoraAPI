@@ -107,7 +107,7 @@ def create_model_mfcc_from_wav_file(file_path):
 def treat_audio_file(file_path):
     '''
     Remove noise, silence and unnecessary frequencies from wav audio file
-    Treated audio will be stored in a new file named with source file name + _tmp
+    Treated audio will be stored in a new file named with source file name + _tmp.wav
 
     :param file_path: a string containing the file path
     :returns: None

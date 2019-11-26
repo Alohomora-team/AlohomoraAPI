@@ -30,7 +30,7 @@ class VoiceBelongsUserTests(TestCase):
             }
         '''
         self.residents = [
-            # 'aline',
+            'aline',
             # 'baraky',
             # 'felipe',
             # 'luis',
