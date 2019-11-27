@@ -19,7 +19,7 @@ class CreateService(graphene.Mutation):
         email = graphene.String(required=True)
         complete_name = graphene.String(required=True)
 
-    # @superuser_required
+    @superuser_required
     def mutate(self, info, **kwargs):
         """Method to execute the mutation"""
         email = kwargs.get('email')
@@ -48,7 +48,7 @@ class UpdateService(graphene.Mutation):
         service_data = ServiceInput()
 
 
-    # @login_required
+    @login_required
     def mutate(self, info, service_data=None):
         """Method to execute the mutation"""
         service = Service.objects.get(email=service_data.service_email)
@@ -67,7 +67,7 @@ class DeleteService(graphene.Mutation):
         """Mutation arguments for delete aservice"""
         service_email = graphene.String(required=True)
 
-    # @superuser_required
+    @superuser_required
     def mutate(self, info, service_email):
         """Method to execute the mutation"""
         service = Service.objects.get(email=service_email)

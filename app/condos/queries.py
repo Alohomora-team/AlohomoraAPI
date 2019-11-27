@@ -32,14 +32,17 @@ class Query():
         """Say if the door can be open"""
         return door.door_instance.value
 
+    @superuser_required
     def resolve_all_blocks(self, info, **kwargs):
         """Returns all Block type objects"""
         return Block.objects.all()
 
+    @superuser_required
     def resolve_all_apartments(self, info, **kwargs):
         """Returns all Apartment type objects"""
         return Apartment.objects.all()
 
+    @superuser_required
     def resolve_apartment(self, info, **kwargs):
         """Returns a specific Apartment type object"""
         number = kwargs.get('number')
@@ -51,6 +54,7 @@ class Query():
 
         return None
 
+    @superuser_required
     def resolve_block(self, info, **kwargs):
         """Returns a specific Block type object"""
         number = kwargs.get('number')
@@ -60,6 +64,7 @@ class Query():
 
         return None
 
+    @superuser_required
     def resolve_apartments(self, info, **kwargs):
         """Returns all Apartment type objects that match a number"""
         number = kwargs.get('number')

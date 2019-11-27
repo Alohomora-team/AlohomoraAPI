@@ -30,6 +30,7 @@ class CreateResident(graphene.Mutation):
         audio_speaking_name = graphene.List(graphene.Float, required=True)
         audio_samplerate = graphene.Int(required=False)
 
+    @superuser_required
     def mutate(self, info, **kwargs):
         """Method to execute the mutation"""
 
@@ -92,7 +93,7 @@ class UpdateResident(graphene.Mutation):
         """Mutation arguments for update a resident"""
         resident_data = ResidentInput()
 
-    # @login_required
+    @login_required
     def mutate(self, info, resident_data=None):
         """Method to execute the mutation"""
         resident = Resident.objects.get(cpf=resident_data.resident_cpf)
@@ -109,7 +110,7 @@ class DeleteResident(graphene.Mutation):
         """Mutation arguments for delete a resident"""
         resident_email = graphene.String(required=True)
 
-    # @superuser_required
+    @superuser_required
     def mutate(self, info, resident_email):
         """Method to execute the mutation"""
         resident = Resident.objects.get(email=resident_email)
