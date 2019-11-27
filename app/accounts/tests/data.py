@@ -78,9 +78,11 @@ def create_resident_test_account(resident_name):
     '''
     Create a resident accout for tests
     '''
+    print('\tCreating model mfcc ...')
     mfcc_resident = Utility.create_model_mfcc_from_wav_file(
         'accounts/tests/audios/' + resident_name + '_base.wav'
     )
+    print('\t\tDone')
 
     get_user_model().objects.create(
             email=resident_name + '@example.com',
@@ -101,17 +103,31 @@ def initialize_voice_data():
     '''
     Create all resident accounts for tests
     '''
+    print('Creating aline ...')
     create_resident_test_account('aline')
+    print('\tDone')
     # create_resident_test_account('baraky')
     # create_resident_test_account('felipe')
     # create_resident_test_account('luis')
+    print('Creating marcos ...')
     create_resident_test_account('marcos')
+    print('\tDone')
     # create_resident_test_account('mateus')
     # create_resident_test_account('paulo')
     # create_resident_test_account('pedro')
     # create_resident_test_account('rodrigo')
+    print('Creating samuel ...')
     create_resident_test_account('samuel')
+    print('\tDone')
+    print('Creating sergio ...')
     create_resident_test_account('sergio')
+    print('\tDone')
+    print('Creating silva ...')
     create_resident_test_account('silva')
+    print('\tDone')
+    print('Creating victor ...')
     create_resident_test_account('victor')
+    print('\tDone')
+    print('Creating vitor ...')
     create_resident_test_account('vitor')
+    print('\tDone')
