@@ -73,7 +73,7 @@ def mfcc_array_to_matrix(mfcc_array):
     '''
     column_length, array_len = 13, len(mfcc_array)
     mfcc_matrix = [mfcc_array[x:x + column_length] for x in range(0, array_len, column_length)]
-    print('\t\t\t\tDone')
+
     return mfcc_matrix
 
 def create_model_mfcc(audio_signal, samplerate):
@@ -84,14 +84,12 @@ def create_model_mfcc(audio_signal, samplerate):
     :param samplerate: audio_signal's samplerate
     :returns: audio_signal's MFCC linearized matrix
     """
-    print('\t\t\tExtratcting MFCC ...')
     mfcc_audio_signal = mfcc(
         numpy.array(audio_signal),
         samplerate=samplerate,
         winfunc=numpy.hamming
     )
-    print('\t\t\t\tDone')
-    print('\t\t\tLinearzing MFCC ...')
+
     return mfcc_matrix_to_array(mfcc_audio_signal)
 
 def create_model_mfcc_from_wav_file(file_path):
@@ -101,14 +99,11 @@ def create_model_mfcc_from_wav_file(file_path):
     :param file_path: a string containing the file path
     :returns: MFCCs linearized matrix
     '''
-    print('\t\tTreating audio file ...')
+
     file_path = treat_audio_file(file_path)
-    print('\t\t\tDone')
-    print(f"\t\tOpening treated audio file ({file_path})...")
     samplerate, data = read(file_path)
-    print('\t\t\tDone')
-    print('\t\tCreating model mfcc ...')
     os.system(f"rm {file_path}")
+
     return create_model_mfcc(data, samplerate)
 
 def treat_audio_file(file_path):
@@ -119,27 +114,14 @@ def treat_audio_file(file_path):
     :param file_path: a string containing the file path
     :returns: treated audio file path
     '''
-    print('\t\t\tSplitting audio file path ...')
+
     file_name = file_path.split('/')[-1].split('.')[0]
-    print(f"\t\t\t\tDone file_name = {file_name}")
-
-    print('\t\t\tExtracting noise profile ...')
     os.system(f"sox {file_path} -n trim 0 0.4 noiseprof {file_name}.np")
-    print('\t\t\t\tDone')
-
-    print('\t\t\tApplying noisereduction ...')
     os.system(f"sox {file_path} {file_name}_tmp.wav noisered {file_name}.np 0.26")
-    print('\t\t\t\tDone')
-
-    print('\t\t\tAplying bandpass filters ...')
     os.system(f"sox {file_name}_tmp.wav {file_name}_tmp1.wav highpass 300 lowpass 3400")
-    print('\t\t\t\tDone')
-
-    print('\t\t\tRemoving trealing silence and rating to 16k')
     os.system(
 f"sox {file_name}_tmp1.wav {file_name}_tmp.wav silence 1 1 2 reverse silence 1 1 1 reverse rate 16k"
     )
-    print('\t\t\t\tDone')
 
     os.system(f"rm {file_name}_tmp1.wav {file_name}.np")
 
@@ -152,11 +134,15 @@ def treat_audio_data(audio_data, samplerate):
     :param audio_data: an array containing audio data
     :returns: treated array containing audio data
     '''
+
     letters = string.ascii_lowercase
     tmp_file_name = ''.join(random.choice(letters) for i in range(10))
     tmp_file_path = tmp_file_name + ".wav"
 
-    write(tmp_file_path, samplerate, numpy.array(audio_data))
+    audio_data = numpy.array(audio_data)
+    audio_data = audio_data * (1 / (audio_data.max() * 5))
+
+    write(tmp_file_path, samplerate, audio_data)
     new_file_name = treat_audio_file(tmp_file_path)
     samplerate, data = read(new_file_name)
 

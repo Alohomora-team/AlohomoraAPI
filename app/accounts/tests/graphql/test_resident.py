@@ -9,6 +9,7 @@ from graphene.test import Client
 from alohomora.schema import schema
 from django.contrib.auth import get_user_model
 from accounts.models import Resident
+from scipy.io.wavfile import read
 
 @pytest.mark.usefixtures('test_data')
 class ResidentTest(JSONWebTokenTestCase, TestCase):
@@ -27,7 +28,10 @@ class ResidentTest(JSONWebTokenTestCase, TestCase):
 
 
         mutation = '''
-                    mutation{
+                    mutation createResident(
+                      $audioSpeakingPhrase: [Float]!,
+                      $audioSpeakingName: [Float]!,
+                      ){
                       createResident(
                         completeName: "bob o construtor",
                         email: "resident2@example.com",
@@ -36,8 +40,8 @@ class ResidentTest(JSONWebTokenTestCase, TestCase):
                         apartment: "101",
                         block: "1",
                         password: "resident",
-                        audioSpeakingPhrase: [1.0, 2.0, 3.0, 4.0, 5.0],
-                        audioSpeakingName: [1.0, 2.0, 3.0, 4.0, 5.0]
+                        audioSpeakingPhrase: $audioSpeakingPhrase,
+                        audioSpeakingName: $audioSpeakingName
                       ){ resident{
                          completeName
                          email
@@ -46,7 +50,16 @@ class ResidentTest(JSONWebTokenTestCase, TestCase):
                     }
         '''
 
-        result = self.client.execute(mutation)
+        sr, audio_speaking = read("accounts/tests/audios/impostor.wav")
+        audio_speaking = audio_speaking.tolist()
+
+        result = self.client.execute(
+          mutation,
+          variables={
+            'audioSpeakingName': audio_speaking,
+            'audioSpeakingPhrase': audio_speaking
+            }
+        )
         self.assertIsNone(result.errors)
         self.assertDictEqual({
             "createResident": {

@@ -60,10 +60,13 @@ class CreateResident(graphene.Mutation):
         if audio_samplerate is None:
             audio_samplerate = 16000
 
+        audio_speaking_phrase = Utility.treat_audio_data(audio_speaking_phrase, audio_samplerate)
         mfcc_audio_speaking_phrase = Utility.create_model_mfcc(
             audio_speaking_phrase,
             audio_samplerate
         )
+
+        audio_speaking_name = Utility.treat_audio_data(audio_speaking_name, audio_samplerate)
         mfcc_audio_speaking_name = Utility.create_model_mfcc(
             audio_speaking_name,
             audio_samplerate

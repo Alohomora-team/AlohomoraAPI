@@ -31,14 +31,11 @@ class VoiceBelongsUserTests(TestCase):
         '''
         self.residents = [
             'aline',
-            # 'baraky',
-            # 'felipe',
-            # 'luis',
+            'felipe',
             'marcos',
-            # 'mateus',
-            # 'paulo',
-            # 'pedro',
-            # 'rodrigo',
+            'mateus',
+            'paulo',
+            'pedro',
             'samuel',
             'sergio',
             'silva',
@@ -82,8 +79,8 @@ class VoiceBelongsUserTests(TestCase):
         '''
         hit_ratio = self.compute_accuracy('_noised.wav')
         
-        # accuracy must be greater equal 50% 
-        self.assertGreaterEqual(hit_ratio, 50.0)
+        # accuracy must be greater equal 53% 
+        self.assertGreaterEqual(hit_ratio, 53.0)
 
     def test_impostors_rejection(self):
         samplerate, data = read('accounts/tests/audios/impostor.wav')
@@ -97,9 +94,6 @@ class VoiceBelongsUserTests(TestCase):
                     'audioSamplerate': samplerate
                 }
             )
-            print("\n\n\n")
-            print(response)
-            print("\n\n\n")
             if response["data"]["voiceBelongsResident"] == False:
                 rejections = rejections + 1.0
 
