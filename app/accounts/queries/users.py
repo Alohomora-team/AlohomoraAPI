@@ -23,14 +23,6 @@ class UsersQuery(graphene.AbstractType):
     def resolve_me(self, info):
         """Search for user features"""
         user = info.context.user
-        if user.is_active is False:
-            raise Exception('User is NOT active')
-        if user.is_service is True:
-            raise Exception('User is service')
-        if user.is_visitor is True:
-            raise Exception('User is visitor')
-        if user.is_resident is True:
-            raise Exception('User is resident')
         return user
 
     @superuser_required
