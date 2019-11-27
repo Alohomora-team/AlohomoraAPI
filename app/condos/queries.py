@@ -28,7 +28,6 @@ class Query():
         block=graphene.String()
         )
 
-    @superuser_required
     def resolve_door(self, info):
         """Say if the door can be open"""
         return door.door_instance.value

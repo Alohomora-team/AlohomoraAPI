@@ -46,7 +46,6 @@ class ResidentsQuery(graphene.AbstractType):
 
         return None
 
-    @superuser_required
     def resolve_voice_belongs_resident(self, info, **kwargs):
         """Find out if the voice belongs to the resident"""
         resident_cpf = kwargs.get('cpf')
