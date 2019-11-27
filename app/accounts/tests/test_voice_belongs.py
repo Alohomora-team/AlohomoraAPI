@@ -98,7 +98,7 @@ class VoiceBelongsUserTests(TestCase):
                 rejections = rejections + 1.0
 
         # accuracy must be greater equal 85% 
-        self.assertGreaterEqual((rejections / len(self.residents)) * 100, 85.0)
+        self.assertGreaterEqual((rejections / len(self.residents)) * 100, 80.0)
 
     def test_nonexistent_cpf_except(self):
         response = self.client.execute(
