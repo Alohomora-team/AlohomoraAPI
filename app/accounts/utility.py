@@ -108,6 +108,7 @@ def create_model_mfcc_from_wav_file(file_path):
     samplerate, data = read(file_path)
     print('\t\t\tDone')
     print('\t\tCreating model mfcc ...')
+    os.system(f"rm {file_path}")
     return create_model_mfcc(data, samplerate)
 
 def treat_audio_file(file_path):
@@ -156,8 +157,8 @@ def treat_audio_data(audio_data, samplerate):
     tmp_file_path = tmp_file_name + ".wav"
 
     write(tmp_file_path, samplerate, numpy.array(audio_data))
-    treat_audio_file(tmp_file_path)
-    samplerate, data = read(tmp_file_name + "_tmp.wav")
+    new_file_name = treat_audio_file(tmp_file_path)
+    samplerate, data = read(new_file_name)
 
     os.system(f"rm {tmp_file_path}")
     os.system(f"rm {tmp_file_name}_tmp.wav")

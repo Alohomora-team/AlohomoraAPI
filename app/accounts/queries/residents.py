@@ -9,6 +9,7 @@ from graphql_jwt.decorators import superuser_required
 from accounts.models import Resident
 import accounts.utility as Utility
 from accounts.types import ResidentType
+from scipy.io.wavfile import write
 
 class ResidentsQuery(graphene.AbstractType):
     """Used to read or fetch values"""
@@ -48,8 +49,9 @@ class ResidentsQuery(graphene.AbstractType):
     def resolve_voice_belongs_resident(self, info, **kwargs):
         """Find out if the voice belongs to the resident"""
         resident_cpf = kwargs.get('cpf')
-        audio_speaking_phrase = kwargs.get('audio_speaking_phrase')
+        audio_speaking_phrase = numpy.array(kwargs.get('audio_speaking_phrase'))
         audio_samplerate = kwargs.get('audio_samplerate')
+        audio_speaking_phrase = audio_speaking_phrase * (1/(audio_speaking_phrase.max()*5))
 
         if audio_samplerate is None:
             audio_samplerate = 16000
@@ -64,9 +66,11 @@ class ResidentsQuery(graphene.AbstractType):
 
         main_resident, resident_test_group = ResidentsQuery._create_test_group(
             resident_cpf,
-            group_size=5
+            group_size=10
         )
 
+        print("\n\n###############################################################")
+        print(f"Comparando {main_resident.complete_name} com demais ...\n\n")
         nearest_resident = ResidentsQuery._find_nearest_resident_by_mfcc_phrase(
             residents=resident_test_group,
             mfcc_attribute=mfcc_audio_speaking_phrase
@@ -105,6 +109,7 @@ class ResidentsQuery(graphene.AbstractType):
             resident_mfcc_attribute = numpy.array(resident_mfcc_attribute)
 
             current_measure = Utility.compute_dtw_distance(mfcc_attribute, resident_mfcc_attribute)
+            print(f"\tDistancia para {resident.complete_name} = {current_measure}")
             if current_measure < lowest_dtw_score:
                 lowest_dtw_score = current_measure
                 nearest_resident = resident
