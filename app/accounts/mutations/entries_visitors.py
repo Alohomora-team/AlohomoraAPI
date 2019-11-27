@@ -18,6 +18,7 @@ class CreateEntryVisitor(graphene.Mutation):
         block_number = graphene.String()
         apartment_number = graphene.String()
 
+    @superuser_required
     def mutate(self, info, **kwargs):
         """Method to execute the mutation"""
         visitor_cpf = kwargs.get('visitor_cpf')

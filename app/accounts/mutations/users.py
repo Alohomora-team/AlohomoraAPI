@@ -16,7 +16,7 @@ class CreateUser(graphene.Mutation):
         email = graphene.String(required=True)
 
 
-    # @login_required
+    @login_required
     def mutate(self, info, password, username, email):
         """Method to execute the mutation"""
         user = get_user_model()(
@@ -36,7 +36,7 @@ class ChangePassword(graphene.Mutation):
         password = graphene.String(required=True)
         user_email = graphene.String(required=True)
 
-    #@superuser_required
+    @superuser_required
     def mutate(self, info, password, user_email):
         """Method to execute the mutation"""
         user = get_user_model().objects.get(email=user_email)
@@ -52,7 +52,7 @@ class ChangeEmail(graphene.Mutation):
         user_email = graphene.String(required=True)
         email = graphene.String(required=True)
 
-    #@superuser_required
+    @superuser_required
     def mutate(self, info, email, user_email):
         """Method to execute the mutation"""
         user = get_user_model().objects.get(email=user_email)
@@ -68,6 +68,7 @@ class UserActivationManager(graphene.Mutation):
         """Mutation arguments for activate/deactive a user"""
         user_email = graphene.String()
 
+    @superuser_required
     def mutate(self, info, user_email):
         """Method to execute the mutation"""
         user = get_user_model().objects.get(email=user_email)

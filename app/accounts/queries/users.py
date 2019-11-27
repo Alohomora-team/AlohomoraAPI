@@ -14,11 +14,12 @@ class UsersQuery(graphene.AbstractType):
     unactives_users = graphene.List(UserType)
     me = graphene.Field(UserType)
 
+    @superuser_required
     def resolve_unactives_users(self, info, **kwargs):
         """Query all unactives users"""
         return get_user_model().objects.filter(is_active=False)
 
-    # @login_required
+    @login_required
     def resolve_me(self, info):
         """Search for user features"""
         user = info.context.user
@@ -32,7 +33,7 @@ class UsersQuery(graphene.AbstractType):
             raise Exception('User is resident')
         return user
 
-    # @superuser_required
+    @superuser_required
     def resolve_users(self, info, **kwargs):
         """Query all users"""
         return get_user_model().objects.all()

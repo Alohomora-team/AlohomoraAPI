@@ -13,6 +13,7 @@ class UpdateDoor(graphene.Mutation):
         """Mutation arguments for updating"""
         enter = graphene.Boolean(required=True)
 
+    @superuser_required
     def mutate(self, info, enter):
         """Method to execute the mutation updateDoor"""
         door.door_instance.value = enter
