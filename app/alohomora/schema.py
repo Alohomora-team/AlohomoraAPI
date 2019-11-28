@@ -12,6 +12,7 @@ import accounts.queries.visitors
 import accounts.queries.entries
 import accounts.queries.entries_visitors
 import accounts.queries.services
+import accounts.queries.audio
 import condos.schema
 import condos.queries
 import bot.schema
@@ -26,6 +27,7 @@ class Query(
         accounts.queries.services.ServicesQuery,
         accounts.queries.users.UsersQuery,
         accounts.queries.visitors.VisitorsQuery,
+        accounts.queries.audio.AudioQuery,
         graphene.ObjectType,
         ):
     """
