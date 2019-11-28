@@ -3,7 +3,6 @@ Module used to implement querys to verify audio features
 '''
 import numpy
 import graphene
-from scipy.io.wavfile import write
 import accounts.utility as Utility
 
 class AudioQuery(graphene.AbstractType):

@@ -117,7 +117,9 @@ def treat_audio_file(file_path):
 
     file_name = file_path.split('/')[-1].split('.')[0]
     os.system(f"sox {file_path} -n trim 0 0.4 noiseprof {file_name}.np")
-    os.system(f"sox {file_path} {file_name}_tmp.wav noisered {file_name}.np 0.26")
+    os.system(
+        f"sox {file_path} {file_name}_tmp.wav noisered {file_name}.np 0.26 channels 1"
+    )
     os.system(f"sox {file_name}_tmp.wav {file_name}_tmp1.wav highpass 300 lowpass 3400")
     os.system(
 f"sox {file_name}_tmp1.wav {file_name}_tmp.wav silence 1 1 2 reverse silence 1 1 1 reverse rate 16k"
