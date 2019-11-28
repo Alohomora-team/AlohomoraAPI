@@ -17,7 +17,14 @@ class CreateUser(graphene.Mutation):
 
 
     @login_required
-    def mutate(self, info, password, username, email):
+    def mutate(self, info, password, **kwargs):
+        """
+        Create a user mutation
+        """
+
+        username = kwargs.get('username')
+        email = kwargs.get('email')
+
         """Method to execute the mutation"""
         user = get_user_model()(
             username=username,
