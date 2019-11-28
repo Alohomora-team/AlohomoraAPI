@@ -1,0 +1,29 @@
+homeassistant:
+  name: Portaria
+  latitude: -15.831420
+  longitude: -48.057800
+  elevation: 1
+  unit_system: metric
+  time_zone: America/Sao_Paulo
+  customize: !include customization.yaml
+
+
+config:
+
+map:
+
+system_health:
+
+updater:
+
+
+tts:
+  - platform: google_translate
+
+switch: !include switches.yaml
+
+
+group: !include groups.yaml
+
+
+script: !include scripts.yaml

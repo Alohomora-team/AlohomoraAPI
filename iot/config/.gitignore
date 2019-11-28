@@ -1,0 +1,7 @@
+.storage/
+.HA_VERSION
+*.db
+deps
+tts
+.uuid
+home-assistant.log

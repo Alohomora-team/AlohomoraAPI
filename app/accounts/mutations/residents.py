@@ -11,6 +11,7 @@ from accounts.models import Resident
 from accounts.types import ResidentType, UserType, ResidentInput
 import accounts.utility as Utility
 
+
 class CreateResident(graphene.Mutation):
     """Mutation from graphene for creating resident"""
 
@@ -30,6 +31,40 @@ class CreateResident(graphene.Mutation):
         audio_speaking_name = graphene.List(graphene.Float, required=True)
         audio_samplerate = graphene.Int(required=False)
 
+    @staticmethod
+    def _set_sample_rate(audio_samplerate):
+        """
+        Set sample_rate to default (1600 hz)
+        """
+
+        if audio_samplerate is None:
+            audio_samplerate = 1600
+
+        return audio_samplerate
+
+    @staticmethod
+    def _verify_block(block):
+        """
+        Raise a exception if block not exists
+        """
+        if block is None:
+            raise Exception('Block not found')
+
+    @staticmethod
+    def _if_aparment_exists(apartment, block):
+        """
+        Raise a exception if block not exists
+        """
+
+        query = Apartment.objects.filter(
+            number=apartment,
+            block=block
+        ).first()
+
+        if query is None:
+            raise Exception('Apartment not found')
+
+    @superuser_required
     def mutate(self, info, **kwargs):
         """Method to execute the mutation"""
 
@@ -51,19 +86,17 @@ class CreateResident(graphene.Mutation):
 
         block_obj = Block.objects.filter(number=block).first()
 
-        if block_obj is None:
-            raise Exception('Block not found')
+        CreateResident._verify_block(block_obj)
+        CreateResident._if_aparment_exists(apartment, block_obj)
+        audio_samplerate = CreateResident._set_sample_rate(audio_samplerate)
 
-        if Apartment.objects.filter(number=apartment, block=block_obj).first() is None:
-            raise Exception('Apartment not found')
-
-        if audio_samplerate is None:
-            audio_samplerate = 16000
-
+        audio_speaking_phrase = Utility.treat_audio_data(audio_speaking_phrase, audio_samplerate)
         mfcc_audio_speaking_phrase = Utility.create_model_mfcc(
             audio_speaking_phrase,
             audio_samplerate
         )
+
+        audio_speaking_name = Utility.treat_audio_data(audio_speaking_name, audio_samplerate)
         mfcc_audio_speaking_name = Utility.create_model_mfcc(
             audio_speaking_name,
             audio_samplerate
@@ -92,7 +125,7 @@ class UpdateResident(graphene.Mutation):
         """Mutation arguments for update a resident"""
         resident_data = ResidentInput()
 
-    # @login_required
+    @login_required
     def mutate(self, info, resident_data=None):
         """Method to execute the mutation"""
         resident = Resident.objects.get(cpf=resident_data.resident_cpf)
@@ -109,7 +142,7 @@ class DeleteResident(graphene.Mutation):
         """Mutation arguments for delete a resident"""
         resident_email = graphene.String(required=True)
 
-    # @superuser_required
+    @superuser_required
     def mutate(self, info, resident_email):
         """Method to execute the mutation"""
         resident = Resident.objects.get(email=resident_email)

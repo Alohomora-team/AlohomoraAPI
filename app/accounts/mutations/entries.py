@@ -24,6 +24,7 @@ class CreateEntry(graphene.Mutation):
         resident_cpf = graphene.String()
         apartment_number = graphene.String()
 
+    @superuser_required
     def mutate(self, info, resident_cpf, apartment_number):
         """Method to execute the mutation"""
         resident = Resident.objects.filter(cpf=resident_cpf).first()

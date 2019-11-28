@@ -1,6 +1,10 @@
 """Module for grouping utility functions used throughout the project"""
+import os
 import json
+import string
+import random
 import numpy
+from scipy.io.wavfile import read, write
 from python_speech_features import mfcc
 from fastdtw import fastdtw
 
@@ -74,12 +78,12 @@ def mfcc_array_to_matrix(mfcc_array):
 
 def create_model_mfcc(audio_signal, samplerate):
     """
-    Create a linearized matrix of base_signal's MFCC
-    :param base_signal: Audio signal array
+    Create a linearized matrix of audio_signal's MFCC
+
+    :param auio_signal: Audio signal array
     :param samplerate: audio_signal's samplerate
     :returns: audio_signal's MFCC linearized matrix
     """
-
     mfcc_audio_signal = mfcc(
         numpy.array(audio_signal),
         samplerate=samplerate,
@@ -87,3 +91,64 @@ def create_model_mfcc(audio_signal, samplerate):
     )
 
     return mfcc_matrix_to_array(mfcc_audio_signal)
+
+def create_model_mfcc_from_wav_file(file_path):
+    '''
+    Treat the audio file and create a linearized matrix of MFCCs from a audio file
+
+    :param file_path: a string containing the file path
+    :returns: MFCCs linearized matrix
+    '''
+
+    file_path = treat_audio_file(file_path)
+    samplerate, data = read(file_path)
+    os.system(f"rm {file_path}")
+
+    return create_model_mfcc(data, samplerate)
+
+def treat_audio_file(file_path):
+    '''
+    Remove noise, silence and unnecessary frequencies from wav audio file
+    Treated audio will be stored in a new file named with source file name + _tmp.wav
+
+    :param file_path: a string containing the file path
+    :returns: treated audio file path
+    '''
+
+    file_name = file_path.split('/')[-1].split('.')[0]
+    os.system(f"sox {file_path} -n trim 0 0.4 noiseprof {file_name}.np")
+    os.system(
+        f"sox {file_path} {file_name}_tmp.wav noisered {file_name}.np 0.26 channels 1"
+    )
+    os.system(f"sox {file_name}_tmp.wav {file_name}_tmp1.wav highpass 300 lowpass 3400")
+    os.system(
+f"sox {file_name}_tmp1.wav {file_name}_tmp.wav silence 1 1 2 reverse silence 1 1 1 reverse rate 16k"
+    )
+
+    os.system(f"rm {file_name}_tmp1.wav {file_name}.np")
+
+    return file_name + '_tmp.wav'
+
+def treat_audio_data(audio_data, samplerate):
+    '''
+    Remove noise, silence and unnecessary frequencies from audio data array
+
+    :param audio_data: an array containing audio data
+    :returns: treated array containing audio data
+    '''
+
+    letters = string.ascii_lowercase
+    tmp_file_name = ''.join(random.choice(letters) for i in range(10))
+    tmp_file_path = tmp_file_name + ".wav"
+
+    # Reduce volume gained in comunication
+    audio_data = numpy.array(audio_data) * 0.00002
+
+    write(tmp_file_path, samplerate, audio_data)
+    new_file_name = treat_audio_file(tmp_file_path)
+    samplerate, data = read(new_file_name)
+
+    os.system(f"rm {tmp_file_path}")
+    os.system(f"rm {tmp_file_name}_tmp.wav")
+
+    return data

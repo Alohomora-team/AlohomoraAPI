@@ -7,6 +7,8 @@ Todas as mudanças notáveis no sistema você encontra aqui.
 ## [Unreleased]
 * Correção do bug na query de admins
 * Altera sistema de entradas de visitantes. Retira atributo 'pending' e mutations/queries desnecessárias.
+* Descomenta os decorators para dar mais segurança à aplicação.
+* Corrige bug na query 'resolve_me'
 
 ### Adicionado
 - Campos ***audioSpeakingName*** e ***audioSamplerate*** adicionados na *mutation* de [criação de morador](https://github.com/Alohomora-team/2019.2-AlohomoraPage/blob/master/docs/projeto/guia_de_uso.md#211-criando-um-morador) e na *query* de [autênticação do morador](https://github.com/Alohomora-team/2019.2-AlohomoraPage/blob/master/docs/projeto/guia_de_uso.md#31-autenticação-de-morador)
@@ -26,6 +28,9 @@ Todas as mudanças notáveis no sistema você encontra aqui.
 - Mecanismo de [ativar/desativar usuário](https://github.com/Alohomora-team/2019.2-AlohomoraPage/blob/master/docs/projeto/guia_de_uso.md#52-gerênciando-conta-de-usuários), bem como a consulta de usuários ativados ou desativados.
 
 - Disponibilizado uma forma de mudar a senha e email.
+
+- Adição do home-assistant
+
 - Disponibilizado uma forma de revogar e renovar o token.
 
 ### Modificado

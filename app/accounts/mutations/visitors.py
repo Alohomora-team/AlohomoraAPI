@@ -17,7 +17,7 @@ class CreateVisitor(graphene.Mutation):
         complete_name = graphene.String()
         cpf = graphene.String()
 
-    # @superuser_required
+    @superuser_required
     def mutate(self, info, **kwargs):
         """Method to execute the mutation"""
         complete_name = kwargs.get('complete_name')
@@ -40,7 +40,7 @@ class UpdateVisitor(graphene.Mutation):
         """Mutation arguments for update a visitor"""
         visitor_data = VisitorInput()
 
-    # @superuser_required
+    @superuser_required
     def mutate(self, info, visitor_data):
 
         """Method to execute the mutation"""
@@ -58,7 +58,7 @@ class DeleteVisitor(graphene.Mutation):
         """Mutation arguments for delete a visitor"""
         cpf = graphene.String(required=True)
 
-    # @superuser_required
+    @superuser_required
     def mutate(self, info, cpf):
         """Method to execute the mutation"""
         visitor = Visitor.objects.get(cpf=cpf)

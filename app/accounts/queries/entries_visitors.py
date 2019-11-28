@@ -2,6 +2,7 @@
 Resolve data about visitos entries
 """
 import graphene
+from graphql_jwt.decorators import superuser_required
 from condos.models import Apartment, Block
 from accounts.models import Visitor, EntryVisitor
 from accounts.types import EntryVisitorType
@@ -16,10 +17,13 @@ class EntriesVisitorsQuery(graphene.AbstractType):
         block_number=graphene.String(),
         apartment_number=graphene.String(),
         )
+
+    @superuser_required
     def resolve_all_entries_visitors(self, info, **kwargs):
         """Query all entries from visitors"""
         return EntryVisitor.objects.all()
 
+    @superuser_required
     def resolve_entries_visitor(self, info, **kwargs):
         """Query all entries from a specific visitor"""
         cpf = kwargs.get('cpf')
