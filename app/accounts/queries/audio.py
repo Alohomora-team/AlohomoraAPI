@@ -22,4 +22,4 @@ class AudioQuery(graphene.AbstractType):
         audio_samplerate = kwargs.get('audio_samplerate')
         audio_data = Utility.treat_audio_data(audio_data, audio_samplerate)
 
-        return len(audio_data) / audio_samplerate > 0.3
+        return len(audio_data) / 16000 > 0.3
