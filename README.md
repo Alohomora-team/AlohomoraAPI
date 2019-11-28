@@ -8,6 +8,8 @@
 
 ## Descrição
 
+
+
 [*AlohomoraAPI*](https://docs.google.com/presentation/d/1Stq0aMrGHJtB4bNKjKWnblM6ARlbEPcDAjC2B-zUUU0/edit?usp=sharing) é um sistema idealizado para a **gerência de portarias** de condomínios e prédios. Escrito em [*Python*](https://www.python.org) com o auxílio do [*framework Django*](https://www.djangoproject.com), o sistema visa resolver problemas de custo com portaria e fornecer autonomia aos moradores.
 
  O sistema conta com uma ferramenta de **biometria de voz**, fazendo com que a **voz do morador** se torne a sua própria **chave**. Tal funcionalidade faz com que o uso de **senhas se torne algo secundário**.
