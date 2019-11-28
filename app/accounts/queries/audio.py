@@ -3,6 +3,7 @@ Module used to implement querys to verify audio features
 '''
 import numpy
 import graphene
+from scipy.io.wavfile import write
 import accounts.utility as Utility
 
 class AudioQuery(graphene.AbstractType):
@@ -18,12 +19,8 @@ class AudioQuery(graphene.AbstractType):
         '''
         Find out if the audio has a good volume
         '''
-        print('Entrei')
-
         audio_data = kwargs.get('audio_data')
         audio_samplerate = kwargs.get('audio_samplerate')
-        audio_data = numpy.array(audio_data)
-
         audio_data = Utility.treat_audio_data(audio_data, audio_samplerate)
 
         return len(audio_data) / audio_samplerate > 0.3
