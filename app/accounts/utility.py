@@ -139,8 +139,8 @@ def treat_audio_data(audio_data, samplerate):
     tmp_file_name = ''.join(random.choice(letters) for i in range(10))
     tmp_file_path = tmp_file_name + ".wav"
 
-    audio_data = numpy.array(audio_data)
-    audio_data = audio_data * (1 / (audio_data.max() * 5))
+    # Reduce volume gained in comunication
+    audio_data = numpy.array(audio_data) * 0.00002
 
     write(tmp_file_path, samplerate, audio_data)
     new_file_name = treat_audio_file(tmp_file_path)
